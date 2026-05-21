@@ -1,0 +1,231 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { aboutSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Icons from "@/helpers/Icons.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import CircularProgressBar from "@/layouts/components/widgets/CircularProgressBar.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof aboutSectionSchema>>;
+type Props = {
+  content?: SectionType;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "about-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, list = [] } = actualContent ?? {};
+
+if (!enable) return;
+---
+
+<section class="bg-light relative overflow-hidden">
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20">
+    {
+      list.map((item, index) => {
+        const isEven = index % 2 === 0;
+        const {
+          badge,
+          title,
+          description,
+          services,
+          image,
+          imageAlt,
+          imageVerticalTitle,
+          leftImagePostion,
+        } = item;
+
+        return (
+          <div
+            class:list={[
+              "flex flex-col items-start gap-10 xl:gap-20",
+              isEven ? "lg:text-right" : "lg:mt-20",
+              !leftImagePostion && "max-lg:flex-col-reverse",
+            ]}
+            data-aos={isEven ? "reveal-anim-right" : "reveal-anim-left"}
+            data-aos-duration="600">
+            {/* Logic for image and content order */}
+            {leftImagePostion ? (
+              <>
+                {image && (
+                  <div class="relative w-full shrink-0 overflow-hidden">
+                    <OptimizedImage
+                      src={image}
+                      alt={imageAlt}
+                      width={684}
+                      height={612}
+                      quality={70}
+                      widths={[480, 600, 684]}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      class="h-full w-full object-cover"
+                    />
+                    {imageVerticalTitle && (
+                      <h3
+                        class="bg-light text-dark xl:text-h6-sm absolute -bottom-px -left-px rotate-180 px-3 py-4 text-center text-xs tracking-wider [writing-mode:vertical-lr] sm:text-base md:px-5 md:py-5 lg:text-base"
+                        set:html={markdownify(imageVerticalTitle)}
+                      />
+                    )}
+                  </div>
+                )}
+                <div class="flex flex-col items-start gap-4 xl:gap-7">
+                  <div>
+                    {badge && (
+                      <SectionBadge
+                        title={badge}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                    {title && (
+                      <SectionTitle
+                        title={title}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                  </div>
+                  {description && (
+                    <p
+                      class="text-text-dark/90 lg:text-lg"
+                      set:html={markdownify(description)}
+                    />
+                  )}
+                  {services && services.length > 0 && (
+                    <>
+                      {services[0].percent ? (
+                        <div class="grid w-full grid-cols-2 items-center gap-8 pt-2 lg:items-end">
+                          {services.map((service) => (
+                            <div>
+                              <CircularProgressBar
+                                percent={service.percent}
+                                title={service.title}
+                                size={96}
+                                stroke={2}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <ul class="flex flex-col justify-center gap-4">
+                          {services.map((service) => (
+                            <li class="flex items-center gap-2">
+                              <Icons
+                                icon="CircleCheckBig"
+                                class="text-primary size-5"
+                              />
+                              <h3 class="sm:text-h6-sm md:text-h6 text-base">
+                                {service.title}
+                              </h3>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div class="flex flex-col items-start gap-4 xl:gap-7">
+                  <div>
+                    {badge && (
+                      <SectionBadge
+                        title={badge}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                    {title && (
+                      <SectionTitle
+                        title={title}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                  </div>
+                  {description && (
+                    <p
+                      class="text-text-dark/90 lg:text-lg"
+                      set:html={markdownify(description)}
+                    />
+                  )}
+                  {services && services.length > 0 && (
+                    <>
+                      {services[0].percent ? (
+                        <div class="grid w-full grid-cols-2 items-center gap-8 pt-2 lg:items-end">
+                          {services.map((service) => (
+                            <div>
+                              <CircularProgressBar
+                                percent={service.percent}
+                                title={service.title}
+                                size={96}
+                                stroke={2}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <ul class="flex flex-col justify-center gap-4">
+                          {services.map((service) => (
+                            <li class="flex items-center gap-2">
+                              <Icons
+                                icon="CircleCheckBig"
+                                class="text-primary size-5"
+                              />
+                              <h3 class="sm:text-h6-sm md:text-h6 text-base">
+                                {service.title}
+                              </h3>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
+                {image && (
+                  <div class="relative w-full shrink-0 overflow-hidden">
+                    <OptimizedImage
+                      src={image}
+                      alt={imageAlt}
+                      width={684}
+                      height={612}
+                      quality={70}
+                      widths={[480, 600, 684]}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      class="h-full w-full object-cover"
+                    />
+                    {imageVerticalTitle && (
+                      <h3
+                        class="bg-light text-dark xl:text-h6-sm absolute -bottom-px -left-px rotate-180 px-3 py-4 text-center text-xs tracking-wider [writing-mode:vertical-lr] sm:text-base md:px-5 md:py-5 lg:text-base"
+                        set:html={markdownify(imageVerticalTitle)}
+                      />
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</section>

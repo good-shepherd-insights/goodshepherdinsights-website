@@ -1,0 +1,71 @@
+{
+  "common": {
+    "readMore": "Read More",
+    "viewDetails": "View Details",
+    "readMoreAbout": "Read more about",
+    "viewProject": "View Project",
+    "learnMoreAbout": "Learn more about",
+    "emailPlaceholder": "Email Address",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next",
+    "paginationCaseStudiesPrev": "Previous CaseStudies",
+    "paginationCaseStudiesNext": "Next CaseStudies",
+    "workingHours": "Working Hours",
+    "workHour": "Work Hour",
+    "workingHoursValue": "Sun-monday, 09am-5pm",
+    "workHourValue": "Monday To Friday: 9PM - 5PM Saturday Closed",
+    "call": "Call:",
+    "callUs": "Call Us",
+    "play": "Play",
+    "contactUs": "Contact Us",
+    "ourServices": "Our Services",
+    "recentProjects": "Recent Projects",
+    "discoverMore": "Discover More",
+    "hotLine": "Hot Line",
+    "searchHere": "Search Here",
+    "letsChat": "Let's Chat",
+    "sendRequest": "Send Request",
+    "noFaqsFoundFor": "No FAQs found for",
+    "loadingMap": "Loading Map...",
+    "comments": "Comments",
+    "reply": "Reply"
+  },
+  "widgets": {
+    "postSearchFormPlaceholder": "Try Searching 'tips'...",
+    "categoriesTitle": "Categories",
+    "tagsTitle": "Tags",
+    "popularTagsTitle": "Popular Tags",
+    "recentPostsTitle": "Recent Posts",
+    "haveAnyQuestionsTitle": "Have Any Questions?",
+    "haveAnyQuestionsDescription": "There are many variations of passages of Lorem Ipsum available, but the alteration in some form,"
+  },
+  "header": {
+    "announcement": "Get Your Free Tax Advisor Today and Save 10% on Your First Session. [Get Started](/contact/)"
+  },
+  "headerOffcanvas": {
+    "description": "We are a digital agency that helps businesses create immersive experiences.",
+    "buttonLabel": "Let’s Talk With Us"
+  },
+  "blog": {
+    "category": "Category",
+    "share": "Share:",
+    "follow": "Follow:",
+    "paginationPrevious": "Previous Post",
+    "paginationNext": "Next Post"
+  },
+  "navigation": {
+    "buttonLabel": "Get in Touch"
+  },
+  "subscription": {
+    "title": "Add Your Own Details and Inform All Your Tax Requirements"
+  },
+  "footer": {
+    "menuTitleLinks": "Links",
+    "freeSupport": "Free Support",
+    "description": "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus id quod maxime placeat facere assumenda est omnis dolor repellendus.",
+    "contact": "Contact",
+    "copyright": "Copyright © {{ year }}. [Taxo](https://taxo-dev.netlify.app/) All Rights Reserved.",
+    "_comment": "We kindly appreciate it if you retain the theme copyright. Thank you for supporting Taxo!",
+    "since": "since 1990"
+  }
+}

@@ -1,0 +1,331 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import type { heroSectionSchema } from "@/sections.schema";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+import SatisfactionClientsCard from "@/components/cards/SatisfactionClientsCard.astro";
+import VideoModal from "@/layouts/components/widgets/VideoModal.astro";
+import Button from "../Button.astro";
+
+const t = await useTranslations(Astro.currentLocale as string);
+type SectionType = Section & NonNullable<z.infer<typeof heroSectionSchema>>;
+type Props = { content?: SectionType };
+
+let defaultContent = (
+  await getEntryCTM("sections", "hero-section", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  subTitle,
+  titleLine1,
+  titleLine2,
+  description,
+  decorativeImage,
+  decorativeImageAlt,
+  arrowDecorationImage,
+  arrowDecorationImageAlt,
+  shapeImage,
+  shapeImageAlt,
+  slides,
+  satisfactionClients,
+  video,
+  helpDropdown,
+} = actualContent;
+
+type SlideType = NonNullable<SectionType["slides"]>[number];
+
+const hasSlides = slides && slides.length > 0;
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="hero-section has-video-modal relative">
+  {
+    arrowDecorationImage && (
+      <div
+        class="pointer-events-none absolute -top-25.5 right-0 -z-1 block w-[45%] opacity-80 mix-blend-multiply xl:w-[40%]"
+        aria-hidden="true">
+        <OptimizedImage
+          src={arrowDecorationImage}
+          width={400}
+          height={400}
+          quality={50}
+          widths={[160, 240, 320, 400]}
+          sizes="(min-width: 1536px) 376px, (min-width: 1280px) 300px, (min-width: 768px) 200px, 45vw"
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+          class="h-full w-full object-cover object-top-right"
+          alt={arrowDecorationImageAlt}
+        />
+      </div>
+    )
+  }
+  {
+    shapeImage && (
+      <div
+        class="pointer-events-none absolute top-full right-0 z-0 block w-[20%] opacity-80 mix-blend-multiply xl:w-[15%]"
+        aria-hidden="true">
+        <OptimizedImage
+          src={shapeImage}
+          width={800}
+          height={800}
+          quality={50}
+          widths={[240, 360, 480, 640, 800]}
+          sizes="(min-width: 1280px) 40vw, 45vw"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          class="h-full w-full object-cover object-top-right"
+          alt={shapeImageAlt}
+        />
+      </div>
+    )
+  }
+
+  <div class="relative container">
+    {
+      subTitle && (
+        <div
+          data-aos="reveal-anim-left"
+          data-aos-offset="0"
+          data-aos-duration="600">
+          <h3 class="text-dark text-h6 sm:text-h5-sm md:text-h4-md lg:text-h3 inline-block tracking-wider">
+            {markdownify(subTitle)}
+            <div class="border-dark/60 h-1 border-y" />
+          </h3>
+        </div>
+      )
+    }
+    <div
+      class="mt-7 grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10">
+      <div class="space-y-6 lg:col-span-12 xl:col-span-10">
+        <h1
+          data-aos="reveal-anim-left"
+          data-aos-offset="0"
+          data-aos-delay="200"
+          class="text-h2-sm sm:text-h2 md:text-display-4 lg:text-display-2 xl:text-display-1 leading-[1.1]">
+          {titleLine1 && <div set:html={markdownify(titleLine1)} />}
+          <div
+            class="flex flex-col flex-wrap items-start gap-8 md:flex-row md:items-center lg:gap-14">
+            <div>
+              {titleLine2 && <div set:html={markdownify(titleLine2)} />}
+            </div>
+            {
+              description && (
+                <div class="space-y-4">
+                  <p
+                    class="text-text-dark/85 font-primary prose-a:text-primary prose-a:font-medium prose-a:border-b prose-a:border-primary text-xs font-normal tracking-[0.06em] md:max-w-lg md:text-sm lg:text-lg"
+                    set:html={markdownify(description)}
+                  />
+                </div>
+              )
+            }
+          </div>
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  {
+    hasSlides && (
+      <div class="relative mx-auto mt-16 w-full lg:mt-24">
+        <div class="relative">
+          <div
+            class="bannerDiv relative ml-auto w-[calc(100%-var(--banner-offset))] sm:w-[calc(50%+var(--banner-offset))]"
+            id="bannerDiv">
+            <div
+              class="banner-slider-track relative w-full overflow-hidden"
+              id="home-banner-slider"
+              data-aos="reveal-anim-right"
+              data-aos-offset="0"
+              data-aos-duration="300">
+              {slides.map((slide: SlideType, i: number) => (
+                <div
+                  class:list={[
+                    "banner-slide absolute inset-0 w-full",
+                    "transition-opacity duration-700 ease-in-out",
+                    i === 0 && "active",
+                  ]}
+                  data-slide={i}
+                  aria-hidden={i !== 0}>
+                  <OptimizedImage
+                    src={slide.image}
+                    alt={slide.alt}
+                    width={1536}
+                    height={720}
+                    widths={[640, 960, 1280, 1536]}
+                    sizes="(min-width: 1536px) 1400px, (min-width: 1280px) 1200px, (min-width: 1024px) 960px, 100vw"
+                    quality={60}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding={i === 0 ? "sync" : "async"}
+                    fetchpriority={i === 0 ? "high" : "auto"}
+                    class="h-full w-full object-cover object-top"
+                  />
+                </div>
+              ))}
+
+              <div class="bg-dark/70 pointer-events-none absolute inset-0 z-2" />
+
+              {video && (
+                <div class="relative inset-0 z-2 flex items-center justify-center pt-30 pb-50 max-sm:mr-3 sm:py-40 md:py-63 lg:py-75.5 xl:py-88">
+                  <Button
+                    tag="button"
+                    variant="circle"
+                    label={t("common.play")}
+                    class="video-modal-toggle border-border-light size-24 border bg-transparent text-lg font-bold transition-all duration-300 hover:scale-105 hover:bg-white/10"
+                    aria-haspopup="dialog"
+                    aria-expanded="false"
+                    aria-controls={`#${video.id}`}
+                    data-hs-overlay={`#${video.id}`}
+                    data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+                    title={t("common.play")}
+                  />
+                </div>
+              )}
+            </div>
+            {decorativeImage && (
+              <div
+                class="pointer-events-none absolute top-[95%] right-full z-0 size-40 mix-blend-multiply lg:size-75"
+                aria-hidden="true"
+                data-aos="zoom-in-right"
+                data-aos-delay="800"
+                data-aos-duration="600">
+                <OptimizedImage
+                  src={decorativeImage}
+                  width={320}
+                  height={340}
+                  quality={50}
+                  widths={[160, 300, 320]}
+                  sizes="(min-width: 1024px) 300px, 160px"
+                  class="h-full w-full object-cover object-top-right"
+                  alt={decorativeImageAlt}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <div class="relative container">
+          <div class="absolute bottom-0 left-0 z-2 container flex items-end justify-between overflow-hidden max-sm:flex-col-reverse max-sm:items-center">
+            <div class="pointer-events-auto z-30 flex w-full max-w-sm flex-col gap-0 md:max-w-md lg:max-w-140">
+              {satisfactionClients?.enable && (
+                <SatisfactionClientsCard
+                  avatars={satisfactionClients.avatars}
+                  avatarAlt={satisfactionClients.avatarAlt}
+                  count={satisfactionClients.count}
+                  label={satisfactionClients.label}
+                  helpDropdown={helpDropdown}
+                  data-aos="reveal-anim-bottom"
+                  data-aos-offset="0"
+                  data-aos-delay="600"
+                  data-aos-duration="600"
+                />
+              )}
+            </div>
+
+            {slides.length > 1 && (
+              <div
+                class="pointer-events-auto z-20 flex items-center gap-3 pb-6 lg:pb-12"
+                id="banner-pagination">
+                {slides.map((_: SlideType, i: number) => (
+                  <Button
+                    tag="button"
+                    variant="outline"
+                    label={""}
+                    class:list={[
+                      "banner-dot relative size-5 border-none p-0 transition-all duration-300 md:size-3.5",
+                      i === 0 ? "bg-accent" : "bg-white",
+                    ]}
+                    data-dot={i}
+                    aria-label={`${t("common.paginationNext")} ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <script>
+    (function () {
+      const slider = document.getElementById("home-banner-slider");
+      if (!slider) return;
+
+      const slides = Array.from(
+        slider.querySelectorAll<HTMLElement>(".banner-slide"),
+      );
+      if (slides.length <= 1) return;
+
+      const dots = Array.from(
+        document.querySelectorAll<HTMLElement>(".hero-section .banner-dot"),
+      );
+      let current = 0;
+
+      function goTo(index: number) {
+        slides[current].style.opacity = "0";
+        slides[current].style.zIndex = "0";
+        slides[current].setAttribute("aria-hidden", "true");
+
+        if (dots[current]) {
+          dots[current].classList.remove("bg-accent");
+          dots[current].classList.add("bg-white");
+        }
+
+        current = (index + slides.length) % slides.length;
+        slides[current].style.opacity = "1";
+        slides[current].style.zIndex = "1";
+        slides[current].setAttribute("aria-hidden", "false");
+
+        if (dots[current]) {
+          dots[current].classList.remove("bg-white");
+          dots[current].classList.add("bg-accent");
+        }
+      }
+
+      let autoplayTimer = window.setInterval(() => goTo(current + 1), 5000);
+
+      function resetAutoplay() {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = window.setInterval(() => goTo(current + 1), 5000);
+      }
+
+      slider.addEventListener("mouseenter", () =>
+        window.clearInterval(autoplayTimer),
+      );
+      slider.addEventListener("mouseleave", () => resetAutoplay());
+
+      document.getElementById("banner-prev")?.addEventListener("click", () => {
+        goTo(current - 1);
+        resetAutoplay();
+      });
+
+      document.getElementById("banner-next")?.addEventListener("click", () => {
+        goTo(current + 1);
+        resetAutoplay();
+      });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          goTo(i);
+          resetAutoplay();
+        });
+      });
+    })();
+  </script>
+  {/* Video Modal */}
+  {video && video.src && <VideoModal video={video} />}
+</section>

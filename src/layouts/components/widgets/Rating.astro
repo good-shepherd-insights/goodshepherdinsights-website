@@ -1,0 +1,101 @@
+---
+type Props = {
+  content: {
+    rating: number;
+    variant?: "primary" | "secondary";
+  };
+};
+
+const { rating, variant = "primary" } = Astro.props.content;
+
+const stars = Array.from({ length: 5 }, (_, i) => {
+  const fill = Math.min(1, Math.max(0, rating - i)); // 0, 0.5, or 1
+  return fill;
+});
+
+if (!rating) {
+  return null;
+}
+const uid = `stars-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+{
+  variant === "primary" ? (
+    <div class="flex items-center gap-1.5 px-4">
+      {stars.map((fill) => (
+        <span class="relative inline-block h-5 w-5" aria-hidden="true">
+          {/* Empty star (always shown as base) */}
+          <svg
+            viewBox="0 0 24 24"
+            class="fill-light/0 stroke-accent absolute inset-0 h-5 w-5"
+            stroke-width="1">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          {/* Filled star clipped to fill% */}
+          {fill > 0 && (
+            <svg
+              viewBox="0 0 24 24"
+              class="fill-accent stroke-accent absolute inset-0 h-5 w-5"
+              stroke-width="1"
+              style={`clip-path: inset(0 ${(1 - fill) * 100}% 0 0);`}>
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          )}
+        </span>
+      ))}
+    </div>
+  ) : (
+    <div class="flex items-center gap-1.5 px-4">
+      {/* Hidden clip-paths definition */}
+      <svg width="0" height="0" aria-hidden="true" class="absolute">
+        {stars.map((fill, i) => (
+          <defs>
+            <clipPath id={`${uid}-${i}`}>
+              <rect x="0" y="0" width={`${fill * 100}%`} height="100%" />
+            </clipPath>
+          </defs>
+        ))}
+      </svg>
+      <div class="flex items-center">
+        {/* Star rating with half-star support via SVG clipPath */}
+        <div class="bg-primary flex h-10 items-center gap-1.5 px-4">
+          {/* Hidden clip-paths definition */}
+          <svg width="0" height="0" aria-hidden="true" class="absolute">
+            {stars.map((fill, i) => (
+              <defs>
+                <clipPath id={`${uid}-${i}`}>
+                  <rect x="0" y="0" width={`${fill * 100}%`} height="100%" />
+                </clipPath>
+              </defs>
+            ))}
+          </svg>
+
+          {stars.map((fill) => (
+            <span class="relative inline-block h-5 w-5" aria-hidden="true">
+              {/* Empty star (always shown as base) */}
+              <svg
+                viewBox="0 0 24 24"
+                class="fill-light/0 stroke-light absolute inset-0 h-5 w-5"
+                stroke-width="1">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              {/* Filled star clipped to fill% */}
+              {fill > 0 && (
+                <svg
+                  viewBox="0 0 24 24"
+                  class="fill-light stroke-light absolute inset-0 h-5 w-5"
+                  stroke-width="1"
+                  style={`clip-path: inset(0 ${(1 - fill) * 100}% 0 0);`}>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              )}
+            </span>
+          ))}
+        </div>
+        <div class="bg-accent flex h-10 items-center px-4 font-bold">
+          {rating}
+        </div>
+      </div>
+    </div>
+  )
+}

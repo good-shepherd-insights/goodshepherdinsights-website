@@ -1,0 +1,121 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+
+/**
+ * CircularProgressBar.astro
+ * A rounded SVG-based circular progress bar widget.
+ *
+ * Props:
+ *  - percent: string  (e.g. "85%")
+ *  - title:   string  (label shown below the ring)
+ *  - size:    number  (diameter in px, default 120)
+ *  - stroke:  number  (ring thickness, default 8)
+ *  - class:   string  (extra classes on the wrapper)
+ */
+
+interface Props {
+  percent?: string;
+  title: string;
+  size?: number;
+  stroke?: number;
+  class?: string;
+}
+
+const {
+  percent = "0%",
+  title,
+  size = 120,
+  stroke = 8,
+  class: className = "",
+} = Astro.props;
+
+// Strip the "%" and clamp to [0, 100]
+const numericPercent = Math.min(100, Math.max(0, parseFloat(percent)));
+
+const radius = (size - stroke) / 2;
+const circumference = 2 * Math.PI * radius;
+// offset so the arc starts at the top (12 o'clock)
+const dashOffset = circumference - (numericPercent / 100) * circumference;
+
+// Unique ID per component instance to avoid clash
+const uid = `cpb-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class:list={[
+    "circular-progress-bar flex flex-col items-center gap-3",
+    className,
+  ]}>
+  <div class="relative" style={`width:${size}px; height:${size}px;`}>
+    <!-- Background track -->
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      aria-hidden="true">
+      <!-- <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        stroke-width={stroke}
+        class="text-border-light opacity-30"
+      /> -->
+      <!-- Foreground progress arc -->
+      <circle
+        id={uid}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        stroke-width={stroke}
+        stroke-linecap="round"
+        stroke-dasharray={circumference}
+        stroke-dashoffset={circumference}
+        class="transition-all duration-1000 ease-out"
+        style="transform: rotate(-90deg); transform-origin: center;"
+        data-target-offset={dashOffset}>
+      </circle>
+    </svg>
+
+    <!-- Centre label -->
+    <div
+      class="absolute inset-0 flex items-center justify-center"
+      aria-label={`${percent} ${title}`}>
+      <span class="sm:text-h5-sm text-h5 font-secondary font-bold">
+        {percent}
+      </span>
+    </div>
+  </div>
+
+  <!-- Title below ring -->
+  <p class="text-center font-bold" set:html={markdownify(title)} />
+</div>
+
+<script>
+  // Animate each progress arc when it enters the viewport
+  const arcs = document.querySelectorAll<SVGCircleElement>(
+    "[data-target-offset]",
+  );
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as SVGCircleElement;
+          const target = parseFloat(el.dataset.targetOffset ?? "0");
+          // Small delay for visual polish
+          requestAnimationFrame(() => {
+            el.style.strokeDashoffset = String(target);
+          });
+          observer.unobserve(el);
+        }
+      });
+    },
+    { threshold: 0.3 },
+  );
+
+  arcs.forEach((arc) => observer.observe(arc));
+</script>

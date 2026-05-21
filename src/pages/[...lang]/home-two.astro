@@ -1,0 +1,50 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import HeroSectionTwo from "@/components/sections/HeroSectionTwo.astro";
+import FeaturesGridTwo from "@/components/sections/FeaturesGridTwo.astro";
+import AboutSectionTwo from "@/components/sections/AboutSectionTwo.astro";
+import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
+import ServicesSectionTwo from "@/components/sections/ServicesSectionTwo.astro";
+import TestimonialSectionTwo from "@/components/sections/TestimonialSectionTwo.astro";
+import ProcessSection from "@/components/sections/ProcessSection.astro";
+import ContactSection from "@/components/sections/ContactSection.astro";
+import CaseStudiesSectionTwo from "@/components/sections/CaseStudiesSectionTwo.astro";
+import BrandLogos from "@/components/sections/BrandLogos.astro";
+import CTAVideoSectionTwo from "@/components/sections/CTAVideoSectionTwo.astro";
+import AboutMetricsSection from "@/components/sections/AboutMetricsSection.astro";
+import CTABarSection from "@/components/sections/CTABarSection.astro";
+import BlogSectionTwo from "@/components/sections/BlogSectionTwo.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import SocialBarSection from "@/components/sections/SocialBarSection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const page = await getEntryCTM("homepage", "home-two", Astro.currentLocale);
+---
+
+<Base
+  {...page?.data}
+  footerLayout="footer-2"
+  fitToScreen={false}
+  footerSpaceTop={false}>
+  <HeroSectionTwo hasSectionSpacingTop={false} />
+  <FeaturesGridTwo />
+  <AboutSectionTwo />
+  <StatsMarqueeSection hasLightBackground={true} />
+  <ServicesSectionTwo />
+  <TestimonialSectionTwo />
+  <ProcessSection />
+  <ContactSection mode="transparent" />
+  <CaseStudiesSectionTwo />
+  <BrandLogos />
+  <CTAVideoSectionTwo hasLightBackground={true} />
+  <AboutMetricsSection />
+  <CTABarSection />
+  <BlogSectionTwo />
+  <CTAGallerySection />
+  <SocialBarSection hasSectionSpacingTop={false} />
+</Base>

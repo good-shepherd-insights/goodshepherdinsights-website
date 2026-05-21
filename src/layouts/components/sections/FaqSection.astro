@@ -1,0 +1,310 @@
+---
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import AccordionList from "@/layouts/components/widgets/AccordionList.astro";
+import type { faqSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import Button from "../Button.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+const t = await useTranslations(Astro.currentLocale as string);
+
+type SectionType = Section & z.infer<typeof faqSectionSchema>;
+type Props = {
+  content?: any;
+  mode?: "light" | "dark" | "shadow";
+  badgeVariant?: "default" | "secondary";
+  hasSectionSpacingBottom?: boolean;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "faq-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Default content fetch from sections collection
+let actualContent = defaultContent as SectionType;
+
+// Extract the faqSection search header data passed from the page
+const faqSection = Astro.props.content;
+let {
+  enable = true,
+  badge,
+  title,
+  imageList = [],
+  decorativeShapes = [],
+  list = [],
+} = actualContent;
+
+if (!enable) {
+  return null;
+}
+const mode = Astro.props.mode ?? "light";
+const badgeVariant = Astro.props.badgeVariant ?? "primary";
+const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
+---
+
+<section
+  class:list={[
+    "relative overflow-clip",
+    mode === "dark" ? "bg-dark" : "bg-light",
+    hasSectionSpacingBottom && "section-spacing-bottom",
+  ]}>
+  {
+    faqSection && (
+      <div class="container mb-16 md:mb-20">
+        <div class="mx-auto text-center">
+          {faqSection.badge && (
+            <SectionBadge
+              title={faqSection.badge}
+              dataAos="reveal-anim-top"
+              mode={mode}
+              variant={badgeVariant}
+              className="justify-center"
+            />
+          )}
+          {faqSection.title && (
+            <SectionTitle
+              title={faqSection.title}
+              dataAos="reveal-anim-top"
+              variant={mode === "dark" ? "dark" : "light"}
+              className="text-center"
+            />
+          )}
+        </div>
+
+        <div
+          class="mt-8 w-full"
+          data-aos="reveal-anim-top"
+          data-aos-duration="600">
+          <form
+            id="faq-search-form"
+            class="faq-search-bar bg-body flex items-stretch overflow-hidden">
+            <input
+              id="faq-search-input"
+              name="faq-search"
+              type="text"
+              placeholder={faqSection.searchPlaceholder}
+              class="text-dark h-full w-full border-none bg-transparent px-6 py-4 outline-0 placeholder:opacity-60 focus:shadow-none focus:ring-0 md:py-6"
+            />
+            <Button
+              buttonType="submit"
+              variant="fill"
+              hoverEffect="creative-fill"
+              label=""
+              {...faqSection.button}
+              icon={{
+                enable: true,
+                name: "Search",
+                position: "right",
+                size: "sm",
+              }}
+              class="btn-accent effect-color-dark text-text-dark! mt-2 mr-2 h-10 w-10 items-center justify-center p-0 leading-normal md:h-14 md:w-14"
+            />
+          </form>
+        </div>
+
+        <div
+          id="faq-no-results"
+          class="mx-auto mt-8 hidden max-w-3xl text-center">
+          <p class="text-h6 text-text-dark">
+            {t("common.noFaqsFoundFor")}{" "}
+            <span id="faq-search-term" class="text-primary">
+              ""
+            </span>
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  {/* ── FAQ Content Area ── */}
+  <div
+    id="faq-content-area"
+    class:list={[
+      "relative container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20",
+    ]}>
+    {
+      decorativeShapes &&
+        decorativeShapes.length > 0 &&
+        mode === "dark" &&
+        decorativeShapes[0] && (
+          <OptimizedImage
+            src={decorativeShapes[0].url}
+            alt={decorativeShapes[0].alt || "Decorative shape"}
+            width={168}
+            height={90}
+            widths={[84, 120, 168]}
+            sizes="168px"
+            quality={60}
+            class="absolute -top-18 -right-16 h-23 w-42 rotate-45 object-cover sm:-top-20 sm:-right-36"
+          />
+        )
+    }
+    {
+      decorativeShapes &&
+        decorativeShapes.length > 1 &&
+        mode === "dark" &&
+        decorativeShapes[1] && (
+          <OptimizedImage
+            src={decorativeShapes[1].url}
+            width={100}
+            height={100}
+            quality={60}
+            class="absolute -bottom-44 left-0 h-auto w-70 rotate-180 object-contain sm:-left-20 md:-left-70"
+            alt={decorativeShapes[1].alt || "Decorative shape"}
+          />
+        )
+    }
+
+    {/* Left Column - Sticky Header and Images */}
+    <div
+      class="flex flex-col items-start gap-4 lg:sticky lg:top-28 lg:self-start xl:gap-7">
+      <div data-aos="reveal-anim-right" data-aos-duration="600">
+        {
+          badge && (
+            <SectionBadge
+              title={badge}
+              dataAos="reveal-anim-right"
+              mode={mode}
+              variant={badgeVariant}
+            />
+          )
+        }
+        {
+          title && (
+            <SectionTitle
+              title={title}
+              dataAos="reveal-anim-right"
+              variant={mode === "dark" ? "dark" : "light"}
+            />
+          )
+        }
+      </div>
+
+      <div
+        class="relative flex w-full shrink-0 items-center gap-6 overflow-hidden"
+        data-aos="reveal-anim-right"
+        data-aos-duration="600">
+        <div class="flex flex-col items-center gap-6">
+          {
+            imageList && imageList.length > 0 && (
+              <OptimizedImage
+                src={imageList[0].url}
+                alt={imageList[0].alt}
+                width={360}
+                height={360}
+                widths={[180, 240, 360]}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                quality={60}
+                class="h-full w-full object-cover"
+              />
+            )
+          }
+          {
+            imageList && imageList.length > 1 && (
+              <OptimizedImage
+                src={imageList[1].url}
+                alt={imageList[1].alt}
+                width={360}
+                height={240}
+                widths={[180, 240, 360]}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                quality={60}
+                class="h-full w-full object-cover"
+              />
+            )
+          }
+        </div>
+        <div class="flex flex-col items-center gap-6">
+          {
+            imageList && imageList.length > 2 && (
+              <OptimizedImage
+                src={imageList[2].url}
+                alt={imageList[2].alt}
+                width={234}
+                height={450}
+                widths={[117, 180, 234]}
+                sizes="(min-width: 1024px) 20vw, 40vw"
+                quality={60}
+                class="h-full w-full object-cover"
+              />
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    {/* Right Column - FAQ Accordion List */}
+    <div class="flex flex-col items-start gap-4 lg:self-center xl:gap-7">
+      {list.length > 0 && <AccordionList content={list} mode={mode} />}
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchForm = document.getElementById(
+        "faq-search-form",
+      ) as HTMLFormElement | null;
+      const searchInput = document.getElementById(
+        "faq-search-input",
+      ) as HTMLInputElement | null;
+      const noResults = document.getElementById("faq-no-results");
+      const searchTermSpan = document.getElementById("faq-search-term");
+      const contentArea = document.getElementById("faq-content-area");
+
+      if (!searchForm || !searchInput || !contentArea) return;
+
+      // Get all accordion items within the FAQ content area
+      const accordionItems = contentArea.querySelectorAll(
+        ".hs-accordion",
+      ) as NodeListOf<HTMLElement>;
+
+      function performSearch(term: string) {
+        const query = term.toLowerCase().trim();
+
+        if (!query) {
+          // Show all items when search is empty
+          accordionItems.forEach((item) => {
+            item.style.display = "";
+          });
+          if (noResults) noResults.classList.add("hidden");
+          return;
+        }
+
+        let matchCount = 0;
+
+        accordionItems.forEach((item) => {
+          const titleEl = item.querySelector("h3");
+          const contentEl = item.querySelector("[role='region'] div div");
+          const titleText = titleEl?.textContent?.toLowerCase() || "";
+          const contentText = contentEl?.textContent?.toLowerCase() || "";
+
+          if (titleText.includes(query) || contentText.includes(query)) {
+            item.style.display = "";
+            matchCount++;
+          } else {
+            item.style.display = "none";
+          }
+        });
+
+        // Show/hide no results message
+        if (noResults && searchTermSpan) {
+          if (matchCount === 0) {
+            searchTermSpan.textContent = `"${term}"`;
+            noResults.classList.remove("hidden");
+          } else {
+            noResults.classList.add("hidden");
+          }
+        }
+      }
+
+      // Search on form submit (Enter key or button click)
+      searchForm.addEventListener("submit", (e: Event) => {
+        e.preventDefault();
+        performSearch(searchInput.value);
+      });
+    });
+  </script>
+</section>

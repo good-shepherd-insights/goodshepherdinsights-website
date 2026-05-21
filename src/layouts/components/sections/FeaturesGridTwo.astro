@@ -1,0 +1,36 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { featuresGridSchema } from "@/sections.schema";
+import FeaturesGridCard from "../cards/FeaturesGridCard.astro";
+
+type SectionType = Section & NonNullable<z.infer<typeof featuresGridSchema>>;
+type Props = { content?: SectionType };
+
+let defaultContent = (
+  await getEntryCTM("sections", "features-grid-two", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { features, cardLayout } = actualContent;
+---
+
+{
+  features && features.length > 0 && (
+    <section class="bg-light relative">
+      <div class="relative container">
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
+          {features.map((feature) => (
+            <FeaturesGridCard content={feature} cardLayout={cardLayout} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,79 @@
+---
+import social from "@/config/social.json";
+import Icons from "@/helpers/Icons.astro";
+import config from ".astro/config.generated.json";
+import Logo from "../global/Logo.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import Social from "./Social.astro";
+import Button from "@/components/Button.astro";
+import Navbar from "../global/header/Navbar.astro";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
+
+const {
+  settings: {
+    headerOffcanvas: { enable, description, button },
+    contactInfo: { address, phone, email },
+  },
+} = config;
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+const { offcanvas } = Astro.props;
+
+if (!enable) {
+  return null;
+}
+---
+
+<div
+  class="bg-light h-screen space-y-10 overflow-auto px-8 pt-20 pb-5 md:px-16 md:pt-32 md:pb-10">
+  <button
+    type="button"
+    data-hs-overlay={`#${offcanvas}`}
+    title="Close offcanvas"
+    class="border-border-light hover:border-border-dark bg-body absolute inset-e-7 top-5 z-20 inline-flex h-14 w-14 items-center justify-center gap-x-2 rounded-full border-2 text-sm font-medium transition-all duration-500 ease-out hover:rotate-90"
+    aria-expanded="true">
+    <Icons icon="X" class="text-2xl" />
+  </button>
+
+  <Logo class="justify-start" />
+  <div class="lg:border-b lg:pb-10">
+    {
+      (description || t("headerOffcanvas.description")) && (
+        <p
+          class="text-lg"
+          set:html={markdownify(
+            description || t("headerOffcanvas.description"),
+          )}
+        />
+      )
+    }
+  </div>
+  <div class="border-border-dark/10 border-y py-10 xl:hidden">
+    <Navbar isMobile={true} />
+  </div>
+
+  <div class="prose-a:hover:text-accent prose-a: font-secondary text-base">
+    {address && <address class="not-italic" set:html={markdownify(address)} />}
+    {phone && <p set:html={markdownify(phone)} />}
+    {email && <p set:html={markdownify(email)} />}
+  </div>
+
+  <div class="flex items-center">
+    <Social
+      linkType="follow"
+      slug={getLocaleUrlCTM(Astro.url.pathname, Astro.currentLocale)}
+      layout="minimal"
+      list={social.main.filter((social) => social.enable).slice(0, 4)}
+      size="lg"
+    />
+  </div>
+
+  <Button
+    variant="circle"
+    hoverEffect="magnetic"
+    class="btn-accent m-0 ms-auto hidden justify-center lg:flex"
+    {...button}
+    label={button?.label || t("headerOffcanvas.buttonLabel")}
+  />
+</div>

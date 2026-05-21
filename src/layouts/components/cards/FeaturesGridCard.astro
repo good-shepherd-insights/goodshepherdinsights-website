@@ -1,0 +1,135 @@
+---
+import type { z } from "astro/zod";
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { featuresGridSchema } from "@/sections.schema";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import type { FeaturedGridCardLayout } from "@/enum";
+
+type GridCardType = NonNullable<
+  z.infer<typeof featuresGridSchema>
+>["features"][0];
+
+type Props = {
+  content: GridCardType;
+  cardLayout?: FeaturedGridCardLayout;
+  index?: number;
+};
+
+const {
+  cardLayout = "outsideIcon",
+  content: {
+    enable,
+    icon,
+    title,
+    description,
+    backgroundImage,
+    backgroundImageAlt,
+  },
+  index,
+} = Astro.props;
+
+if (!enable) {
+  return null;
+}
+---
+
+{
+  cardLayout === "outsideIcon" ? (
+    <div data-aos="fade-up-sm" data-aos-delay={100} data-aos-duration="600">
+      <div class="group bg-primary hover:bg-accent hover:text-text-dark text-text-light relative flex gap-4 p-4 transition-all duration-300 ease-in-out max-lg:items-center md:p-6 lg:flex-col lg:p-8 xl:p-10">
+        {backgroundImage && (
+          <OptimizedImage
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            width={420}
+            height={220}
+            widths={[240, 376, 400, 420]}
+            sizes="(min-width: 1536px) 376px, (min-width: 1280px) 300px, (min-width: 768px) 200px, 100vw"
+            quality={50}
+            class="pointer-events-none absolute inset-0 bottom-0 z-0 h-full w-full overflow-hidden object-cover object-center opacity-10"
+          />
+        )}
+        {icon && (
+          <div class="bg-primary group-hover:bg-accent group-hover:shadow-primary shadow-accent flex min-h-16 min-w-16 items-center justify-center rounded-full transition-all duration-300 ease-in-out lg:-mt-20 lg:mb-4 lg:size-20">
+            <OptimizedImage
+              src={icon}
+              alt={title}
+              width={48}
+              height={48}
+              inlineSvg={true}
+              class="group-hover:fill-text-dark fill-text-light size-8 md:size-12"
+            />
+          </div>
+        )}
+        <div class="flex flex-col gap-1 lg:gap-4">
+          <h3
+            class="group-hover:text-text-dark text-text-light text-h6-sm lg:text-h6 xl:text-h5"
+            set:html={markdownify(title)}
+          />
+          <p set:html={markdownify(description)} />
+        </div>
+        <div class="bg-accent group-hover:bg-primary absolute right-4 bottom-4 flex size-2 lg:size-3" />
+      </div>
+    </div>
+  ) : cardLayout === "outsideIconSquare" ? (
+    <div data-aos="fade-up-sm" data-aos-delay={100} data-aos-duration="600">
+      <div
+        class:list={[
+          "group bg-light relative flex gap-7 p-4 max-lg:items-center md:p-6 lg:flex-col lg:p-5 xl:p-6",
+          index !== undefined && (index % 2 === 0 || index === 0) && "lg:mt-16",
+        ]}>
+        {icon && (
+          <div class="bg-primary group-hover:bg-accent flex min-h-12 min-w-12 items-center justify-center transition-all duration-300 ease-in-out lg:-mt-14 lg:size-16">
+            <OptimizedImage
+              src={icon}
+              alt={title}
+              width={48}
+              height={48}
+              inlineSvg={true}
+              class="group-hover:fill-text-dark group-hover:stroke-text-dark fill-text-light stroke-text-light size-7 md:size-10"
+            />
+          </div>
+        )}
+        <div class="flex flex-col gap-1 lg:gap-3">
+          <h3
+            class="text-h6-sm lg:text-h6 xl:text-h5"
+            set:html={markdownify(title)}
+          />
+          <p class="text-base lg:text-lg" set:html={markdownify(description)} />
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div data-aos="fade-up-sm" data-aos-delay={100} data-aos-duration="600">
+      <div class="group bg-primary hover:bg-accent hover:text-text-dark text-text-light relative flex flex-col gap-4 p-4 transition-all duration-300 ease-in-out md:p-6 lg:p-8 xl:p-8">
+        <div class="flex items-center gap-4 lg:gap-6">
+          {icon && (
+            <div class="group-hover:bg-primary bg-accent flex min-h-16 min-w-16 items-center justify-center transition-all duration-300 ease-in-out lg:min-h-20 lg:min-w-20">
+              <OptimizedImage
+                src={icon}
+                alt={title}
+                width={48}
+                height={48}
+                inlineSvg={true}
+                class="group-hover:fill-text-light fill-text-dark size-8 md:size-12"
+              />
+            </div>
+          )}
+          <h2
+            class="group-hover:text-text-dark text-text-light text-h6-sm lg:text-h6 xl:text-h5"
+            set:html={markdownify(title)}
+          />
+        </div>
+        <div class="flex justify-between gap-4 lg:flex-col">
+          <div class="flex flex-col gap-1 lg:gap-4">
+            <p set:html={markdownify(description)} class="leading-normal" />
+          </div>
+          <div class="-mb-2">
+            <Icons icon="ArrowUpRight" class="size-8" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

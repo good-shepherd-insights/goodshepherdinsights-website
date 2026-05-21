@@ -1,0 +1,109 @@
+---
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import CommentForm from "../widgets/CommentForm.astro";
+import type { commentSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import Button from "../Button.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+type SectionType = Section & z.infer<typeof commentSectionSchema>;
+
+type Props = {
+  content?: SectionType;
+  hasSectionPadding?: boolean;
+  comments?: number;
+  commentList?: {
+    avatar?: string;
+    name: string;
+    date: string;
+    content: string;
+  }[];
+};
+
+let defaultContent = (
+  await getEntryCTM("sections", "comment-section", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+let { enable = true, title, form } = actualContent;
+
+const { comments, commentList } = Astro.props;
+
+if (!enable) return null;
+
+const t = await useTranslations(Astro.currentLocale as string);
+---
+
+<div class="space-y-10 lg:space-y-16">
+  {
+    commentList && commentList.length > 0 && (
+      <div>
+        <h3 class="font-secondary text-h3-sm md:text-h3 mb-6 capitalize md:mb-8">
+          {t("common.comments")} ({comments || commentList.length})
+        </h3>
+        <div class="space-y-4 lg:space-y-8">
+          {commentList.map((comment) => (
+            <div class="bg-text-light flex flex-col gap-6 rounded-xl p-6 shadow-[0px_4px_30px_rgba(0,0,0,0.03)] max-md:items-center md:flex-row md:p-8">
+              {comment.avatar && (
+                <div class="shrink-0">
+                  <OptimizedImage
+                    src={comment.avatar}
+                    alt={comment.name}
+                    width={130}
+                    height={144}
+                    position="top"
+                    class="h-24 w-24 rounded-xl object-cover lg:h-full lg:w-32"
+                  />
+                </div>
+              )}
+              <div class="relative w-full">
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <h4
+                      class="text-h6 font-bold"
+                      set:html={markdownify(comment.name)}
+                    />
+                    <span class="text-primary mt-4 block text-sm font-medium underline">
+                      {comment.date}
+                    </span>
+                  </div>
+                  <Button
+                    label={t("common.reply")}
+                    class={`btn-accent effect-color-dark rounded-md px-4 py-1 tracking-wide transition-colors`}
+                    hoverEffect="creative-fill"
+                  />
+                </div>
+                <p
+                  class="text-text-dark mt-4"
+                  set:html={markdownify(comment.content)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <div
+    class="bg-text-light container rounded-xl p-6 shadow-[0px_4px_30px_rgba(0,0,0,0.03)] xl:p-8">
+    {
+      title && (
+        <h3
+          class="font-secondary mb-8.5 text-2xl md:text-4xl"
+          set:html={markdownify(title)}
+        />
+      )
+    }
+
+    {form && <CommentForm form={form} />}
+  </div>
+</div>

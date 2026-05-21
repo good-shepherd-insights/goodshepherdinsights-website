@@ -1,0 +1,124 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import config from ".astro/config.generated.json";
+import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { servicesSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "../Button.astro";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import ServiceCard from "@/components/cards/ServiceCard.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
+type Props = {
+  content?: SectionType;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "services-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  description,
+  image,
+  imageAlt,
+  button,
+  cardLayout,
+  limit,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+let servicesList = await getCollectionCTM(
+  config.settings.serviceFolder as "services",
+  Astro.currentLocale,
+);
+
+if (limit) {
+  servicesList = servicesList.slice(0, limit);
+}
+---
+
+<section class="bg-light relative overflow-hidden">
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20">
+    <div class="max-lg:order-2">
+      {
+        servicesList && servicesList.length > 0 && (
+          <div class="divide-border-dark border-border-dark divide-y border-y">
+            {servicesList.map((service, index) => (
+              <ServiceCard
+                content={service}
+                options={{ layout: cardLayout }}
+                index={index}
+              />
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <div class="flex flex-col items-start gap-4 xl:gap-7">
+      {/* Left: badge + title */}
+      <div>
+        {badge && <SectionBadge title={badge} dataAos="reveal-anim-right" />}
+        {title && <SectionTitle title={title} dataAos="reveal-anim-right" />}
+      </div>
+
+      {
+        description && (
+          <p
+            class="text-text-dark/90 lg:text-lg"
+            set:html={markdownify(description)}
+          />
+        )
+      }
+
+      {/* Right: image */}
+      {
+        image && (
+          <div
+            class="relative w-full shrink-0 overflow-hidden"
+            data-aos="reveal-anim-right"
+            data-aos-duration="600">
+            <OptimizedImage
+              src={image}
+              alt={imageAlt}
+              width={640}
+              height={300}
+              widths={[320, 480, 640]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={60}
+              class="h-full w-full object-cover"
+            />
+            <div class="absolute bottom-0 left-0 text-center text-lg font-medium">
+              {button && (
+                <Button
+                  tag="a"
+                  variant="text"
+                  url={getLocaleUrlCTM(button.url, Astro.currentLocale)}
+                  label={button.label}
+                  class="bg-light font-secondary overflow-visible! border-none px-4 py-2 text-base font-medium underline-offset-2 hover:underline md:px-6 md:py-4"
+                />
+              )}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

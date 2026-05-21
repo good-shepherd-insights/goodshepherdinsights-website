@@ -1,0 +1,122 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import formatRelativeDate from "@/lib/utils/formatRelativeDate";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import Icons from "@/helpers/Icons.astro";
+import config from ".astro/config.generated.json";
+
+const t = await useTranslations(Astro.currentLocale as string);
+const { pageHeaderDefaultImage } = config.settings;
+
+type Props = {
+  content: {
+    badge?: string;
+    title?: string;
+    image?: string;
+    imageText?: string;
+    postData?: {
+      date?: Date;
+      comments?: number;
+      author?: string;
+    };
+  };
+  contentClass?: string;
+};
+
+const {
+  badge,
+  title,
+  image = pageHeaderDefaultImage,
+  imageText,
+  postData,
+} = Astro.props.content;
+---
+
+<section class="relative">
+  {
+    image && (
+      <div class="bg-light absolute bottom-0 left-0 z-[-1] h-18 w-full sm:h-30 md:h-40 lg:h-52 xl:h-68" />
+    )
+  }
+  <div class="container">
+    <div
+      class=""
+      class:list={[
+        "mx-auto flex max-w-5xl flex-col items-center text-center",
+        Astro.props.contentClass,
+      ]}>
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            variant="secondary"
+            dataAos="reveal-anim-top"
+          />
+        )
+      }
+      {
+        title && (
+          <h1
+            data-aos="reveal-anim-top"
+            data-aos-offset="0"
+            data-aos-duration="400"
+            class:list={["text-h2-sm lg:text-h1-sm xl:text-h1"]}
+            set:html={markdownify(title)}
+          />
+        )
+      }
+      {
+        postData && (
+          <ul class="text-dark mt-4 flex flex-wrap items-center gap-x-1 gap-y-1 tracking-wide max-sm:justify-center lg:gap-x-4">
+            {postData.date && (
+              <li class="before:bg-dark relative flex items-center gap-2 pe-5 leading-normal">
+                <Icons icon="Calendar" class="text-primary size-4" />
+                {postData.date &&
+                  markdownify(
+                    formatRelativeDate(postData.date, "dd MMM, yyyy"),
+                  )}
+              </li>
+            )}
+
+            <li class="before:bg-dark relative flex items-center gap-2 pe-5 leading-normal">
+              <Icons icon="MessagesSquare" class="text-primary size-4" />
+              {postData.comments} {t("common.comments")}
+            </li>
+
+            {postData.author && (
+              <li class="before:bg-dark relative flex items-center gap-2 leading-normal">
+                <Icons icon="User" class="text-primary size-4" />
+                By {markdownify(postData.author)}
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </div>
+    {
+      image && (
+        <div class="relative pt-12 lg:pt-24">
+          <OptimizedImage
+            src={image}
+            alt={title}
+            width={1320}
+            height={550}
+            widths={[480, 640, 768, 1024, 1320]}
+            sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+            quality={60}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+          />
+          {imageText && (
+            <div class="bg-light font-secondary text-h3-sm md:text-h2 absolute bottom-0 left-0 px-8 font-bold">
+              {imageText}
+            </div>
+          )}
+        </div>
+      )
+    }
+  </div>
+</section>

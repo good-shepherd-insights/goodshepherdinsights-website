@@ -1,0 +1,358 @@
+---
+import config from ".astro/config.generated.json";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { sortByDate } from "@/lib/utils/sortFunctions";
+import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
+import { slugifyyy } from "@/lib/utils/textConverter";
+import { generateCategorySlugs } from "@/lib/taxonomyParser.astro";
+import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import Icons from "@/helpers/Icons.astro";
+import Button from "../Button.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+
+interface Props {
+  class: string;
+  layout: "default" | "list";
+  searchSection?: {
+    title?: string;
+    searchPlaceholder?: string;
+    button?: {
+      label?: string;
+      icon?: {
+        enable: boolean;
+        name: string;
+        position: "left" | "right";
+        size: "sm" | "md" | "lg";
+      };
+    };
+  };
+}
+
+const { layout = "default", searchSection } = Astro.props as Props;
+
+const currentLocale = Astro.currentLocale;
+const blogFolder = config.settings.blogFolder as "blog";
+
+let posts = await getCollectionCTM(blogFolder as "blog", currentLocale);
+posts = await processPosts(posts);
+
+const postJson = sortByDate(posts).map((item) => {
+  return {
+    title: item.data.title,
+    slug: getEntrySlugCTM(item, currentLocale),
+    date: item.data.date,
+    author: item.data.author,
+    authorImage: item.data.authorImage,
+    image: item.data.image,
+    metaDescription: item.data.metaDescription,
+    categories: generateCategorySlugs(
+      item.data.categories,
+      currentLocale as string,
+      blogFolder,
+    ),
+  };
+});
+
+async function processPosts(sortedPosts: any) {
+  sortedPosts = await Promise.all(
+    sortedPosts.map(async (post: any) => {
+      const authorEntry = await getEntryCTM(
+        "author",
+        slugifyyy(post.data.author || ""),
+        currentLocale,
+      );
+
+      return {
+        ...post,
+        data: {
+          ...post.data,
+          image: post.data.image && (await bgOptimizedImage(post.data.image)),
+          author: authorEntry?.data.title,
+          authorImage:
+            authorEntry?.data.image &&
+            (await bgOptimizedImage(authorEntry?.data.image)),
+        },
+      };
+    }),
+  );
+
+  return sortedPosts;
+}
+
+const baseURL = Astro.url.origin;
+const t = await useTranslations(Astro.currentLocale as string);
+const learnMoreI18n = t("common.learnMoreAbout");
+const btnLabelReadMoreI18n = t("common.readMore");
+
+const notFoundImage = await bgOptimizedImage("/images/404.svg");
+---
+
+{
+  layout === "default" ? (
+    <div class="bg-light rounded-lg p-4 lg:p-8">
+      <form
+        method="post"
+        class="relative flex rounded-lg"
+        data-search-form="default">
+        <input
+          name="search"
+          type="text"
+          placeholder={t("widgets.postSearchFormPlaceholder")}
+          class="form-input h-full rounded-md border-none placeholder:tracking-widest placeholder:opacity-50!"
+        />
+        <div class="absolute top-0 right-0 flex items-center gap-2">
+          <span data-search-close class="hidden cursor-pointer">
+            <Icons icon="X" class="size-5" />
+          </span>
+          <Button
+            variant="fill"
+            hoverEffect="creative-fill"
+            label=""
+            icon={{
+              enable: true,
+              name: "Search",
+              position: "left",
+              className: "size-5",
+            }}
+            aria-label={t("common.searchHere")}
+            class="btn-accent effect-color-dark size-11 items-center justify-center rounded-none rounded-r-md px-2 transition-colors xl:size-13.5"
+            tag="button"
+            buttonType="submit"
+          />
+        </div>
+      </form>
+    </div>
+  ) : (
+    <>
+      {searchSection && (
+        <div class="mb-6 space-y-4 lg:mb-14 lg:space-y-10">
+          {searchSection?.title && (
+            <SectionTitle
+              title={searchSection.title}
+              dataAos="reveal-anim-top"
+              className="text-center"
+            />
+          )}
+          <form
+            data-search-form="list"
+            class="faq-search-bar border-border-dark mx-auto flex max-w-md items-stretch overflow-hidden border-b">
+            <div class="relative flex w-full items-center">
+              <input
+                name="search"
+                type="text"
+                placeholder={t("widgets.postSearchFormPlaceholder")}
+                class="text-dark h-full w-full border-none bg-transparent py-2 pr-10 pl-0 outline-0 focus:shadow-none focus:ring-0 md:py-2"
+              />
+              <span
+                data-search-close
+                class="absolute right-2 hidden cursor-pointer opacity-50 grayscale hover:opacity-100">
+                <Icons icon="X" class="size-5" />
+              </span>
+            </div>
+            <Button
+              variant="text"
+              label=""
+              {...searchSection.button}
+              icon={{
+                enable: true,
+                name: "Search",
+                position: "right",
+                size: "sm",
+              }}
+              class="text-text-dark! items-center justify-center bg-transparent p-0 leading-normal"
+              aria-label={t("common.searchHere")}
+              tag="button"
+              buttonType="submit"
+            />
+          </form>
+        </div>
+      )}
+    </>
+  )
+}
+
+<script
+  is:inline
+  define:vars={{
+    baseURL,
+    notFoundImage,
+    postJson,
+    blogFolder,
+    learnMoreI18n,
+    btnLabelReadMoreI18n,
+    trailingSlash: config.site.trailingSlash,
+  }}
+>
+  (function () {
+    const posts = postJson;
+    let prevResults;
+
+    const searchResultsSelector = ".blog-search-results";
+    const paginationSelector = "#pagination";
+    const blogDetailsSelector = ".blog-details";
+    const blogDetailHeaderSelector = "#blogDetailHeader";
+
+    const getSearchResultsElement = () =>
+      document.querySelector(searchResultsSelector);
+    const getPaginationElement = () =>
+      document.querySelector(paginationSelector);
+    const getBlogDetailsElement = () =>
+      document.querySelector(blogDetailsSelector);
+    const getBlogDetailHeader = () =>
+      document.querySelector(blogDetailHeaderSelector);
+
+    const captureInitialResults = () => {
+      const searchResults = getSearchResultsElement();
+      if (searchResults && prevResults === undefined) {
+        prevResults = searchResults.innerHTML;
+      }
+    };
+
+    const renderBlogPost = (post) => {
+      const searchResults = getSearchResultsElement();
+      if (!searchResults) return;
+
+      const template = document.querySelector(".template-post-search");
+      if (!template) return;
+
+      const newPost = template.cloneNode(true);
+      newPost.classList.remove("template-post-search", "hidden");
+
+      // Links
+      newPost.querySelectorAll("a[data-post-link]").forEach((link) => {
+        link.href = post.slug || "";
+        link.title = `${learnMoreI18n} ${post.title}`;
+      });
+
+      // Image
+      const imgEl = newPost.querySelector("img");
+      if (imgEl) {
+        imgEl.src = post.image || "";
+        imgEl.alt = post.title || "";
+      }
+
+      // Title
+      const titleEl = newPost.querySelector("h3");
+      if (titleEl) titleEl.textContent = post.title || "";
+
+      // metaDescription
+      const metaDescriptionEl = newPost.querySelector("p.leading-6");
+      if (metaDescriptionEl)
+        metaDescriptionEl.textContent = post.metaDescription || "";
+
+      // Append
+      searchResults.appendChild(newPost);
+    };
+
+    const doSearch = (searchTerm, searchForms) => {
+      const searchResults = getSearchResultsElement();
+      const pagination = getPaginationElement();
+      const blogDetails = getBlogDetailsElement();
+      const blogDetailHeader = getBlogDetailHeader();
+
+      if (!searchResults) return;
+
+      // Update all search bar close buttons
+      searchForms.forEach((form) => {
+        const closeBtn = form.querySelector("[data-search-close]");
+        closeBtn?.classList.toggle("hidden", !searchTerm);
+      });
+
+      if (!searchTerm) {
+        if (prevResults !== undefined) {
+          searchResults.innerHTML = prevResults;
+        }
+
+        if (blogDetails) {
+          searchResults.classList.add("hidden");
+        } else {
+          searchResults.classList.remove("hidden");
+        }
+
+        pagination?.classList.remove("hidden");
+        blogDetails?.classList.remove("hidden");
+        blogDetailHeader?.classList.remove("hidden");
+
+        // Refresh AOS after restoring initial view
+        window.AOS?.refresh();
+        return;
+      }
+
+      searchResults.classList.remove("hidden");
+      pagination?.classList.add("hidden");
+      blogDetails?.classList.add("hidden");
+      blogDetailHeader?.classList.add("hidden");
+
+      const filteredPosts = posts.filter((post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+
+      if (filteredPosts.length === 0) {
+        const notFoundHTML = `
+            <div class="text-center space-y-10 w-full col-span-2 py-20">
+              <img class="w-96 mx-auto" src=${notFoundImage} alt="404" />
+              <p class="text-h6">
+                No Posts Found For <span class="text-primary">"${searchTerm}"</span>
+              </p>
+            </div>
+            `;
+        searchResults.innerHTML = notFoundHTML;
+        window.AOS?.refresh();
+        return;
+      }
+
+      searchResults.innerHTML = "";
+      filteredPosts.forEach((post) => {
+        renderBlogPost(post);
+      });
+
+      // Refresh AOS after rendering new search results
+      window.AOS?.refresh();
+    };
+
+    const setupSearch = () => {
+      const searchForms = document.querySelectorAll("[data-search-form]");
+      if (!searchForms.length) return;
+
+      searchForms.forEach((form) => {
+        const input = form.querySelector('input[name="search"]');
+        const closeBtn = form.querySelector("[data-search-close]");
+
+        if (!input) return;
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          doSearch(input.value.trim(), searchForms);
+        });
+
+        input.addEventListener("input", () => {
+          const term = input.value.trim();
+          if (!term) {
+            closeBtn?.classList.add("hidden");
+            // If clearing this input, trigger a search with empty value to reset
+            doSearch("", searchForms);
+          } else {
+            closeBtn?.classList.remove("hidden");
+          }
+        });
+
+        closeBtn?.addEventListener("click", () => {
+          input.value = "";
+          closeBtn.classList.add("hidden");
+          doSearch("", searchForms);
+        });
+      });
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        captureInitialResults();
+        setupSearch();
+      });
+    } else {
+      captureInitialResults();
+      setupSearch();
+    }
+  })();
+</script>

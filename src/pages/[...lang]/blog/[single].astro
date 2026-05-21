@@ -1,0 +1,83 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import BlogLayout from "@/components/BlogLayout.astro";
+import extractSlug from "@/lib/utils/extractSlug";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const blogFolder = config.settings.blogFolder as "blog";
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const postIndex = await getEntryCTM(
+        blogFolder as "blog",
+        "-index",
+        lang.languageCode,
+      );
+
+      let posts = await getCollectionCTM(
+        blogFolder as "blog",
+        lang.languageCode,
+      );
+
+      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
+      if (postIndex?.data.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      return posts.map((post) => ({
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+          single: extractSlug(post).split("/").pop(),
+        },
+        props: {
+          post,
+          postIndex,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { post, postIndex } = Astro.props;
+---
+
+<Base {...post.data}>
+  <PageHeader
+    content={{
+      badge: post?.data?.categories?.[0],
+      title: post?.data?.title,
+      postData: {
+        date: post?.data?.date,
+        comments: post?.data?.comments,
+        author: post?.data?.author,
+      },
+    }}
+    contentClass=""
+  />
+  <BlogLayout
+    sidebar={{
+      enable: true,
+      sticky: true,
+      widgets: ["Search", "Categories", "RecentPosts", "Tags", "CTA"],
+    }}
+    content={post}
+    contentList={{
+      options: postIndex?.data.options,
+      breadcrumb: true,
+    }}
+  />
+  <CTASection hasNoLightBackground={true} />
+</Base>

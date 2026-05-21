@@ -1,0 +1,36 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import AboutHeroSection from "@/components/sections/AboutHeroSection.astro";
+import FeaturesGrid from "@/components/sections/FeaturesGrid.astro";
+import AboutSectionTwo from "@/components/sections/AboutSectionTwo.astro";
+import StatsSection from "@/components/sections/StatsSection.astro";
+import TeamSection from "@/components/sections/TeamSection.astro";
+import CTAVideoSection from "@/components/sections/CTAVideoSection.astro";
+import AboutMetricsSection from "@/components/sections/AboutMetricsSection.astro";
+import TestimonialSectionTwo from "@/components/sections/TestimonialSectionTwo.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import BrandLogos from "@/components/sections/BrandLogos.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const page = await getEntryCTM("about-us", "-index", Astro.currentLocale);
+---
+
+<Base {...page?.data} hideOffcanvas={true}>
+  <AboutHeroSection />
+  <FeaturesGrid hasLightBackground={true} />
+  <AboutSectionTwo />
+  <StatsSection hasHalfBackground={true} />
+  <TeamSection badgeVariant="secondary" />
+  <CTAVideoSection />
+  <AboutMetricsSection hasLightBackground={true} />
+  <TestimonialSectionTwo />
+  <CTAGallerySection />
+  <BrandLogos />
+  <CTASection />
+</Base>

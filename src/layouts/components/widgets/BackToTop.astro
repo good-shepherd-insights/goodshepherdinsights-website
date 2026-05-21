@@ -1,0 +1,53 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+const t = await useTranslations(Astro.currentLocale as string);
+---
+
+<button
+  id="back-to-top"
+  aria-label={t("aria.backToTop")}
+  class="bg-primary pointer-events-none fixed right-5 bottom-48 z-50 flex h-12 w-10 translate-y-12 items-center justify-center rounded text-white opacity-0 transition-all duration-300 hover:opacity-90">
+  <Icons icon="ArrowUp" class="text-lg" />
+</button>
+
+<script>
+  const backToTopBtn = document.getElementById("back-to-top");
+
+  if (backToTopBtn) {
+    const toggleVisibility = () => {
+      if (window.scrollY > 0) {
+        backToTopBtn.classList.remove(
+          "translate-y-12",
+          "opacity-0",
+          "pointer-events-none",
+        );
+        backToTopBtn.classList.add(
+          "translate-y-0",
+          "opacity-100",
+          "pointer-events-auto",
+        );
+      } else {
+        backToTopBtn.classList.add(
+          "translate-y-12",
+          "opacity-0",
+          "pointer-events-none",
+        );
+        backToTopBtn.classList.remove(
+          "translate-y-0",
+          "opacity-100",
+          "pointer-events-auto",
+        );
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+
+    // Initial check
+    toggleVisibility();
+
+    backToTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+</script>

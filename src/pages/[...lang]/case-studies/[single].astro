@@ -1,0 +1,70 @@
+---
+import "@/components/widgets/VideoModal.astro";
+import Base from "@/layouts/Base.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import config from ".astro/config.generated.json";
+import CaseStudiesSingle from "@/components/CaseStudiesSingle.astro";
+import extractSlug from "@/lib/utils/extractSlug";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const caseStudiesFolder = config.settings
+        .caseStudiesFolder as "case-studies";
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const caseStudiesIndex = await getEntryCTM(
+        caseStudiesFolder as "case-studies",
+        "-index",
+        lang.languageCode,
+      );
+
+      let caseStudiess = await getCollectionCTM(
+        caseStudiesFolder as "case-studies",
+        lang.languageCode,
+      );
+
+      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
+      if (caseStudiesIndex?.data.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      return caseStudiess.map((caseStudies) => ({
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+          single: extractSlug(caseStudies).split("/").pop(),
+        },
+        props: {
+          caseStudies,
+          caseStudiesIndex,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { caseStudies, caseStudiesIndex } = Astro.props;
+---
+
+<Base {...caseStudies.data}>
+  <PageHeader
+    content={{
+      badge: caseStudiesIndex?.data?.badgeSecondary,
+      title: caseStudies?.data?.title,
+    }}
+  />
+  <CaseStudiesSingle content={caseStudies} />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

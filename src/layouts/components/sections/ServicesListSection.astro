@@ -1,0 +1,46 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import config from ".astro/config.generated.json";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import type { servicesSectionSchema } from "@/sections.schema";
+import ServiceCard from "@/components/cards/ServiceCard.astro";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
+type Props = {
+  content?: SectionType;
+  loadFrom?: string;
+  hasPaddingBottom?: boolean;
+};
+
+let servicesList = await getCollectionCTM(
+  config.settings.serviceFolder as "services",
+  Astro.currentLocale,
+);
+
+const { hasPaddingBottom = false } = Astro.props;
+---
+
+<section
+  class:list={[
+    "bg-light relative",
+    hasPaddingBottom && "section-spacing-bottom",
+  ]}>
+  <div class="container flex flex-col gap-8 lg:gap-12">
+    {
+      servicesList && servicesList.length > 0 && (
+        <div class="divide-border-dark border-border-dark group/list relative divide-y border-y">
+          {servicesList.map((service, index) => (
+            <ServiceCard
+              content={service}
+              options={{ layout: "listImage" }}
+              index={index}
+              tag="h2"
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,64 @@
+---
+import config from ".astro/config.generated.json";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+const { announcement } = Astro.props;
+
+const {
+  settings: { contactInfo },
+} = config;
+---
+
+<div class="topbar bg-dark">
+  <div class="container">
+    <div
+      class="flex flex-col items-center justify-between gap-2 py-2.5 md:flex-row md:gap-4">
+      <div
+        class="text-text-light flex items-center justify-center gap-2 whitespace-nowrap xl:justify-start">
+        <OptimizedImage
+          src={"/images/icons/svg/hotline.svg"}
+          alt="Phone"
+          width={24}
+          height={24}
+          inlineSvg={true}
+          class="fill-accent size-4"
+        />
+        <span>
+          {t("common.hotLine")}:
+        </span>
+        <p set:html={markdownify(contactInfo.phone)} />
+      </div>
+      {
+        announcement && (
+          <div class="text-text-light [&_a]:border-text-light flex flex-nowrap items-center justify-center gap-1 max-sm:items-start max-sm:text-center lg:justify-start xl:col-span-2 [&_a]:border-b [&_a]:font-medium">
+            <OptimizedImage
+              src={"/images/decorative/scribble/scribble-1.svg"}
+              alt="Phone"
+              width={24}
+              height={24}
+              inlineSvg={true}
+              class="stroke-accent size-4"
+            />
+            <p
+              class="wrap-break-word max-lg:text-sm"
+              set:html={markdownify(announcement)}
+            />
+          </div>
+        )
+      }
+      <div
+        class="flex items-center justify-center gap-2 xl:justify-end xl:gap-4">
+        {
+          config.settings.multilingual.enable && (
+            <LanguageSwitcher appearance="light" />
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>

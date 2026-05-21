@@ -1,0 +1,269 @@
+/* Header */
+.header {
+  @apply relative z-30 w-full;
+
+  &.has-sticky-behavior {
+    @apply sticky top-0 z-40 transition-[transform,opacity,background] duration-500;
+  }
+
+  &.has-sticky-behavior {
+    @apply bg-transparent;
+  }
+
+  /* Sticky Animation On Fixed Header */
+  &.scroll-down.has-sticky-behavior:not(.has-dark-background),
+  &.scroll-up.has-sticky-behavior:not(.has-dark-background) {
+    @apply bg-white backdrop-blur-lg;
+  }
+
+  &.scroll-down.has-sticky-behavior.has-dark-background,
+  &.scroll-up.has-sticky-behavior.has-dark-background {
+    @apply bg-black backdrop-blur-lg;
+  }
+
+  /* Following Code Make Sticky Upwards */
+  &.scroll-down,
+  &.scroll-up {
+    @apply pointer-events-auto translate-y-0 opacity-100;
+  }
+
+  &.scroll-up {
+    .hs-dropdown-menu.mega-menu {
+      @apply pointer-events-auto;
+    }
+  }
+}
+
+/* Language Switcher */
+.language-switcher {
+  @apply relative;
+
+  .language-switcher-button {
+    @apply btn text-text-dark font-primary flex items-center gap-2 p-0 text-base font-normal capitalize;
+
+    svg * {
+      @apply stroke-current!;
+    }
+  }
+
+  .language-switcher-dropdown {
+    @apply border-border-dark hs-dropdown-open:opacity-100 divide-border-light absolute inset-e-0 top-[calc(100%+0.5rem)] min-w-32 divide-y border bg-white opacity-0 transition-[opacity,margin];
+
+    li a {
+      @apply btn text-text-dark hover:bg-primary/10! hover:text-light block bg-white p-2 text-center transition-colors duration-300;
+      &.active {
+        @apply bg-primary text-light;
+      }
+    }
+  }
+
+  &.language-switcher-light {
+    .language-switcher-button {
+      @apply text-light;
+    }
+    .language-switcher-dropdown li a {
+      @apply text-text-dark hover:bg-accent hover:text-dark;
+    }
+  }
+}
+
+/* === Common Navbar Base Styles === */
+.navbar {
+  /* Base layout */
+  @apply flex max-h-[80vh] lg:relative lg:mx-auto lg:items-center lg:bg-transparent;
+
+  /* Mobile overlay behavior */
+  @apply max-lg:hs-dropdown-open:opacity-100 max-lg:top-full max-lg:z-40 max-lg:hidden max-lg:w-full max-lg:flex-col max-lg:space-y-1 max-lg:border max-lg:bg-white max-lg:p-2 max-lg:opacity-0 max-lg:transition-[opacity,margin];
+
+  /* Nav Items & Links */
+  .nav-item,
+  .nav-dropdown-item {
+    @apply mb-0 bg-transparent;
+
+    .nav-toggle {
+      @apply cursor-pointer appearance-none justify-between gap-1 border-0 bg-transparent text-start select-none;
+
+      .nav-toggle-icon {
+        @apply hs-dropdown-open:rotate-180 inline-block h-4 w-4 transition duration-300;
+      }
+    }
+
+    .nav-link {
+      @apply hover:lg:border-primary/5 lg:border lg:border-transparent;
+    }
+    .nav-link,
+    .nav-dropdown-link {
+      @apply font-secondary text-base-sm text-text-dark hover:bg-primary/5 relative flex w-full items-center px-2 py-2 font-bold transition duration-300 md:py-3 md:text-base lg:text-sm xl:px-3 xl:text-base;
+
+      &.nav-link-active,
+      &.active,
+      &:focus {
+        @apply bg-primary/5 text-primary max-lg:text-primary outline-none;
+      }
+    }
+    .nav-dropdown-link.active.nav-dropdown-link.active:focus {
+      @apply bg-primary/5 outline-none;
+    }
+  }
+
+  /* Dropdown List Styles */
+  .nav-dropdown-list {
+    @apply hs-dropdown-open:pointer-events-auto hs-dropdown-open:opacity-100 border-border-dark pointer-events-none absolute top-0 z-10 mt-4 hidden min-w-72 border bg-white p-1 opacity-0 transition-[opacity,margin] max-lg:static! max-lg:transform-none! lg:inset-s-1/2 lg:mx-2! lg:-translate-x-1/2;
+  }
+
+  .nav-dropdown-link {
+    @apply font-secondary px-2.5 py-3 text-inherit lg:px-5;
+  }
+
+  .nav-dropdown .nav-toggle {
+    @apply lg:hs-dropdown-open:bg-primary/5 lg:hs-dropdown-open:text-primary;
+  }
+
+  /* Navbar for Mobile */
+  &.navbar-mobile {
+    @apply flex max-h-fit border-0 bg-transparent px-0 py-0 opacity-100 lg:hidden!;
+
+    .nav-link,
+    .nav-dropdown-link {
+      @apply hover:text-primary! hover:bg-transparent;
+      &:not(.active) {
+        @apply px-0!;
+      }
+    }
+
+    .nav-item.open,
+    .nav-dropdown.open {
+      .nav-dropdown-list,
+      > .nav-toggle {
+        @apply border-border-dark;
+      }
+      > .nav-toggle {
+        @apply text-primary/80!;
+      }
+    }
+
+    .nav-item > .nav-toggle {
+      @apply justify-between;
+    }
+
+    .nav-dropdown-list .nav-dropdown > .nav-toggle {
+      @apply border-s border-transparent;
+    }
+
+    .nav-dropdown-list {
+      @apply mt-0 border-y-0 border-e-0 bg-transparent p-0 ps-5 text-sm;
+
+      .nav-dropdown-link {
+        @apply px-4 py-3;
+      }
+    }
+  }
+  .mega-menu a.active {
+    @apply text-primary bg-slate-50;
+  }
+
+  .mega-menu {
+    @apply shadow-[0_28px_80px_-56px_rgba(15,23,42,0.45)];
+
+    @media (max-width: 1023px) {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .mega-menu-link.active {
+      @apply border-slate-200/90 bg-white shadow-[0_10px_30px_-24px_rgba(15,23,42,0.3)];
+    }
+  }
+}
+
+.navbar.navbar-active-border {
+  .nav-item:not(.has-mega-menu) {
+    &:has(.active, .nav-link-active) > .nav-link,
+    > .nav-link:is(.active, .nav-link-active) {
+      @apply border-primary border;
+    }
+  }
+}
+
+/* Dark Header Variant */
+.header.has-dark-background {
+  .nav-link {
+    @apply text-light hover:text-primary;
+  }
+}
+
+/* Badge */
+.navbar .badge {
+  @apply relative inline-block;
+
+  &:not(.badge-dot) {
+    @apply relative ms-3 inline-block px-1.5 py-1 text-xs! font-normal;
+  }
+
+  &.badge-dot {
+    @apply absolute -inset-e-3 top-1 h-1.5 w-1.5 rounded-full lg:-top-1;
+  }
+
+  &.badge-primary {
+    @apply bg-primary text-light;
+
+    &.badge-dot {
+      @apply bg-primary;
+    }
+  }
+
+  &.badge-info {
+    @apply bg-blue-100 text-blue-800;
+
+    &.badge-dot {
+      @apply bg-blue-400;
+    }
+  }
+
+  &.badge-accent {
+    @apply bg-purple-100 text-purple-800;
+
+    &.badge-dot {
+      @apply bg-purple-400;
+    }
+  }
+
+  &.badge-success {
+    @apply bg-emerald-100 text-emerald-800;
+
+    &.badge-dot {
+      @apply bg-emerald-400;
+    }
+  }
+
+  &.badge-danger {
+    @apply bg-rose-100 text-rose-800;
+
+    &.badge-dot {
+      @apply bg-rose-400;
+    }
+  }
+}
+
+/* Changing Badges That Appearing badly On Dark Header */
+header.has-dark-background .navbar .badge {
+  &.badge-primary {
+    @apply bg-primary text-light;
+  }
+
+  &.badge-info {
+    @apply bg-blue-300;
+  }
+
+  &.badge-accent {
+    @apply bg-purple-300;
+  }
+
+  &.badge-success {
+    @apply bg-emerald-700 text-emerald-100;
+  }
+
+  &.badge-danger {
+    @apply bg-rose-600 text-rose-50;
+  }
+}

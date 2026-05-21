@@ -1,0 +1,124 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+import type { IconName as SupportedIconName } from "@/lib/iconNames.ts";
+
+import {
+  ArrowRight,
+  ArrowUp,
+  ArrowUpRight,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronsRight,
+  Clock,
+  Diamond,
+  Languages,
+  Link,
+  MailOpen,
+  MessageCircle,
+  Minus,
+  MoveLeft,
+  MoveRight,
+  Phone,
+  Play,
+  Plus,
+  Search,
+  Send,
+  Star,
+  TriangleRight,
+  X,
+  type IconNode,
+} from "lucide";
+
+interface Props {
+  icon: SupportedIconName;
+  [key: string]: any;
+}
+
+const { icon, title, ...restProps } = Astro.props;
+const iconKey = (icon || "").toString().toLowerCase();
+
+const socialKeys = new Set([
+  "facebook",
+  "twitter",
+  "twitter-old",
+  "twitter-new",
+  "linkedin",
+  "instagram",
+  "github",
+  "youtube",
+  "pinterest",
+  "dribbble",
+]);
+
+const iconMap: Record<string, IconNode> = {
+  arrowright: ArrowRight,
+  arrowup: ArrowUp,
+  arrowupright: ArrowUpRight,
+  chevrondown: ChevronDown,
+  chevronleft: ChevronLeft,
+  chevronright: ChevronRight,
+  chevronup: ChevronUp,
+  chevronsright: ChevronsRight,
+  clock: Clock,
+  diamond: Diamond,
+  languages: Languages,
+  link: Link,
+  mailopen: MailOpen,
+  messagecircle: MessageCircle,
+  minus: Minus,
+  moveleft: MoveLeft,
+  moveright: MoveRight,
+  phone: Phone,
+  play: Play,
+  plus: Plus,
+  search: Search,
+  send: Send,
+  star: Star,
+  triangleright: TriangleRight,
+  x: X,
+};
+
+const inlineIcon = iconMap[iconKey];
+---
+
+{
+  socialKeys.has(iconKey) ? (
+    <SocialIcon name={icon as string} title={title} {...restProps} />
+  ) : inlineIcon ? (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden={title ? "false" : "true"}
+      role={title ? "img" : "presentation"}
+      {...restProps}>
+      {title && <title>{title}</title>}
+
+      {inlineIcon.map(([tag, attrs]) => {
+        if (tag === "path") return <path {...attrs} />;
+        if (tag === "polyline") return <polyline {...attrs} />;
+        if (tag === "polygon") return <polygon {...attrs} />;
+        if (tag === "line") return <line {...attrs} />;
+        if (tag === "circle") return <circle {...attrs} />;
+        if (tag === "rect") return <rect {...attrs} />;
+
+        return null;
+      })}
+    </svg>
+  ) : (
+    <div
+      data-lucide={icon}
+      data-lucide-title={title}
+      aria-hidden={title ? "false" : "true"}
+      role={title ? "img" : "presentation"}
+      {...restProps}
+    />
+  )
+}

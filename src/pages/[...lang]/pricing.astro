@@ -1,0 +1,31 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import handleDraftPage from "@/lib/utils/handleDraftPage";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import ProcessSectionTwo from "@/components/sections/ProcessSectionTwo.astro";
+import PricingSection from "@/components/sections/PricingSection.astro";
+import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const entry = await getEntryCTM("pricing", "-index", Astro.currentLocale);
+
+// Remove drafts pages in production
+const response = handleDraftPage(entry?.data);
+if (response) return response;
+---
+
+<Base {...entry?.data}>
+  <PageHeader content={entry?.data} contentClass="max-w-7xl!" />
+  <ProcessSectionTwo hasPaddingBottom={true} />
+  <PricingSection />
+  <StatsMarqueeSection hasLightBackground={false} />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

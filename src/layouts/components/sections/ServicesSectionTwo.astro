@@ -1,0 +1,91 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import config from ".astro/config.generated.json";
+import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { servicesSectionSchema } from "@/sections.schema";
+import ServiceCard from "@/components/cards/ServiceCard.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import Button from "../Button.astro";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
+type Props = {
+  content?: SectionType;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "services-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  button,
+  cardLayout,
+  limit,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+let servicesList = await getCollectionCTM(
+  config.settings.serviceFolder as "services",
+  Astro.currentLocale,
+);
+
+if (limit) {
+  servicesList = servicesList.slice(0, limit);
+}
+---
+
+<section class="bg-light relative overflow-hidden">
+  <div class="container flex flex-col gap-8 lg:gap-12">
+    <div
+      class="mx-auto flex max-w-4xl flex-col items-center text-center lg:px-4">
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            dataAos="reveal-anim-top"
+            variant="secondary"
+          />
+        )
+      }
+      {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
+    </div>
+    {
+      servicesList && servicesList.length > 0 && (
+        <div class="divide-border-dark border-border-dark group/list relative divide-y border-y">
+          {servicesList.map((service, index) => (
+            <ServiceCard
+              content={service}
+              options={{ layout: cardLayout }}
+              index={index}
+            />
+          ))}
+        </div>
+      )
+    }
+    {
+      button && (
+        <div class="mx-auto flex">
+          <Button
+            {...button}
+            hoverEffect="creative-fill"
+            class="btn-accent effect-color-dark"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>

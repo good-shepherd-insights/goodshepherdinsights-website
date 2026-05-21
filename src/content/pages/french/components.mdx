@@ -1,0 +1,781 @@
+---
+title: "Éléments"
+date: 2022-06-06
+draft: false
+---
+
+## Mise en forme du texte [.h5]
+
+---
+
+### Texte en gras [.h6]
+
+To make text bold, use `**` or `__` around the word or phrase:  
+**Example**: **This text is bold** or **This text is bold**
+
+### Texte en italique [.h6]
+
+To italicize text, use `*` or `_` around the word or phrase:  
+**Example**: _This text is italic_ or _This text is italic_
+
+### Texte souligné [.h6]
+
+To underline text, use HTML `<u>` tags:
+
+**Example**:
+
+`<u>This text is underlined</u>`
+
+**Result**:
+
+<u>This text is underlined</u>
+
+### Texte barré [.h6]
+
+To strike through text, use `~~` around the word or phrase:  
+**Example**: ~~This text is struck through~~
+
+## Button [.h5]
+
+---
+
+```jsx
+Ce bouton dispose d'une animation de remplissage créative au survol.
+
+<Button
+  hoverEffect="creative-fill"
+  class="effect-color-accent w-fit"
+  label="Creative Fill"
+  url="/"
+/>
+
+Ce bouton dispose d'une animation magnétique au survol.
+
+<Button hoverEffect="magnetic" label="Magnetic" url="/" class="w-fit" />
+
+Ce bouton dispose d'une animation de basculement de texte au survol.
+
+<Button hoverEffect="text-flip" label="Text Flip" url="/" class="w-fit" />
+
+Ce bouton dispose d'une animation magnétique et de basculement de texte combinées au survol.
+
+<Button
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+<Button
+  variant="circle"
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+
+```
+
+Ce bouton dispose d'une animation de remplissage créative au survol.
+
+<Button
+  hoverEffect="creative-fill"
+  class="effect-color-accent w-fit"
+  label="Creative Fill"
+  url="/"
+/>
+
+Ce bouton dispose d'une animation magnétique au survol.
+
+<Button hoverEffect="magnetic" label="Magnetic" url="/" class="w-fit" />
+
+Ce bouton dispose d'une animation de basculement de texte au survol.
+
+<Button hoverEffect="text-flip" label="Text Flip" url="/" class="w-fit" />
+
+Ce bouton dispose d'une animation magnétique et de basculement de texte combinées au survol.
+
+<Button
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+
+---
+
+### Buttons Variants [.h6]
+
+Chaque couleur de bouton peut être personnalisée en ajoutant **class="btn-accent"** ou **class="btn-light"**
+
+```jsx
+<Button variant="circle" label="Example Button" url="/" />
+<Button label="Example Button" url="/" />
+<Button class="btn-accent" label="Example Button" url="/" />
+<Button
+  variant="outline"
+  label="With External Link"
+  url="https://astro.build"
+/>
+<Button variant="text" label="Example Button" url="/" />
+```
+
+<Button variant="circle" label="Example Button" url="/" />
+<Button label="Example Button" url="/" class="w-fit" />
+<Button class="btn-accent w-fit" label="Example Button" url="/" />
+<Button
+  variant="outline"
+  label="With External Link"
+  url="https://astro.build"
+  class="w-fit"
+/>
+<Button variant="text" label="Example Button" url="/" class="w-fit" />
+
+## Accordéon [.h5]
+
+---
+
+```jsx
+<Accordion label="Example Accordion Label 01" group="accordion-01" expanded="true">
+
+Nous offrons une large gamme de services, notamment le développement web, l'image de marque et le marketing numérique, pour aider les entreprises à croître et à réussir.
+
+- **Essentials**: Atelier ciblé pour identifier les valeurs fondamentales et l'USP.
+- **Growth**: Atelier approfondi pour établir une identité de marque claire et différenciée.
+- **Enterprise**: Stratégie complète de positionnement de marque englobant tous les aspects de votre marque.
+
+</Accordion>
+
+<Accordion label="Example Accordion Label 02" group="accordion-01" expanded="false">
+
+Nous offrons une large gamme de services, notamment le développement web, l'image de marque et le marketing numérique, pour aider les entreprises à croître et à réussir.
+
+- **Essentials**: Atelier ciblé pour identifier les valeurs fondamentales et l'USP.
+- **Growth**: Atelier approfondi pour établir une identité de marque claire et différenciée.
+- **Enterprise**: Stratégie complète de positionnement de marque englobant tous les aspects de votre marque.
+
+</Accordion>
+
+---
+
+<Accordion label="Example Accordion Label 03" group="accordion-01" expanded="false">
+
+Nous offrons une large gamme de services, notamment le développement web, l'image de marque et le marketing numérique, pour aider les entreprises à croître et à réussir.
+
+- **Essentials**: Atelier ciblé pour identifier les valeurs fondamentales et l'USP.
+- **Growth**: Atelier approfondi pour établir une identité de marque claire et différenciée.
+- **Enterprise**: Stratégie complète de positionnement de marque englobant tous les aspects de votre marque.
+
+</Accordion>
+```
+
+<Accordion label="Example Accordion Label 01" group="accordion-01" expanded="true">
+
+Nous offrons une large gamme de services, notamment le développement web, l'image de marque et le marketing numérique, pour aider les entreprises à croître et à réussir.
+
+- **Essentials**: Atelier ciblé pour identifier les valeurs fondamentales et l'USP.
+- **Growth**: Atelier approfondi pour établir une identité de marque claire et différenciée.
+- **Enterprise**: Stratégie complète de positionnement de marque englobant tous les aspects de votre marque.
+
+</Accordion>
+
+<Accordion label="Example Accordion Label 02" group="accordion-01" expanded="false">
+
+Nous offrons une large gamme de services, notamment le développement web, l'image de marque et le marketing numérique, pour aider les entreprises à croître et à réussir.
+
+- **Essentials**: Atelier ciblé pour identifier les valeurs fondamentales et l'USP.
+- **Growth**: Atelier approfondi pour établir une identité de marque claire et différenciée.
+- **Enterprise**: Stratégie complète de positionnement de marque englobant tous les aspects de votre marque.
+
+</Accordion>
+
+---
+
+## Onglet [.h5]
+
+---
+
+```jsx
+<Tabs>
+  <Tab name="Overview">
+    **Comment pouvons-nous vous aider ?** Nous offrons des consultations
+    personnalisées pour vous aider à atteindre vos objectifs personnels et
+    professionnels. Choisissez un onglet ci-dessous pour découvrir nos services.
+    - Coaching personnel - Conseil de carrière - Résolution de conflits -
+    Conseils de vie
+  </Tab>
+
+  <Tab name="Coaching">
+    **Coaching personnel : libérez votre potentiel** Obtenez un coaching
+    personnalisé pour surmonter les défis et fixer des objectifs significatifs.
+    Nous nous concentrons sur : - Renforcement de la confiance - Intelligence
+    émotionnelle - Surmonter la procrastination
+  </Tab>
+</Tabs>
+```
+
+<Tabs>
+  <Tab name="Overview">
+    **Comment pouvons-nous vous aider ?**
+
+    Nous offrons des consultations personnalisées pour vous aider à atteindre vos objectifs personnels et professionnels. Choisissez un onglet ci-dessous pour découvrir nos services.
+
+    - Coaching personnel
+    - Conseil de carrière
+    - Résolution de conflits
+    - Conseils de vie
+
+  </Tab>
+
+  <Tab name="Coaching">
+    **Coaching personnel : libérez votre potentiel**
+
+    Obtenez un coaching personnalisé pour surmonter les défis et fixer des objectifs significatifs. Nous nous concentrons sur :
+    - Renforcement de la confiance
+    - Intelligence émotionnelle
+    - Surmonter la procrastination
+
+  </Tab>
+
+  <Tab name="Counseling">
+    **Conseil de carrière : trouvez votre voie**
+
+    Besoin d'aide pour votre carrière ? Nous fournissons :
+    - Orientation professionnelle
+    - Préparation de CV et d'entretiens
+    - Aperçus du marché du travail
+
+  </Tab>
+
+  <Tab name="Resolution">
+    **Résolution de conflits : construisez des relations plus solides**
+
+    Résolvez les conflits efficacement avec :
+    - Services de médiation
+    - Stratégies de communication
+    - Techniques de gestion de la colère
+
+  </Tab>
+</Tabs>
+
+## Vidéo Youtube [.h5]
+
+---
+
+```jsx
+<VideoInline src="" provider="youtube" />
+```
+
+<VideoInline src="" provider="youtube" />
+
+## Vidéo personnalisée [.h5]
+
+---
+
+```jsx
+<VideoInline
+  src="/videos/test-video.mp4"
+  provider="html5"
+  poster="/images/banner/banner-common.png"
+/>
+```
+
+<VideoInline
+  src="/videos/test-video.mp4"
+  provider="html5"
+  poster="/images/banner/banner-common.png"
+/>
+
+## Avis [.h5]
+
+---
+
+```jsx
+<Notice type="info" title="Information">
+  Ceci est un message d'information.
+</Notice>
+
+<Notice type="warning">Ceci est un message d'avertissement sans titre.</Notice>
+
+<Notice type="success" title="Success!">
+  Vos modifications ont été enregistrées avec succès.
+</Notice>
+
+<Notice type="error" title="Error!">
+  Une erreur s'est produite. Veuillez réessayer.
+</Notice>
+```
+
+<Notice type="info" title="Information">
+  Ceci est un message d'information.
+</Notice>
+
+<Notice type="warning">Ceci est un message d'avertissement sans titre.</Notice>
+
+<Notice type="success" title="Success!">
+  Vos modifications ont été enregistrées avec succès.
+</Notice>
+
+<Notice type="error" title="Error!">
+  Une erreur s'est produite. Veuillez réessayer.
+</Notice>
+
+## Citation [.h5]
+
+---
+
+Pour créer une citation, commencez la ligne par `>`:  
+**Exemple**:
+
+> Ceci est une citation.  
+> Elle s'étend sur plusieurs lignes.
+>
+> _Auteur_
+
+## Code [.h5]
+
+---
+
+Pour formater le code en ligne, utilisez des accents graves (\`):  
+**Exemple**: `This is inline code`
+
+Pour les blocs de code multilignes, utilisez trois accents graves (\`\`\`):  
+**Exemple**:
+Cet exemple utilise le modèle de composant de section du thème Taxo avec `AboutSection.astro` et les helpers du thème.
+
+```astro
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { aboutSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Icons from "@/helpers/Icons.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import CircularProgressBar from "@/layouts/components/widgets/CircularProgressBar.astro";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof aboutSectionSchema>>;
+type Props = {
+  content?: SectionType;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "about-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, list = [] } = actualContent ?? {};
+
+if (!enable) return;
+---
+
+<section class="bg-light relative overflow-hidden">
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20"
+  >
+    {
+      list.map((item, index) => {
+        const isEven = index % 2 === 0;
+        const {
+          badge,
+          title,
+          description,
+          services,
+          image,
+          imageAlt,
+          imageVerticalTitle,
+          leftImagePostion,
+        } = item;
+
+        return (
+          <div
+            class:list={[
+              "flex flex-col items-start gap-10 xl:gap-20",
+              isEven ? "lg:text-right" : "lg:mt-20",
+              !leftImagePostion && "max-lg:flex-col-reverse",
+            ]}
+            data-aos={isEven ? "reveal-anim-right" : "reveal-anim-left"}
+            data-aos-duration="600"
+          >
+            {/* Logic for image and content order */}
+            {leftImagePostion ? (
+              <>
+                {image && (
+                  <div class="relative w-full shrink-0 overflow-hidden">
+                    <OptimizedImage
+                      src={image}
+                      alt={imageAlt}
+                      width={684}
+                      height={612}
+                      quality={70}
+                      widths={[480, 600, 684]}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      class="h-full w-full object-cover"
+                    />
+                    <h3 class="bg-light text-dark xl:text-h6-sm absolute -bottom-px -left-px rotate-180 px-3 py-4 text-center text-xs tracking-wider [writing-mode:vertical-lr] sm:text-base md:px-5 md:py-5 lg:text-base">
+                      {imageVerticalTitle && imageVerticalTitle}
+                    </h3>
+                  </div>
+                )}
+                <div class="flex flex-col items-start gap-4 xl:gap-7">
+                  <div>
+                    {badge && (
+                      <SectionBadge
+                        title={badge}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                    {title && (
+                      <SectionTitle
+                        title={title}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                  </div>
+                  {description && (
+                    <p class="text-text-dark/90 lg:text-lg">{description}</p>
+                  )}
+                  {services && services.length > 0 && (
+                    <>
+                      {services[0].percent ? (
+                        <div class="grid w-full grid-cols-2 items-center gap-8 pt-2 lg:items-end">
+                          {services.map((service) => (
+                            <div>
+                              <CircularProgressBar
+                                percent={service.percent}
+                                title={service.title}
+                                size={96}
+                                stroke={2}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <ul class="flex flex-col justify-center gap-4">
+                          {services.map((service) => (
+                            <li class="flex items-center gap-2">
+                              <Icons
+                                icon="CircleCheckBig"
+                                class="text-primary size-5"
+                              />
+                              <h3 class="sm:text-h6-sm md:text-h6 text-base">
+                                {service.title}
+                              </h3>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div class="flex flex-col items-start gap-4 xl:gap-7">
+                  <div>
+                    {badge && (
+                      <SectionBadge
+                        title={badge}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                    {title && (
+                      <SectionTitle
+                        title={title}
+                        dataAos={
+                          isEven ? "reveal-anim-right" : "reveal-anim-left"
+                        }
+                      />
+                    )}
+                  </div>
+                  {description && (
+                    <p class="text-text-dark/90 lg:text-lg">{description}</p>
+                  )}
+                  {services && services.length > 0 && (
+                    <>
+                      {services[0].percent ? (
+                        <div class="grid w-full grid-cols-2 items-center gap-8 pt-2 lg:items-end">
+                          {services.map((service) => (
+                            <div>
+                              <CircularProgressBar
+                                percent={service.percent}
+                                title={service.title}
+                                size={96}
+                                stroke={2}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <ul class="flex flex-col justify-center gap-4">
+                          {services.map((service) => (
+                            <li class="flex items-center gap-2">
+                              <Icons
+                                icon="CircleCheckBig"
+                                class="text-primary size-5"
+                              />
+                              <h3 class="sm:text-h6-sm md:text-h6 text-base">
+                                {service.title}
+                              </h3>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </div>
+                {image && (
+                  <div class="relative w-full shrink-0 overflow-hidden">
+                    <OptimizedImage
+                      src={image}
+                      alt={imageAlt}
+                      width={684}
+                      height={612}
+                      quality={70}
+                      widths={[480, 600, 684]}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      class="h-full w-full object-cover"
+                    />
+                    <h3 class="bg-light text-dark xl:text-h6-sm absolute -bottom-px -left-px rotate-180 px-3 py-4 text-center text-xs tracking-wider [writing-mode:vertical-lr] sm:text-base md:px-5 md:py-5 lg:text-base">
+                      {imageVerticalTitle && imageVerticalTitle}
+                    </h3>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</section>
+```
+
+## Règle horizontale [.h5]
+
+---
+
+Pour créer une règle horizontale, utilisez trois tirets ou plus (`---`), astérisques (`***`), ou tirets bas (`___`) sur une nouvelle ligne:  
+**Exemple**:
+
+---
+
+## Titres [.h5]
+
+---
+
+Créez des titres en ajoutant des symboles `#` avant votre texte. Ajoutez une classe personnalisée par crochet `[.class-name]`.  
+**Exemple**:
+
+```txt
+# Titre 1 [.custom-class .mt-0! .another-class]
+## Titre 2 [.custom-class .mt-0! .another-class4]
+### Titre 3 [.custom-class .mt-0! .another-class]
+#### Titre 4 [.custom-class .mt-0! .another-class]
+##### Titre 5 [.custom-class .mt-0! .another-class]
+###### Titre 6 [.custom-class .mt-0! .another-class]
+```
+
+## Tableau [.h5]
+
+---
+
+Créez des tableaux en utilisant des barres verticales (`|`) et des tirets (`-`):
+
+**Exemple**:  
+| Colonne 1 | Colonne 2 | Colonne 3 |  
+|----------|----------|----------|  
+| Donnée 1 | Donnée 2 | Donnée 3 |  
+| Data 4 | Data 5 | Data 6 |
+
+## Images [.h5]
+
+---
+
+Local Image ![alt text](/images/banner/banner-common.png)
+
+## Composants [.h5]
+
+### Liste stylisée [.h6]
+
+---
+
+```md
+<ListCheck>
+
+- **Interactions clients incohérentes** : Les clients ont bénéficié de niveaux de qualité de service variables selon les différents canaux.
+- **Manque de personnalisation** : Une intégration limitée des données a conduit à une communication générique et standardisée.
+- **Rétention client** : Difficulté à fidéliser les clients en raison d'un suivi et d'un engagement insuffisants.
+
+</ListCheck>
+```
+
+<ListCheck>
+
+- **Interactions clients incohérentes** : Les clients ont bénéficié de niveaux de qualité de service variables selon les différents canaux.
+- **Manque de personnalisation** : Une intégration limitée des données a conduit à une communication générique et standardisée.
+- **Rétention client** : Difficulté à fidéliser les clients en raison d'un suivi et d'un engagement insuffisants.
+
+</ListCheck>
+
+### Carte d'information [.h6]
+
+---
+
+```jsx
+<CardWrapper>
+  <Card
+    title="Solution personnalisée"
+    description="Nous nous soucions du succès, les relations alimentent le succès, nous aimons construire"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contactez-nous"
+    buttonUrl="/contact/"
+  />
+  <Card
+    title="Résultat dans les délais"
+    description="Nous nous soucions du succès, les relations alimentent le succès, nous aimons construire"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contactez-nous"
+    buttonUrl="/contact/"
+  />
+</CardWrapper>
+```
+
+<CardWrapper>
+  <Card
+    title="Solution personnalisée"
+    description="Nous nous soucions du succès, les relations alimentent le succès, nous aimons construire"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contactez-nous"
+    buttonUrl="/contact/"
+  />
+  <Card
+    title="Résultat dans les délais"
+    description="Nous nous soucions du succès, les relations alimentent le succès, nous aimons construire"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contactez-nous"
+    buttonUrl="/contact/"
+  />
+</CardWrapper>
+
+## Liste d’images avec vidéo [.h5]
+
+---
+
+```jsx
+<ImageList>
+  <ImageItem
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+    videoSrc="rFVpSwgCkCo"
+  />
+  <ImageItem
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+    videoSrc="/videos/test-video.mp4"
+    videoProvider="html5"
+  />
+  <ImageItem
+    width="1/2"
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+  />
+  <ImageItem
+    width="1/2"
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+  />
+</ImageList>
+```
+
+<ImageList>
+
+<ImageItem
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="Exemple de texte alternatif"
+  videoSrc="rFVpSwgCkCo"
+/>
+<ImageItem
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="Exemple de texte alternatif"
+  videoSrc="/videos/test-video.mp4"
+  videoProvider="html5"
+/>
+<ImageItem
+  width="1/2"
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="Exemple de texte alternatif"
+/>
+<ImageItem
+  width="1/2"
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="Exemple de texte alternatif"
+/>
+
+</ImageList>
+
+## Témoignage [.h5]
+
+---
+
+The following code generates the testimonial shown below.
+
+```jsx
+<Testimonial
+  customerImage="/images/customers/avatar/customer-1.png"
+  customerName="Sarah Jones"
+  customerRole="CEO, Founder"
+  rating={5}
+>
+  Notre partenariat avec Taxo démontre la puissance d'une stratégie d'engagement
+  client bien exécutée. En intégrant des technologies avancées et des
+  informations basées sur les données, nous les avons aidés à obtenir une
+  expérience client plus personnalisée, cohérente et enrichissante. Chez Taxo,
+  nous nous engageons à aider les entreprises comme Oloyon à révolutionner leur
+  engagement client et à favoriser leur succès à long terme.
+</Testimonial>
+```
+
+<Testimonial
+  customerImage="/images/customers/avatar/customer-1.png"
+  customerName="Sarah Jones"
+  customerRole="CEO, Founder"
+  rating={5}>
+
+Notre partenariat avec Taxo démontre la puissance d'une stratégie d'engagement client bien exécutée. En intégrant des technologies avancées et des informations basées sur les données, nous les avons aidés à obtenir une expérience client plus personnalisée, cohérente et enrichissante. Chez Taxo, nous nous engageons à aider les entreprises comme Oloyon à révolutionner leur engagement client et à favoriser leur succès à long terme.
+
+</Testimonial>
+
+## Carte de Citation [.h5]
+
+---
+
+```jsx
+<BlockQuoteCard
+  content="Car personne ne méprise, ne hait ni ne fuit le plaisir en tant que plaisir ; mais parce que la douleur suit le plaisir, on ne sait pas comment suivre le plaisir. Il n'y a personne non plus qui aime la douleur en tant que douleur."
+  name="Jhone Marko"
+  position="CEO"
+  location="California"
+/>
+```
+
+<BlockQuoteCard
+  content="Car personne ne méprise, ne hait ni ne fuit le plaisir en tant que plaisir ; mais parce que la douleur suit le plaisir, on ne sait pas comment suivre le plaisir. Il n'y a personne non plus qui aime la douleur en tant que douleur."
+  name="Jhone Marko"
+  position="CEO"
+  location="California"
+/>

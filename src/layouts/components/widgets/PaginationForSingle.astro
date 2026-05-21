@@ -1,0 +1,87 @@
+---
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import Button from "@/components/Button.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  prevBtnText?: string;
+  collection?: string;
+  nextBtnText?: string;
+  currentPage?: CollectionEntry<"blog"> | CollectionEntry<"case-studies">;
+  class?: string;
+}
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+let {
+  prevBtnText = t("common.paginationPrevious"),
+  nextBtnText = t("common.paginationNext"),
+  collection,
+  currentPage,
+  class: className,
+} = Astro.props;
+
+let pages;
+if (collection) {
+  pages = await getCollectionCTM(
+    collection as "blog" | "case-studies",
+    Astro.currentLocale,
+  );
+}
+
+if (!pages) return;
+
+const currentIndex = pages.findIndex(
+  (item) => item.filePath === currentPage?.filePath,
+);
+
+if (currentIndex === -1) {
+  return;
+}
+
+const prevPage = pages[currentIndex - 1];
+const nextPage = pages[currentIndex + 1];
+---
+
+<nav
+  id="pagination"
+  class:list={[
+    "flex w-full flex-wrap items-center justify-between gap-3 font-normal",
+    className,
+  ]}
+  aria-label="Pagination">
+  {/* previous */}
+  {
+    prevPage && (
+      <Button
+        variant="text"
+        icon={{
+          enable: true,
+          name: "ArrowRight",
+          position: "left",
+        }}
+        url={getEntrySlugCTM(prevPage, Astro.currentLocale)}
+        label={prevBtnText}
+        class="hover:text-primary me-auto flex flex-row-reverse items-center gap-2 border-transparent [&_.icons-wrapper]:scale-x-[-1]"
+      />
+    )
+  }
+
+  {/* next page */}
+  {
+    nextPage && (
+      <Button
+        icon={{
+          enable: true,
+          name: "ArrowRight",
+          position: "left",
+        }}
+        variant="text"
+        url={getEntrySlugCTM(nextPage, Astro.currentLocale)}
+        label={nextBtnText}
+        class="hover:text-primary ms-auto border-transparent"
+      />
+    )
+  }
+</nav>

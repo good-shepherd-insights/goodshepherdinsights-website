@@ -1,0 +1,201 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { ctaVideoSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionBadge from "@/layouts/components/global/SectionBadge.astro";
+import Button from "@/layouts/components/Button.astro";
+import VideoModal from "@/layouts/components/widgets/VideoModal.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+type SectionType = Section & NonNullable<z.infer<typeof ctaVideoSectionSchema>>;
+type Props = { content?: SectionType; hasLightBackground?: boolean };
+
+let defaultContent = (
+  await getEntryCTM("sections", "cta-video-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  description,
+  backgroundImage,
+  backgroundImageAlt,
+  scribbleArrow,
+  scribbleArrowAlt,
+  button,
+  video,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+const { hasLightBackground = false } = Astro.props;
+---
+
+<section
+  class:list={[
+    "has-video-modal overflow-hidden",
+    hasLightBackground && "bg-light",
+  ]}>
+  <div class="relative">
+    {
+      backgroundImage && (
+        <div class="pointer-events-none absolute inset-0 z-0">
+          <OptimizedImage
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            width={1920}
+            height={617}
+            widths={[480, 640, 768, 1024, 1280, 1920]}
+            sizes="(min-width: 1536px) 1920px, (min-width: 1280px) 1280px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+            quality={60}
+            class="h-full w-full object-cover object-center"
+          />
+          <div class="pointer-events-none absolute top-0 left-0 z-1 h-full w-[20%] origin-top-left skew-x-25 bg-yellow-700/15 xl:w-[12%]" />
+          <div class="pointer-events-none absolute top-0 right-[16%] z-1 h-full w-[20%] origin-top-right skew-x-25 bg-yellow-700/15 xl:w-[12%]" />
+          <div class="bg-dark/85 absolute inset-0" />
+        </div>
+      )
+    }
+
+    <div
+      class="relative z-10 container grid grid-cols-1 gap-4 py-16 md:gap-8 lg:gap-10 lg:py-36">
+      <div
+        class="grid grid-cols-1 items-center gap-6 md:grid-cols-12 lg:gap-11"
+        data-aos="fade-right"
+        data-aos-duration="600">
+        <div class="col-span-1 md:col-span-10 lg:col-span-9 xl:col-span-6">
+          {
+            badge && (
+              <SectionBadge
+                title={badge}
+                mode="dark"
+                variant="secondary"
+                textColor="accent"
+              />
+            )
+          }
+          {title && <SectionTitle title={title} variant="dark" />}
+        </div>
+        {
+          video && (
+            <div
+              class="hidden items-center justify-center md:col-span-2 md:flex lg:col-span-3"
+              data-aos="fade-left"
+              data-aos-duration="600"
+              data-aos-delay="300">
+              <Button
+                tag="button"
+                variant="outline"
+                label=""
+                class="video-modal-toggle group bg-accent flex size-20 items-center justify-center rounded-full p-0! shadow-xl transition-transform duration-300 hover:scale-110 lg:size-26"
+                hoverEffect="text-flip"
+                icon={{
+                  enable: true,
+                  name: "Play",
+                  position: "right",
+                  className: "fill-dark stroke-text-dark size-5! xl:size-6!",
+                }}
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls={`#${video.id}`}
+                data-hs-overlay={`#${video.id}`}
+                data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+                title={t("common.play")}
+                aria-label={t("common.play")}
+              />
+            </div>
+          )
+        }
+      </div>
+
+      <div class="flex items-start gap-4 max-md:flex-col md:gap-8 lg:gap-16">
+        <div
+          class="relative flex items-center justify-between gap-4 max-md:w-full md:gap-0">
+          {
+            scribbleArrow && (
+              <div class="pointer-events-none absolute right-full bottom-2 mr-4">
+                <OptimizedImage
+                  src={scribbleArrow}
+                  alt={scribbleArrowAlt}
+                  width={86}
+                  height={56}
+                  inlineSvg={true}
+                  class="text-text-light h-21.5 w-14 -scale-x-100 object-cover object-center"
+                />
+              </div>
+            )
+          }
+          {
+            button?.label && (
+              <div>
+                <Button
+                  {...button}
+                  aria-label={button.label}
+                  srOnly={button.label}
+                  class="btn-accent effect-color-dark py-3.5"
+                />
+              </div>
+            )
+          }
+          {
+            video && (
+              <div
+                class="flex items-center justify-center md:col-span-2 md:hidden lg:col-span-5"
+                data-aos="fade-left"
+                data-aos-duration="600"
+                data-aos-delay="300">
+                <Button
+                  tag="button"
+                  variant="outline"
+                  label=""
+                  class="video-modal-toggle group bg-accent flex size-20 items-center justify-center rounded-full p-0! shadow-xl transition-transform duration-300 hover:scale-110"
+                  hoverEffect="text-flip"
+                  icon={{
+                    enable: true,
+                    name: "Play",
+                    position: "right",
+                    className: "fill-dark stroke-text-dark size-5! xl:size-6!",
+                  }}
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls={`#${video.id}`}
+                  data-hs-overlay={`#${video.id}`}
+                  data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+                  title={t("common.play")}
+                  aria-label={t("common.play")}
+                />
+              </div>
+            )
+          }
+        </div>
+        {
+          description && (
+            <div class="lg:max-w-2xl lg:pr-20">
+              <p
+                class="text-text-light leading-relaxed"
+                set:html={markdownify(description)}
+              />
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    {/* Video Modal */}
+  </div>
+</section>
+
+{video && video.src && <VideoModal video={video} />}

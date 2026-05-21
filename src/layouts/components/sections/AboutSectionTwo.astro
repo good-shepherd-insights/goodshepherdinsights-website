@@ -1,0 +1,210 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { aboutSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Icons from "@/helpers/Icons.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import Button from "../Button.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof aboutSectionSchema>>;
+type Props = {
+  content?: SectionType;
+  hasSectionSpacingBottom?: boolean;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "about-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, list = [] } = actualContent ?? {};
+
+if (!enable) return;
+const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom;
+---
+
+<section
+  class:list={[
+    "bg-light relative",
+    hasSectionSpacingBottom && "section-spacing-bottom",
+  ]}>
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20">
+    {
+      list.map((item, index) => {
+        const isEven = index % 2 === 0;
+        const {
+          badge,
+          title,
+          description,
+          services,
+          image,
+          imageAlt,
+          testimonial,
+          button,
+          deocrativeScribble,
+          deocrativeScribbleAlt,
+        } = item;
+
+        return (
+          <div class:list={["flex flex-col items-start", "gap-4 xl:gap-8"]}>
+            {/* Top Content (Badge, Title, Image for secondary column) */}
+            {!isEven && image && (
+              <div class="relative w-full shrink-0">
+                <OptimizedImage
+                  data-aos="reveal-anim-left"
+                  data-aos-duration="600"
+                  src={image}
+                  alt={imageAlt}
+                  width={620}
+                  height={506}
+                  widths={[480, 560, 620]}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            )}
+
+            <div
+              class:list={[
+                "flex flex-col items-start gap-4 xl:gap-7",
+                isEven && "w-full",
+              ]}>
+              {(badge || title) && (
+                <div
+                  data-aos={isEven ? "reveal-anim-right" : "reveal-anim-left"}
+                  data-aos-duration="600">
+                  {badge && (
+                    <SectionBadge
+                      title={badge}
+                      dataAos={isEven ? "reveal-anim-right" : ""}
+                      variant="secondary"
+                    />
+                  )}
+                  {title && (
+                    <SectionTitle
+                      title={title}
+                      dataAos={isEven ? "reveal-anim-right" : ""}
+                    />
+                  )}
+                </div>
+              )}
+
+              {testimonial && (
+                <div class="bg-body flex items-center gap-4 rounded-lg p-4 max-sm:flex-col lg:gap-6 lg:p-6">
+                  {testimonial?.image && (
+                    <OptimizedImage
+                      src={testimonial?.image}
+                      alt={testimonial?.name}
+                      width={120}
+                      height={120}
+                      widths={[60, 90, 120]}
+                      sizes="120px"
+                      class="h-24 w-24 rounded-full md:h-30 md:w-30"
+                    />
+                  )}
+                  <div class="flex w-full flex-col gap-2">
+                    <div class="flex items-end gap-2">
+                      {testimonial?.name && (
+                        <div
+                          class="text-lg font-bold lg:text-xl"
+                          set:html={markdownify(testimonial?.name)}
+                        />
+                      )}
+                      {testimonial?.designation && (
+                        <p
+                          class="leading-normal opacity-90"
+                          set:html={markdownify(testimonial?.designation)}
+                        />
+                      )}
+                    </div>
+                    {testimonial?.review && (
+                      <p
+                        class="text-lg leading-normal"
+                        set:html={markdownify(testimonial?.review)}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {description && (
+                <p
+                  class="text-text-dark/90 lg:text-lg"
+                  set:html={markdownify(description)}
+                />
+              )}
+
+              {services && services.length > 0 && (
+                <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:gap-3">
+                  {services.map((service) => (
+                    <li class="flex items-center gap-2">
+                      <Icons
+                        icon="CircleCheckBig"
+                        class="text-primary size-5"
+                      />
+                      <div set:html={markdownify(service.title)} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Bottom Content (Image for primary column, mostly) */}
+            {isEven && (
+              <div class="relative w-full shrink-0">
+                {image && (
+                  <OptimizedImage
+                    src={image}
+                    alt={imageAlt}
+                    width={606}
+                    height={264}
+                    widths={[480, 560, 606]}
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    class="h-full w-full object-cover"
+                  />
+                )}
+                {button && (
+                  <Button
+                    {...button}
+                    aria-label={button.label}
+                    srOnly={button.label}
+                    class="bg-light text-primary absolute bottom-0 left-0 py-3"
+                  />
+                )}
+
+                {deocrativeScribble && (
+                  <OptimizedImage
+                    src={deocrativeScribble}
+                    width={101}
+                    height={53}
+                    widths={[101]}
+                    sizes="101px"
+                    class="pointer-events-none absolute right-full -bottom-5 z-0 h-13 w-25 object-cover object-top-right mix-blend-multiply"
+                    alt={deocrativeScribbleAlt}
+                    aria-hidden="true"
+                    data-aos="zoom-in-right"
+                    data-aos-delay="800"
+                    data-aos-duration="600"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</section>

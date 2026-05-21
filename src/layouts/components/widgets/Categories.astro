@@ -1,0 +1,78 @@
+---
+import config from ".astro/config.generated.json";
+import Icons from "@/helpers/Icons.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getTaxonomy } from "@/lib/taxonomyParser.astro";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Category {
+  name: string;
+  slug: string;
+  count: number;
+}
+
+interface Props {
+  class?: string;
+}
+
+const posts = await getCollectionCTM(
+  config.settings.blogFolder as "blog",
+  Astro.currentLocale,
+);
+
+let categories = (await getTaxonomy(
+  config.settings.blogFolder as "blog",
+  "categories",
+  Astro.currentLocale as string,
+)) as Category[];
+
+categories = categories.map((category) => {
+  const count = posts.filter((post) =>
+    post.data.categories?.includes(category.name),
+  ).length;
+
+  const slug = getLocaleUrlCTM(
+    category.slug,
+    Astro.currentLocale,
+    `/${config.settings.blogFolder}/category`,
+  );
+
+  return {
+    ...category,
+    count,
+    slug,
+  };
+});
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+// Sort categories by count
+categories = categories.sort((a, b) => b.count - a.count);
+---
+
+{
+  categories && categories.length > 0 && (
+    <div class="bg-light rounded-lg p-4 lg:p-8">
+      <h2 class="md:text-h5 text-h5-sm mb-6">{t("widgets.categoriesTitle")}</h2>
+      <div>
+        {categories.map((category) => (
+          <div class="group/category relative flex items-center gap-2 py-1.5 font-medium transition duration-300 first:pt-0 last:pb-0">
+            <span class="group-hover/category:text-accent inline-block transition duration-300 group-hover/category:translate-x-1">
+              <Icons icon="ChevronsRight" />
+            </span>
+            <span
+              class="group-hover/category:text-accent truncate transition duration-300"
+              set:html={markdownify(category.name)}
+            />
+            <a
+              href={category.slug}
+              class="absolute inset-0"
+              title={`Filter posts by ${category.name}`}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

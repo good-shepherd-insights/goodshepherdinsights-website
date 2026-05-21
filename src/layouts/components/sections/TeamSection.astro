@@ -1,0 +1,77 @@
+---
+import type { Section } from "@/types";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import TeamCard from "@/layouts/components/cards/TeamCard.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import type { teamSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import config from ".astro/config.generated.json";
+
+// Type for this section data
+type SectionType = Section & z.infer<typeof teamSectionSchema>;
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "team-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+// Extracting required values from 'content' object
+const { enable = true, badge, title, limit } = actualContent as SectionType;
+
+let pageData = (
+  await getEntryCTM(
+    config.settings.teamFolder as "team",
+    "-index",
+    Astro.currentLocale,
+  )
+)?.data;
+const members = pageData?.list?.filter((item) => item.enable !== false) ?? [];
+// Limit the number of team members to be displayed
+const slicedMembers =
+  limit && members ? members.slice(0, limit as number) : members;
+
+if (!enable) {
+  return null;
+}
+
+const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom;
+const badgeVariant = Astro.props.badgeVariant;
+---
+
+<section class:list={["", hasSectionSpacingBottom && "section-spacing-bottom"]}>
+  <div class="container flex flex-col items-center gap-8 lg:gap-14">
+    <div class="mx-auto flex max-w-5xl flex-col items-center text-center">
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            variant={badgeVariant}
+            dataAos="reveal-anim-top"
+          />
+        )
+      }
+      {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
+    </div>
+    {
+      slicedMembers && slicedMembers.length > 0 && (
+        <div
+          class:list={[
+            "grid gap-4 md:gap-6",
+            "grid-cols-1 md:grid-cols-2 xl:grid-cols-3",
+          ]}>
+          {slicedMembers.map((item) => (
+            <TeamCard content={item} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

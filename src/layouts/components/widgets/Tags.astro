@@ -1,0 +1,72 @@
+---
+import config from ".astro/config.generated.json";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getTaxonomy } from "@/lib/taxonomyParser.astro";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import { humanize } from "@/lib/utils/textConverter";
+
+interface Tag {
+  name: string;
+  slug: string;
+  count: number;
+}
+
+interface Props {
+  class?: string;
+}
+
+const posts = await getCollectionCTM(
+  config.settings.blogFolder as "blog",
+  Astro.currentLocale,
+);
+
+let tags = (await getTaxonomy(
+  config.settings.blogFolder as "blog",
+  "tags",
+  Astro.currentLocale as string,
+)) as Tag[];
+
+tags = tags.map((tag) => {
+  const count = posts.filter((post) =>
+    post.data.tags?.includes(tag.name),
+  ).length;
+
+  const slug = getLocaleUrlCTM(
+    tag.slug,
+    Astro.currentLocale,
+    `/${config.settings.blogFolder}/tag`,
+  );
+
+  return {
+    ...tag,
+    count,
+    slug,
+  };
+});
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+// Sort tags by count
+tags = tags.sort((a, b) => b.count - a.count);
+---
+
+{
+  tags && tags.length > 0 && (
+    <div class="bg-light rounded-lg p-4 xl:p-8">
+      <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">
+        {t("widgets.popularTagsTitle")}
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        {tags.map((tag) => (
+          <a
+            href={tag.slug}
+            title={`Filter posts by ${tag.name}`}
+            class="bg-body hover:bg-accent inline-block rounded-md px-4 py-1 font-medium capitalize transition">
+            {humanize(tag.name)}
+            {tag.count > 0 && ` (${tag.count})`}
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}

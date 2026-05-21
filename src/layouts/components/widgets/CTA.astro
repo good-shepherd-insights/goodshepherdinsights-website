@@ -1,0 +1,42 @@
+---
+import config from ".astro/config.generated.json";
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+
+const { contactInfo } = config.settings;
+const t = await useTranslations(Astro.currentLocale as string);
+---
+
+<div class="bg-primary rounded-lg p-6 lg:p-8">
+  <h2 class="md:text-h5 text-h5-sm text-text-light mb-4">
+    {t("widgets.haveAnyQuestionsTitle")}
+  </h2>
+  <p class="text-text-light mb-6">
+    {t("widgets.haveAnyQuestionsDescription")}
+  </p>
+
+  <div class="space-y-2">
+    <div class="flex items-center gap-4">
+      <div
+        class="bg-accent flex size-12 shrink-0 items-center justify-center rounded-full text-black">
+        <Icons icon="Phone" class="size-5 fill-black font-bold" />
+      </div>
+      <div
+        class="text-text-light text-lg font-bold tracking-wide lg:text-xl"
+        set:html={markdownify(contactInfo.phone, true)}
+      />
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div
+        class="bg-accent flex size-12 shrink-0 items-center justify-center rounded-full text-black">
+        <Icons icon="Mail" class="size-5 fill-black font-bold" />
+      </div>
+      <div
+        class="text-text-light text-lg font-bold tracking-wide lg:text-xl"
+        set:html={markdownify(contactInfo.email, true)}
+      />
+    </div>
+  </div>
+</div>

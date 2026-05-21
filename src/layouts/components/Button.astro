@@ -1,0 +1,139 @@
+---
+/**
+ * Example Usage
+
+  // Default button (anchor tag)
+  <Button label="Visit Home" url="/" />
+
+  // Outline variant linking externally
+  <Button variant="outline" label="Astro Docs" url="https://astro.build" />
+
+  // Text variant with hover effect
+  <Button variant="text" hoverEffect="text-flip" label="Learn More" url="/learn" />
+
+  // Button tag for form actions
+  <Button tag="button" label="Submit" onClick={() => alert('Submitted!')} />
+
+  // Creative hover effect with fill variant
+  <Button hoverEffect="creative-fill" label="Explore" url="/explore" />
+
+  // Magnetic hover effect with circle variant
+  <Button hoverEffect="magnetic" variant="circle" label="Go" url="/go" />
+
+  // Magnetic text flip with outline variant
+  <Button hoverEffect="magnetic-text-flip" variant="outline" label="Join Now" url="/join" />
+
+  // Custom icon
+  <Button label="Contact Us" icon="/icons/mail.svg" url="/contact" />
+ */
+
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import ButtonContent from "./ButtonContent.astro";
+import type { sharedButton, sharedButtonTag } from "@/sections.schema";
+import type { z } from "astro/zod";
+
+type Props = z.infer<typeof sharedButton | typeof sharedButtonTag> & {
+  [key: string]: any;
+};
+
+const {
+  enable = true,
+  tag = "a",
+  title,
+  srOnly,
+  label,
+  url = "#",
+  rel,
+  target,
+  hoverEffect,
+  icon,
+  variant = "fill",
+  class: className,
+  buttonType,
+  ...rest
+} = Astro.props;
+
+if (!enable) return;
+
+const isCreativeHoverEffect = hoverEffect === "creative-fill";
+const isTextFlipHoverEffect = hoverEffect === "text-flip";
+const isMagneticHoverEffect = hoverEffect === "magnetic";
+const isMagneticTextFlipHoverEffect = hoverEffect === "magnetic-text-flip";
+
+const resolvedRel = url.startsWith("http")
+  ? rel || "noopener noreferrer"
+  : rel || undefined;
+const resolvedTarget = url.startsWith("http")
+  ? target || "_blank"
+  : target || undefined;
+
+const buttonClasses = [
+  "flex items-center gap-1",
+  variant !== "circle" && "btn",
+  {
+    "btn-circle": variant === "circle",
+    "creative-hover-anim": isCreativeHoverEffect,
+    "btn-outline btn-outline-primary": variant === "outline",
+    "btn-primary":
+      (variant === "circle" || variant === "fill") &&
+      !className?.includes("btn-"),
+    "btn-text no-underline": variant === "text",
+  },
+  (isCreativeHoverEffect || variant === "circle" || variant === "text") &&
+    "has-icon-moving-animation",
+
+  (isTextFlipHoverEffect || isMagneticTextFlipHoverEffect) &&
+    "text-flip-hover-anim",
+  (isMagneticHoverEffect || isMagneticTextFlipHoverEffect) &&
+    "magnetic-hover-anim",
+  className,
+];
+---
+
+{
+  tag === "a" ? (
+    <a
+      rel={resolvedRel}
+      target={resolvedTarget}
+      title={title}
+      class:list={buttonClasses}
+      href={getLocaleUrlCTM(url, Astro.currentLocale)}
+      {...rest}>
+      <ButtonContent
+        {...{
+          label,
+          title,
+          srOnly,
+          variant,
+          icon,
+          isCreativeHoverEffect,
+          isTextFlipHoverEffect,
+          isMagneticTextFlipHoverEffect,
+          hasIconMovingAnimation:
+            label || buttonClasses.includes("has-icon-moving-animation"),
+        }}
+      />
+    </a>
+  ) : (
+    <button
+      class:list={buttonClasses}
+      title={title}
+      {...rest}
+      type={buttonType}>
+      <ButtonContent
+        {...{
+          label,
+          title,
+          srOnly,
+          variant,
+          icon,
+          isCreativeHoverEffect,
+          isTextFlipHoverEffect,
+          isMagneticTextFlipHoverEffect,
+          hasIconMovingAnimation:
+            label || buttonClasses.includes("has-icon-moving-animation"),
+        }}
+      />
+    </button>
+  )
+}

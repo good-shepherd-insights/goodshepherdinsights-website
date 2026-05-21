@@ -1,0 +1,109 @@
+---
+import buildToc from "@/lib/utils/buildToc";
+import TOC from "./widgets/TableOfContents.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import OptimizedImage from "./utilities/OptimizedImage.astro";
+import formatRelativeDate from "@/lib/utils/formatRelativeDate";
+import { markdownify, slugifyyy } from "@/lib/utils/textConverter";
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  content: CollectionEntry<"pages">;
+  [key: string]: any;
+}
+
+// Configuration and constants
+const { tableOfContents } = config.settings.markup;
+
+const { content, class: className } = Astro.props;
+let { title, date, image, author, categories } = content.data;
+
+// Process markdown content if function is provided
+let Content: any, headings;
+({ Content, headings } = await render(content));
+
+// Fetch author entry if author name is provided
+const authorName = author
+  ? (await getEntryCTM("author", slugifyyy(author), Astro.currentLocale))?.data
+      ?.title
+  : "";
+
+// Build table of contents from headings if available
+const tocHeadings = headings ? buildToc(headings) : undefined;
+
+// Check if table of contents is enable
+const tocEnabled =
+  tableOfContents?.enable && tocHeadings && tocHeadings.length > 0;
+---
+
+<section class:list={[Astro.props.class]}>
+  <div class="container">
+    <div
+      class:list={[
+        "has-video-modal bg-light max-w-full space-y-10 rounded-lg p-5 md:p-8",
+        className,
+      ]}>
+      {
+        image && Content && (
+          <OptimizedImage
+            width={896}
+            height={500}
+            widths={[480, 640, 768, 896]}
+            sizes="(min-width: 1024px) 896px, 100vw"
+            quality={60}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            alt={title}
+            src={image as string}
+            class:list={["h-125 w-full object-cover"]}
+          />
+        )
+      }
+
+      <div class="space-y-2">
+        <ul
+          class="text-dark flex flex-wrap items-center gap-x-5 gap-y-1 tracking-wide">
+          {
+            date && (
+              <li>
+                {date && markdownify(formatRelativeDate(date, "dd MMM, yyyy"))}
+              </li>
+            )
+          }
+
+          {
+            categories?.map((category: string) => (
+              <li class="before:bg-dark relative pe-5 before:absolute before:inset-e-0 before:top-1/2 before:h-1 before:w-1 before:-translate-y-1/2 before:rounded-full before:content-['']">
+                {markdownify(category)}
+              </li>
+            ))
+          }
+
+          {
+            authorName && (
+              <li class="before:bg-dark relative pe-5 before:absolute before:inset-e-0 before:top-1/2 before:h-1 before:w-1 before:-translate-y-1/2 before:rounded-full before:content-['']">
+                By {markdownify(authorName)}
+              </li>
+            )
+          }
+        </ul>
+        {
+          title && (
+            <h1 class="text-h2-sm md:text-h2" set:html={markdownify(title)} />
+          )
+        }
+      </div>
+      {tocEnabled && tocHeadings && <TOC toc={tocHeadings} marker={false} />}
+      {
+        Content && (
+          <div class="prose-styles content has-video-modal prose-headings:mb-6 prose-headings:mt-10">
+            <Content />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

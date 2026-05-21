@@ -1,0 +1,381 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import type { heroSectionTwoSchema } from "@/sections.schema";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import VideoModal from "@/layouts/components/widgets/VideoModal.astro";
+import Button from "../Button.astro";
+import socialData from "@/config/social.json";
+
+const t = await useTranslations(Astro.currentLocale as string);
+type SectionType = Section & NonNullable<z.infer<typeof heroSectionTwoSchema>>;
+type Props = { content?: SectionType; hasSectionSpacingTop?: boolean };
+
+let defaultContent = (
+  await getEntryCTM("sections", "hero-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  subTitle,
+  titleLine1,
+  titleLine2,
+  description,
+  sinceText,
+  button,
+  buttonContact,
+  slides,
+  video,
+} = actualContent;
+
+type SlideType = NonNullable<SectionType["slides"]>[number];
+
+const hasSlides = slides && slides.length > 0;
+if (!enable) {
+  return null;
+}
+const socialLinks = socialData.main.filter((link) => link.enable).splice(0, 4);
+const hasSectionSpacingTop = Astro.props.hasSectionSpacingTop ?? true;
+---
+
+<section
+  class:list={[
+    "hero-section has-video-modal relative overflow-hidden",
+    !hasSectionSpacingTop ? "pt-0" : "",
+  ]}>
+  {
+    hasSlides && (
+      <div class="absolute top-0 mx-auto h-full w-full">
+        <div class="relative h-full">
+          <div
+            class="banner-slider-track relative h-full w-full"
+            id="home-banner-slider"
+            data-aos="reveal-anim-top"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {slides.map((slide: SlideType, i: number) => (
+              <div
+                class="banner-slide absolute inset-0 h-full w-full transition-opacity duration-700 ease-in-out"
+                data-slide={i}
+                aria-hidden={i !== 0}
+                style={
+                  i === 0 ? "opacity:1; z-index:1;" : "opacity:0; z-index:0;"
+                }>
+                <OptimizedImage
+                  src={slide.image}
+                  alt={slide.alt}
+                  width={1920}
+                  height={900}
+                  widths={[480, 640, 768, 1024, 1280, 1600]}
+                  sizes="(min-width: 1536px) 1600px, (min-width: 1280px) 1280px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+                  quality={i === 0 ? 52 : 44}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding={i === 0 ? "sync" : "async"}
+                  fetchpriority={i === 0 ? "high" : "auto"}
+                  class="h-full w-full object-cover object-center"
+                />
+              </div>
+            ))}
+
+            <div class="bg-dark/70 pointer-events-none absolute inset-0 z-2" />
+            <div class="pointer-events-none absolute top-0 right-[12%] z-2 h-full w-[20%] origin-top-left skew-x-25 bg-yellow-700/30 xl:right-[16%] xl:w-[14%]" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div
+    class:list={[
+      "relative z-2 flex w-full flex-col justify-between gap-10 md:gap-28",
+      "pt-10 lg:pt-16 xl:pt-32",
+    ]}>
+    <div class="container">
+      {
+        subTitle && (
+          <div
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            <div class="text-accent text-h6 sm:text-h5-sm md:text-h4-md lg:text-h3 font-secondary font-bold tracking-wider">
+              {subTitle}
+            </div>
+          </div>
+        )
+      }
+      <div
+        class="mt-4 grid grid-cols-1 items-start gap-8 sm:mt-11 lg:gap-10 xl:grid-cols-12">
+        <div class="space-y-4 md:space-y-10 xl:col-span-10">
+          <h1
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-delay="200"
+            class="text-h3-sm sm:text-h2 md:text-display-4 lg:text-display-2 xl:text-display-1 text-text-light leading-[1.1] font-bold">
+            {titleLine1 && <div set:html={markdownify(titleLine1)} />}
+            <div
+              class="flex flex-col items-start gap-0 md:flex-row md:items-center md:gap-8 lg:gap-14">
+              {titleLine2 && <div set:html={markdownify(titleLine2)} />}
+              {
+                description && (
+                  <div class="w-full space-y-4 pt-4 sm:pt-6 lg:pt-0">
+                    <p
+                      class="font-primary text-xs font-normal tracking-[0.06em] md:max-w-lg md:text-sm lg:text-lg"
+                      set:html={markdownify(description)}
+                    />
+                  </div>
+                )
+              }
+            </div>
+          </h1>
+          <div class="flex items-center justify-between gap-8">
+            {
+              button && (
+                <div
+                  class="flex xl:mt-7"
+                  data-aos="reveal-anim-left"
+                  data-aos-offset="0"
+                  data-aos-delay="200">
+                  <Button
+                    variant="fill"
+                    class="btn-accent effect-color-dark max-md:py-2"
+                    {...button}
+                  />
+                </div>
+              )
+            }
+            {
+              video && (
+                <div
+                  class="flex items-center justify-center sm:col-span-2 xl:hidden"
+                  data-aos="fade-left"
+                  data-aos-duration="600"
+                  data-aos-delay="300">
+                  <Button
+                    tag="button"
+                    variant="outline"
+                    label=""
+                    class="video-modal-toggle group bg-accent border-accent flex size-16 items-center justify-center rounded-full p-0! shadow-xl transition-transform duration-300 hover:scale-110 md:size-20 lg:size-20"
+                    hoverEffect="text-flip"
+                    icon={{
+                      enable: true,
+                      name: "Play",
+                      position: "right",
+                      className:
+                        "fill-dark stroke-text-dark size-5! xl:size-6!",
+                    }}
+                    aria-haspopup="dialog"
+                    aria-expanded="false"
+                    aria-controls={`#${video.id}`}
+                    data-hs-overlay={`#${video.id}`}
+                    data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+                    aria-label={t("common.play")}
+                  />
+                </div>
+              )
+            }
+          </div>
+        </div>
+        {
+          video && (
+            <div
+              class="hidden items-center justify-center md:justify-end xl:col-span-2 xl:flex"
+              data-aos="fade-left"
+              data-aos-duration="600"
+              data-aos-delay="300">
+              <Button
+                tag="button"
+                variant="outline"
+                label=""
+                class="video-modal-toggle group bg-accent border-accent flex size-16 items-center justify-center rounded-full p-0! shadow-xl transition-transform duration-300 hover:scale-110 md:size-20 lg:size-26"
+                hoverEffect="text-flip"
+                icon={{
+                  enable: true,
+                  name: "Play",
+                  position: "right",
+                  className: "fill-dark stroke-text-dark size-5! xl:size-6!",
+                }}
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls={`#${video.id}`}
+                data-hs-overlay={`#${video.id}`}
+                data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+                aria-label={t("common.play")}
+                type="button"
+              />
+            </div>
+          )
+        }
+      </div>
+    </div>
+    {
+      socialLinks && (
+        <div class="container flex flex-wrap items-center gap-2 sm:hidden md:place-content-center">
+          {socialLinks.map((link) => (
+            <Button
+              tag="a"
+              variant="text"
+              label={"." + link.label}
+              url={getLocaleUrlCTM(link.url, Astro.currentLocale)}
+              class="hover:text-accent text-text-light place-self-center border-none text-sm leading-5 font-medium uppercase sm:text-base"
+            />
+          ))}
+        </div>
+      )
+    }
+    <div
+      class="container flex w-full flex-wrap justify-between gap-12 md:items-end md:justify-between">
+      <div class="flex items-center gap-12 lg:pb-12">
+        {
+          hasSlides && (
+            <div>
+              {slides.length > 1 && (
+                <div
+                  class="pointer-events-auto z-20 flex items-center gap-3"
+                  id="banner-pagination">
+                  {slides.map((_: SlideType, i: number) => (
+                    <Button
+                      tag="button"
+                      variant="outline"
+                      label={""}
+                      class:list={[
+                        "banner-dot size-5 border-none p-0 transition-all duration-300 md:size-3.5",
+                        i === 0 ? "bg-accent" : "bg-white",
+                      ]}
+                      data-dot={i}
+                      aria-label={`${t("common.paginationNext")} ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        }
+        {
+          socialLinks && (
+            <div class="hidden flex-wrap place-content-start items-center gap-4 sm:flex lg:gap-12">
+              {socialLinks.map((link) => (
+                <Button
+                  tag="a"
+                  variant="text"
+                  label={"." + link.label}
+                  url={getLocaleUrlCTM(link.url, Astro.currentLocale)}
+                  class="hover:text-accent text-text-light place-self-start border-none leading-5 font-medium uppercase"
+                />
+              ))}
+            </div>
+          )
+        }
+      </div>
+      <div
+        class="after:bg-light relative p-4 after:pointer-events-none after:absolute after:top-0 after:left-0 after:-z-10 after:h-full after:w-screen after:select-none lg:p-8">
+        <div
+          class="relative flex flex-col gap-2"
+          data-aos="reveal-anim-right"
+          data-aos-offset="0"
+          data-aos-duration="600">
+          <span
+            class:list={[
+              "text-text-light bg-clip-text font-medium tracking-widest uppercase opacity-80 [-webkit-background-clip:text] [text-shadow:-1px_-1px_0_var(--color-black),1px_-1px_0_var(--color-black),-1px_1px_0_var(--color-black),1px_1px_0_var(--color-black)]",
+              "lg:text-h3 xl:text-h2 md:text-h4 text-h5 max-w-xl leading-tight",
+            ]}>
+            {sinceText}
+          </span>
+          {
+            buttonContact && (
+              <div class="flex">
+                <Button
+                  variant="text"
+                  url={getLocaleUrlCTM(
+                    buttonContact.url || "#",
+                    Astro.currentLocale,
+                  )}
+                  class="text-sm leading-5 md:text-base"
+                  {...buttonContact}
+                />
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  {/* Video Modal */}
+
+  <script>
+    (function () {
+      const slider = document.getElementById("home-banner-slider");
+      if (!slider) return;
+
+      const slides = Array.from(
+        slider.querySelectorAll<HTMLElement>(".banner-slide"),
+      );
+      if (slides.length <= 1) return;
+
+      const dots = Array.from(
+        document.querySelectorAll<HTMLElement>(".hero-section .banner-dot"),
+      );
+      let current = 0;
+
+      function goTo(index: number) {
+        slides[current].style.opacity = "0";
+        slides[current].style.zIndex = "0";
+        slides[current].setAttribute("aria-hidden", "true");
+
+        if (dots[current]) {
+          dots[current].classList.remove("bg-accent");
+          dots[current].classList.add("bg-white");
+        }
+
+        current = (index + slides.length) % slides.length;
+        slides[current].style.opacity = "1";
+        slides[current].style.zIndex = "1";
+        slides[current].setAttribute("aria-hidden", "false");
+
+        if (dots[current]) {
+          dots[current].classList.remove("bg-white");
+          dots[current].classList.add("bg-accent");
+        }
+      }
+
+      let autoplayTimer = window.setInterval(() => goTo(current + 1), 5000);
+
+      function resetAutoplay() {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = window.setInterval(() => goTo(current + 1), 5000);
+      }
+
+      slider.addEventListener("mouseenter", () =>
+        window.clearInterval(autoplayTimer),
+      );
+      slider.addEventListener("mouseleave", () => resetAutoplay());
+
+      document.getElementById("banner-prev")?.addEventListener("click", () => {
+        goTo(current - 1);
+        resetAutoplay();
+      });
+
+      document.getElementById("banner-next")?.addEventListener("click", () => {
+        goTo(current + 1);
+        resetAutoplay();
+      });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          goTo(i);
+          resetAutoplay();
+        });
+      });
+    })();
+  </script>
+</section>
+
+{video && video.src && <VideoModal video={video} />}

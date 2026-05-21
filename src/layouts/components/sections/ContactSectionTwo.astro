@@ -1,0 +1,114 @@
+---
+import config from ".astro/config.generated.json";
+import type { Section } from "@/types";
+import ContactForm from "../widgets/ContactForm.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { z } from "astro/zod";
+import type { contactSectionSchema } from "@/sections.schema";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const { contactInfo } = config.settings;
+
+type ContactSection = Section & z.infer<typeof contactSectionSchema>;
+
+let defaultContent = (
+  await getEntryCTM("sections", "contact-section-two", Astro.currentLocale)
+)?.data as ContactSection;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as ContactSection;
+
+let {
+  enable = true,
+  badge,
+  title,
+  description,
+  contactTitle,
+  list,
+  form,
+} = actualContent;
+
+if (!enable) return null;
+---
+
+<section class="relative">
+  <div
+    class="bg-light absolute top-76 bottom-0 left-0 z-[-1] h-full w-full sm:top-100 md:top-110 lg:top-128 xl:top-116">
+  </div>
+  <div class="container">
+    <div
+      class="bg-light border-dark shadow-contact grid grid-cols-1 gap-10 border-2 p-6 lg:grid-cols-2 lg:gap-14 lg:p-12 xl:gap-20">
+      <!-- Left -->
+      <div>
+        {
+          contactTitle && (
+            <h2
+              class="text-h2-sm lg:text-h4 font-secondary mb-4 font-bold lg:mb-8"
+              set:html={markdownify(contactTitle)}
+            />
+          )
+        }
+        {
+          form && (
+            <ContactForm class={"p-0!"} form={form} layout="section-two" />
+          )
+        }
+      </div>
+      <!-- Right -->
+      <div class="bg-light relative flex flex-col items-start gap-5">
+        <div>
+          {
+            badge && (
+              <SectionBadge
+                title={badge}
+                dataAos="reveal-anim-right"
+                variant="secondary"
+              />
+            )
+          }
+          {title && <SectionTitle title={title} dataAos="reveal-anim-right" />}
+          {
+            description && (
+              <p class="mt-4" set:html={markdownify(description)} />
+            )
+          }
+
+          <div class="mt-6 flex flex-col gap-8 lg:mt-12">
+            {
+              list &&
+                list.map((item) => (
+                  <div class="group flex gap-3 lg:gap-6">
+                    <div class="bg-primary group-hover:bg-accent flex size-14 min-h-14 min-w-14 items-center justify-center transition-colors duration-300 lg:size-16 lg:min-h-16 lg:min-w-16">
+                      <OptimizedImage
+                        src={item.icon}
+                        alt={item.title}
+                        width={48}
+                        height={48}
+                        inlineSvg={true}
+                        class="group-hover:fill-text-dark fill-text-light size-5 md:size-7"
+                      />
+                    </div>
+                    <div class="">
+                      <div>{item.title}</div>
+                      <div
+                        class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary font-bold break-all"
+                        set:html={markdownify(
+                          (contactInfo as any)[item.settingFieldName],
+                        )}
+                      />
+                    </div>
+                  </div>
+                ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

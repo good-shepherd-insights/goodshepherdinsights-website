@@ -1,0 +1,161 @@
+---
+import Logo from "@/components/global/Logo.astro";
+import Offcanvas from "../../widgets/Offcanvas.astro";
+import config from ".astro/config.generated.json";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import NavbarToggler from "@/layouts/components/global/header/NavbarToggler.astro";
+import HeaderOffcanvasContent from "@/components/widgets/HeaderOffcanvasContent.astro";
+import Navbar from "./Navbar.astro";
+import Button from "@/components/Button.astro";
+import TopBar from "./TopBar.astro";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+const {
+  site: { logoAlternate },
+  settings: { stickyHeader, navigationButton, headerOffcanvas },
+} = config;
+
+const { position, hideOffcanvas, class: ClassName } = Astro.props;
+---
+
+<TopBar />
+
+<header
+  class:list={[
+    "header group/header transform",
+    { sticky: position === "sticky" },
+    { fixed: position === "fixed" },
+    { "has-sticky-behavior": stickyHeader || position === "fixed" },
+    ClassName,
+  ]}>
+  <div class="container">
+    <div
+      class="bg-light hs-dropdown relative flex flex-wrap items-stretch justify-between rounded-b-2xl px-6 py-2 [--auto-close:inside] [--gpu-acceleration:false] [--strategy:absolute] lg:justify-center lg:px-7.5 lg:[--strategy:static]">
+      <Logo />
+
+      {/* Navbar For Header */}
+      <Navbar />
+
+      {/* Navigation Actions - Search + CTA Button */}
+      {
+        (navigationButton.enable || config.settings.multilingual.enable) && (
+          <div class="hidden gap-3.5 justify-self-end max-lg:ms-auto max-lg:me-4 lg:flex lg:items-center">
+            {navigationButton.enable && (
+              <Button
+                variant="text"
+                {...navigationButton}
+                label={navigationButton.label || t("navigation.buttonLabel")}
+                icon={{
+                  enable: true,
+                  name: "ArrowRight",
+                  position: "right",
+                }}
+              />
+            )}
+          </div>
+        )
+      }
+
+      {/* Desktop Sidebar Offcanvas Toggle Button */}
+      {
+        headerOffcanvas?.enable && (
+          <NavbarToggler
+            title="Open sidebar content"
+            appearance="dark"
+            isOffcanvasToggler={true}
+            class:list={[
+              "ring-primary/25 rounded-full duration-500 ease-out",
+              hideOffcanvas ? "lg:hidden" : "",
+            ]}
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="offcanvas-main"
+            data-hs-overlay="#offcanvas-main"
+            data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+          />
+        )
+      }
+    </div>
+  </div>
+</header>
+
+{/* Desktop Sidebar Offcanvas */}
+{
+  headerOffcanvas?.enable && (
+    <Offcanvas
+      class={hideOffcanvas ? "lg:hidden" : ""}
+      id="offcanvas-main"
+      direction="right"
+      size="md">
+      <HeaderOffcanvasContent offcanvas={"offcanvas-main"} />
+    </Offcanvas>
+  )
+}
+<script>
+  import { HSDropdown } from "preline";
+
+  if (
+    [".hs-dropdown", "[data-hs-dropdown]"].some((selector) =>
+      document.querySelector(selector),
+    )
+  ) {
+    HSDropdown?.autoInit();
+  }
+
+  function updateMegaMenuOffset(): void {
+    const header = document.querySelector(".header") as HTMLElement | null;
+    if (!header) return;
+
+    const headerBottom = Math.round(header.getBoundingClientRect().bottom);
+    document.documentElement.style.setProperty(
+      "--header-bottom",
+      `${Math.max(headerBottom, 0)}px`,
+    );
+  }
+
+  function stickyHeader(): void {
+    const header = document.querySelector(
+      ".has-sticky-behavior",
+    ) as HTMLElement | null;
+    if (!header) return;
+
+    let prevScrollPos = window.scrollY;
+    let ticking = false;
+
+    // Initial state
+    if (prevScrollPos > 0) {
+      header.classList.add("scroll-up");
+    }
+    updateMegaMenuOffset();
+
+    const updateHeader = () => {
+      const currentScrollPos = Math.max(0, window.scrollY);
+
+      if (currentScrollPos === 0) {
+        header.classList.remove("scroll-up", "scroll-down");
+      } else {
+        header.classList.add("scroll-up");
+      }
+
+      updateMegaMenuOffset();
+      ticking = false;
+    };
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateHeader);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+    window.addEventListener("resize", updateMegaMenuOffset, {
+      passive: true,
+    });
+  }
+
+  stickyHeader();
+</script>

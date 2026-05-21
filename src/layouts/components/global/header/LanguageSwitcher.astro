@@ -1,0 +1,70 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import { getLocaleUrlCTM, supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+
+const currentLocale = Astro.currentLocale;
+const currentLanguageLabel =
+  currentLocale === "en"
+    ? "US - English"
+    : currentLocale === "fr"
+      ? "FR - Français"
+      : currentLocale;
+const languages = supportedLanguages.map((lang) => {
+  const href = getLocaleUrlCTM(Astro.url.pathname, lang.languageCode as string);
+
+  // Don't include current locale in url
+  if (href === trailingSlashChecker(Astro.url.pathname)) {
+    return;
+  }
+
+  return {
+    slug: href,
+    ...lang,
+  };
+});
+---
+
+<div
+  class:list={[
+    "language-switcher hs-dropdown relative [--auto-close:inside] [--gpu-acceleration:false] [--strategy:absolute]",
+    Astro.props.appearance === "light" && "language-switcher-light",
+  ]}>
+  <button
+    type="button"
+    id="language-switcher-dropdown-toggle"
+    class="language-switcher-button hs-dropdown-toggle flex items-center gap-1.5 bg-transparent"
+    aria-expanded="false"
+    aria-label={`${currentLanguageLabel} language menu`}>
+    <span class="text">
+      {currentLanguageLabel}
+    </span>
+    <Icons
+      icon="ChevronDown"
+      class="hs-dropdown-open:rotate-180 w-3.5 transition-transform duration-300"
+    />
+  </button>
+  <ul
+    class="language-switcher-dropdown hs-dropdown-menu hs-dropdown-open:mt-0 hs-dropdown-open:opacity-100 hs-dropdown-open:visible top-0 z-60 mt-2 hidden w-24 min-w-32 opacity-0 [--placement:right-start]"
+    aria-labelledby="language-switcher-dropdown-toggle">
+    {
+      languages.map(
+        (language) =>
+          language && (
+            <li>
+              <a
+                class:list={[
+                  {
+                    active: language.languageCode === currentLocale,
+                  },
+                  "text-base font-normal capitalize",
+                ]}
+                href={language.slug}
+                set:html={language.contentDir}
+              />
+            </li>
+          ),
+      )
+    }
+  </ul>
+</div>

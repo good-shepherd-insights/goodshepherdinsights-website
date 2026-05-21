@@ -1,0 +1,80 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const {
+  label,
+  variant,
+  title,
+  icon,
+  isCreativeHoverEffect,
+  isTextFlipHoverEffect,
+  isMagneticTextFlipHoverEffect,
+  hasIconMovingAnimation,
+} = Astro.props;
+
+// Applcable only if button have the text-flip hover animation
+let dataContent;
+if (isTextFlipHoverEffect || isMagneticTextFlipHoverEffect) {
+  dataContent = variant !== "text" ? label : undefined;
+}
+
+// Check if the label contain "learn more" "read more" type of text that need to add support for accessibility
+let addAriaLabel = false;
+if (
+  label.toLowerCase().includes("learn more") ||
+  label.toLowerCase().includes("read more") ||
+  label.toLowerCase().includes("discover more")
+) {
+  addAriaLabel = true;
+}
+---
+
+{
+  isTextFlipHoverEffect || isMagneticTextFlipHoverEffect ? (
+    <>
+      <span
+        class="text-flip-inner"
+        set:html={label}
+        data-content={dataContent}
+      />
+      {addAriaLabel && <span class="sr-only" set:html={markdownify(title)} />}
+    </>
+  ) : (
+    <>
+      <Fragment set:html={label} />
+      {addAriaLabel && <span class="sr-only" set:html={markdownify(title)} />}
+    </>
+  )
+}
+
+{
+  icon?.enable && (
+    <span
+      class:list={[
+        "icons-wrapper inline-flex min-h-4 min-w-4 items-center justify-center",
+        { "min-h-4 min-w-4": icon?.size === "sm" },
+        { "min-h-5 min-w-5": icon?.size === "md" },
+        { "min-h-6 min-w-6": icon?.size === "lg" },
+      ]}>
+      <span class="icon icon-before flex items-center justify-center">
+        <Icons
+          class={`[font-size:inherit] ${icon?.size === "sm" ? "size-5" : icon?.size === "md" ? "size-11.5" : icon?.size === "lg" ? "size-16" : ""} ${icon?.className}`}
+          icon={icon.name}
+        />
+      </span>
+      {hasIconMovingAnimation && (
+        <span
+          class="icon icon-after flex items-center justify-center"
+          aria-hidden="true">
+          <Icons
+            class={`[font-size:inherit] ${icon?.size === "sm" ? "size-5" : icon?.size === "md" ? "size-11.5" : icon?.size === "lg" ? "size-16" : ""} ${icon?.className}`}
+            icon={icon.name}
+          />
+        </span>
+      )}
+    </span>
+  )
+}
+
+{isCreativeHoverEffect && <span class="hover-bg" />}

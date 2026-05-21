@@ -1,0 +1,47 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { featuresGridSchema } from "@/sections.schema";
+import FeaturesGridCard from "../cards/FeaturesGridCard.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+
+type SectionType = Section & NonNullable<z.infer<typeof featuresGridSchema>>;
+type Props = { content?: SectionType; hasLightBackground?: boolean };
+
+let defaultContent = (
+  await getEntryCTM("sections", "features-grid-three", Astro.currentLocale)
+)?.data as SectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { features, badge, title, cardLayout } = actualContent;
+const { hasLightBackground = false } = Astro.props;
+---
+
+{
+  features && features.length > 0 && (
+    <section class:list={["relative", hasLightBackground && "bg-light"]}>
+      <div class="relative container">
+        <div class="mx-auto flex max-w-5xl flex-col items-center justify-center gap-2 text-center xl:px-4">
+          {badge && <SectionBadge title={badge} dataAos="reveal-anim-top" />}
+          {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
+        </div>
+        <div class="mt-10 grid grid-cols-1 gap-4 md:mt-20 lg:grid-cols-4 lg:gap-6">
+          {features.map((feature, index) => (
+            <FeaturesGridCard
+              content={feature}
+              cardLayout={cardLayout}
+              index={index}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

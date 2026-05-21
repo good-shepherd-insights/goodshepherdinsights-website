@@ -1,0 +1,198 @@
+---
+import dateFormat from "@/lib/utils/dateFormat";
+import {
+  humanize,
+  markdownify,
+  slugifyyy,
+  toSentenceCase,
+} from "@/lib/utils/textConverter";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import type { CollectionEntry } from "astro:content";
+import Icons from "@/helpers/Icons.astro";
+
+interface Props {
+  class?: string;
+  content: CollectionEntry<"blog">;
+  options: CollectionEntry<"blog">["data"]["options"];
+  tag?: string;
+}
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+let {
+  content,
+  options: { layout = "grid" } = {},
+  class: className,
+  tag = "h3",
+  ...rest
+} = Astro.props;
+
+let {
+  collection,
+  data: { title, image, date, categories, metaDescription } = {},
+} = content;
+
+// Format categories
+const categoriesArray = categories?.map((category: string) => ({
+  name: category,
+  slug: slugifyyy(category),
+}));
+
+let slug =
+  content.id && collection
+    ? getEntrySlugCTM(content, Astro.currentLocale)
+    : "#";
+const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
+---
+
+{
+  layout === "horizontal" ? (
+    <article
+      class:list={[
+        "group border-border-dark/10 relative flex flex-col gap-2 border p-4 lg:p-8",
+        className,
+      ]}
+      {...rest}>
+      <div class="flex items-center gap-2">
+        {categoriesArray &&
+          categoriesArray.map((category: any, index: number) => (
+            <>
+              <span set:html={humanize(category.name)} />
+              {index !== categoriesArray.length - 1 && (
+                <span class:list={["inline-block h-1 w-1 rounded-full"]} />
+              )}
+            </>
+          ))}
+        <span class:list={["bg-dark mt-1 flex size-0.5 rounded-full"]} />
+        <span>{date && dateFormat(date, "dd MMMM yyyy")}</span>
+      </div>
+      <div class="grid grid-cols-12 gap-4">
+        {title && (
+          <HeadingTag
+            class="sm:text-h5-sm text-h6 col-span-9"
+            set:html={markdownify(title)}
+          />
+        )}
+        <div class="col-span-3 flex grow justify-end">
+          <span class="bg-primary group-hover:bg-accent group-hover:text-text-dark text-text-light flex size-12 shrink-0 items-center justify-center transition-all">
+            <Icons icon="ArrowUpRight" class="size-6" />
+          </span>
+        </div>
+      </div>
+      <a
+        data-post-link
+        class="absolute inset-0 z-30"
+        href={slug}
+        aria-label={`${t("button.readMore")} ${title}`}
+      />
+    </article>
+  ) : layout === "grid" || layout === "featured" ? (
+    <article
+      class:list={[
+        className,
+        "group relative",
+        "border-border-dark/10 flex flex-col gap-4 border p-4 sm:p-6 lg:gap-8 lg:p-9",
+        layout !== "featured" && "rounded-lg text-center",
+      ]}
+      {...rest}>
+      <div
+        class:list={[
+          "flex flex-col justify-center gap-2 lg:gap-3",
+          layout !== "featured" && "items-center",
+        ]}>
+        <div class="flex items-center gap-2">
+          {categoriesArray &&
+            categoriesArray.map((category: any, index: number) => (
+              <>
+                <span set:html={humanize(category.name)} />
+                {index !== categoriesArray.length - 1 && (
+                  <span class:list={["inline-block h-1 w-1 rounded-full"]} />
+                )}
+              </>
+            ))}
+          <span class:list={["bg-dark mt-1 flex size-0.5 rounded-full"]} />
+          <span>{date && dateFormat(date, "dd MMMM yyyy")}</span>
+        </div>
+        {title && (
+          <HeadingTag
+            class="sm:text-h4-sm text-h4"
+            set:html={markdownify(title)}
+          />
+        )}
+        {metaDescription && (
+          <p class="leading-6" set:html={markdownify(metaDescription)} />
+        )}
+      </div>
+      <div
+        class:list={[
+          "relative flex items-center justify-center overflow-hidden",
+          layout !== "featured" && "rounded-lg",
+        ]}>
+        {image && (
+          <>
+            <OptimizedImage
+              src={image}
+              alt={toSentenceCase("Image related to " + title)}
+              class:list={[
+                "min-w-full object-cover transition duration-500",
+                "h-62",
+              ]}
+              width={578}
+              height={248}
+              widths={[320, 480, 578]}
+              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              quality={60}
+            />
+            <span class="bg-accent text-text-dark absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
+              <Icons icon="ArrowUpRight" class="size-6" />
+            </span>
+          </>
+        )}
+      </div>
+      <a
+        data-post-link
+        class="absolute inset-0 z-30"
+        href={slug}
+        aria-label={`${t("button.readMore")} ${title}`}
+      />
+    </article>
+  ) : layout === "compact" ? (
+    /* ─── LAYOUT: compact ─── Used by FooterTwo */
+    <a
+      href={slug}
+      class:list={[
+        "group flex items-center gap-4.5 pb-4.5 transition-colors last:pb-0",
+        "border-text-dark/15 border-b last:border-0",
+        className,
+      ]}
+      aria-label={`${t("button.readMore")} ${title}`}
+      {...rest}>
+      {image && (
+        <div class:list={["shrink-0 overflow-hidden", "rounded-md"]}>
+          <OptimizedImage
+            src={image}
+            alt={title}
+            width={90}
+            height={90}
+            quality={40}
+            widths={[60, 80, 100]}
+            sizes="(min-width: 1280px) 90px, 80px"
+            class="size-20 object-cover transition-transform duration-300 group-hover:scale-110 xl:size-22.5"
+          />
+        </div>
+      )}
+      <div class="flex flex-col gap-1">
+        {date && (
+          <span class="text-slate-500">{dateFormat(date, "dd MMM, yyyy")}</span>
+        )}
+        {title && (
+          <span
+            class:list={["font-secondary line-clamp-2 font-bold", "text-lg"]}
+            set:html={markdownify(title)}
+          />
+        )}
+      </div>
+    </a>
+  ) : null
+}
