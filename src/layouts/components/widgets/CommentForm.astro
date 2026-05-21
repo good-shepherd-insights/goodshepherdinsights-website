@@ -1,0 +1,244 @@
+---
+import config from ".astro/config.generated.json";
+import type { z } from "astro/zod";
+import type { commentFormSchema } from "@/sections.schema";
+
+import Button from "@/components/Button.astro";
+
+interface Props {
+  form: z.infer<typeof commentFormSchema>;
+}
+
+const {
+  settings: { contactFormAction, contactFormProvider },
+} = config;
+
+const { form } = Astro.props;
+---
+
+<form
+  id="comment-form"
+  data-action={contactFormAction}
+  data-provider={contactFormProvider}
+  method="post"
+  class="grid grid-cols-2 gap-x-6 gap-y-6"
+  novalidate>
+  {
+    form.emailSubject && (
+      <input type="hidden" name="_subject" value={form.emailSubject} />
+    )
+  }
+
+  {
+    form.inputs.map((input) => (
+      <div
+        class:list={[
+          "relative flex flex-col",
+          input.halfWidth ? "max-sm:col-span-2 md:col-span-1" : "col-span-2",
+        ]}>
+        {input.tag === "textarea" ? (
+          <>
+            <textarea
+              rows={input.rows || "5"}
+              name={input.name}
+              placeholder={input.placeholder}
+              {...(input.required && { required: true })}
+              class="text-text-dark border-b-border-dark/20 placeholder-text-dark/80 focus:ring-primary w-full resize-none rounded border-transparent px-0 py-2 ring-0 outline-none focus:ring-1 focus:outline-none"
+            />
+            <p
+              class="comment-error absolute -bottom-5 left-0 hidden text-sm text-red-400"
+              data-field={input.name}
+            />
+          </>
+        ) : (
+          <>
+            <input
+              type={input.type || "text"}
+              name={input.name}
+              placeholder={input.placeholder}
+              {...(input.required && { required: true })}
+              class="text-text-dark border-b-border-dark/20 placeholder-text-dark/80 focus:ring-primary w-full resize-none rounded border-transparent px-0 py-2 ring-0 outline-none focus:ring-1 focus:outline-none"
+            />
+            <p
+              class="comment-error absolute -bottom-5 left-0 hidden text-sm text-red-400"
+              data-field={input.name}
+            />
+          </>
+        )}
+      </div>
+    ))
+  }
+
+  {
+    form.submitButton?.enable && (
+      <div class="col-span-2 mt-2">
+        <Button
+          tag="button"
+          buttonType="submit"
+          id="comment-submit"
+          label={form.submitButton.label}
+          variant="fill"
+          class="btn-accent effect-color-dark px-8 py-4!"
+        />
+      </div>
+    )
+  }
+</form>
+<script>
+  import {
+    formspreeSubmit,
+    netlifySubmit,
+    formSubmit,
+    isFormFilled,
+    setMessage,
+  } from "@/lib/utils/FormHandle";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById(
+      "comment-form",
+    ) as HTMLFormElement | null;
+    if (!form) return;
+
+    const inputs = form.querySelectorAll<
+      HTMLInputElement | HTMLTextAreaElement
+    >("input, textarea");
+
+    // clear error on typing
+    inputs.forEach((el) => {
+      el.addEventListener("input", () => {
+        const name = el.name;
+
+        const errorEl = form.querySelector<HTMLElement>(
+          `[data-field="${name}"]`,
+        );
+
+        if (errorEl) {
+          errorEl.textContent = "";
+          errorEl.classList.add("hidden");
+        }
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const provider = form.getAttribute("data-provider") || "";
+      const action = form.getAttribute("data-action") || "";
+
+      // clear previous errors
+      form.querySelectorAll<HTMLElement>(".comment-error").forEach((el) => {
+        el.textContent = "";
+        el.classList.add("hidden");
+      });
+
+      let hasError = false;
+
+      const formData = new FormData(form);
+
+      // validation
+      form
+        .querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[required]")
+        .forEach((el) => {
+          const name = el.name;
+          const value = formData.get(name);
+
+          if (!value || (typeof value === "string" && !value.trim())) {
+            const errorEl = form.querySelector<HTMLElement>(
+              `[data-field="${name}"]`,
+            );
+
+            if (errorEl) {
+              errorEl.textContent = "Required";
+              errorEl.classList.remove("hidden");
+            }
+
+            hasError = true;
+          } else if (el.type === "email" && typeof value === "string") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(value)) {
+              const errorEl = form.querySelector<HTMLElement>(
+                `[data-field="${name}"]`,
+              );
+
+              if (errorEl) {
+                errorEl.textContent = "Invalid email";
+                errorEl.classList.remove("hidden");
+              }
+
+              hasError = true;
+            }
+          }
+        });
+
+      if (hasError) return;
+
+      if (isFormFilled(form)) {
+        console.log(
+          Object.entries(Object.fromEntries(formData.entries()))
+            .map(([key, value]) => `${key}: ${value}`)
+            .join("\n\n"),
+        );
+
+        setMessage("Submitting comment...", true, true, form);
+
+        // button loader
+        const submitBtn = document.getElementById(
+          "comment-submit",
+        ) as HTMLButtonElement | null;
+
+        let originalBtnContent = "";
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+
+          originalBtnContent = submitBtn.innerHTML;
+
+          submitBtn.textContent = "Posting...";
+        }
+
+        try {
+          switch (provider) {
+            case "netlify":
+              await netlifySubmit(form, action);
+              break;
+
+            case "formsubmit.co":
+              await formSubmit({
+                form,
+                action,
+              });
+              break;
+
+            case "formspree":
+              await formspreeSubmit(
+                Object.fromEntries(new FormData(form).entries()),
+                5000,
+                form,
+              );
+              break;
+
+            default:
+              throw new Error("Unknown form provider.");
+          }
+        } catch (error) {
+          setMessage(
+            "Comment submission failed. Please try again.",
+            false,
+            false,
+            form,
+          );
+        } finally {
+          const finalBtn = document.getElementById(
+            "comment-submit",
+          ) as HTMLButtonElement | null;
+          if (finalBtn) {
+            finalBtn.disabled = false;
+
+            finalBtn.innerHTML = originalBtnContent;
+          }
+        }
+      }
+    });
+  });
+</script>

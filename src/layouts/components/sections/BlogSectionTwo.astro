@@ -1,0 +1,79 @@
+---
+import type { Section } from "@/types";
+import BlogCard from "@/layouts/components/cards/BlogCard.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { sortByDate } from "@/lib/utils/sortFunctions";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import type { blogSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+
+// Type for this section data
+type SectionType = Section & z.infer<typeof blogSectionSchema>;
+
+type Props = {
+  content?: SectionType;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "blog-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+// Extracting required values from 'content' object
+let { enable = true, title, badge, options } = actualContent as SectionType;
+
+let posts = await getCollectionCTM(
+  config.settings.blogFolder as "blog",
+  Astro.currentLocale,
+);
+
+// Sort posts by date
+posts = sortByDate(posts);
+
+// Limit the number of items to be displayed
+posts =
+  options?.limit && posts ? posts.slice(0, options?.limit as number) : posts;
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="bg-light">
+  <div class="container space-y-8 md:space-y-14">
+    <div
+      class="mx-auto flex max-w-4xl flex-col items-center text-center xl:px-4">
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            dataAos="reveal-anim-top"
+            variant="secondary"
+          />
+        )
+      }
+      {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+      <BlogCard content={posts[0]} options={{ layout: "featured" }} />
+      <div class="grid grid-cols-1 gap-4 md:gap-6">
+        {
+          posts
+            ?.slice(1)
+            .map((post) => <BlogCard content={post} options={options} />)
+        }
+      </div>
+    </div>
+  </div>
+</section>

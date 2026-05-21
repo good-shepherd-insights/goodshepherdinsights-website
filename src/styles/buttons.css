@@ -1,0 +1,199 @@
+/* ====================================================== */
+/* Button Style */
+/* ====================================================== */
+
+@utility btn {
+  @apply font-secondary text-light inline-block overflow-hidden px-6 py-4 font-bold whitespace-nowrap disabled:cursor-not-allowed xl:px-9 xl:py-5;
+}
+@utility btn-md {
+  @apply px-8 py-5 md:text-lg xl:px-10 xl:py-7;
+}
+
+@utility btn-circle {
+  @apply font-secondary inline-flex h-42.5 w-42.5 items-center justify-center rounded-full px-4 py-3 text-center font-bold;
+}
+
+@utility btn-light {
+  @apply bg-light text-dark;
+}
+
+@utility btn-accent {
+  @apply bg-accent text-dark;
+}
+@utility btn-text {
+  @apply text-text-dark rounded-none border-b p-0;
+}
+
+@utility btn-primary {
+  @apply bg-primary text-light;
+}
+@utility btn-text-primary {
+  @apply text-primary;
+}
+@utility btn-text-white {
+  @apply text-light border-b-white;
+}
+@utility btn-outline {
+  @apply text-light border font-medium;
+}
+@utility btn-outline-primary {
+  @apply border-primary text-primary bg-white;
+}
+@utility btn-outline-transparent {
+  @apply text-light border-white bg-transparent;
+}
+
+.btn-outline {
+  & ~ .icon {
+    @apply text-dark flex h-12 w-12 items-center justify-center bg-white;
+
+    svg path {
+      @apply [fill-color:currentColor]!;
+    }
+  }
+
+  &.btn-md ~ .icon {
+    @apply h-14 w-14;
+  }
+}
+*[class*="btn-outline-primary"] ~ .icon {
+  @apply bg-primary;
+}
+*[class*="btn-outline-transparent"] ~ .icon {
+  @apply bg-white;
+}
+
+.magnetic-hover-anim:not([disabled="true"]) {
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+.creative-hover-anim:not([disabled="true"]) {
+  @apply relative z-10 overflow-hidden delay-100;
+
+  .hover-bg {
+    @apply translate-centered absolute inset-s-(--creative-hover-left) top-(--creative-hover-top) -z-10 block h-0 w-0 rounded-full;
+    transition:
+      width 0.6s ease,
+      height 0.6s ease;
+  }
+
+  &:hover .hover-bg {
+    width: 56.25rem;
+    height: 56.25rem;
+  }
+
+  &.effect-color-primary .hover-bg {
+    background: var(--color-theme-primary);
+  }
+  &.effect-color-light .hover-bg {
+    background: var(--color-light);
+  }
+  &.effect-color-dark .hover-bg {
+    background: var(--color-primary);
+  }
+  &.effect-color-accent .hover-bg {
+    background: var(--color-accent);
+  }
+
+  &:hover {
+    &.effect-color-primary,
+    &.effect-color-dark {
+      color: var(--color-light) !important;
+    }
+    &.effect-color-light,
+    &.effect-color-accent {
+      color: var(--color-dark) !important;
+    }
+  }
+}
+.text-flip-hover-anim:not([disabled="true"]) {
+  .text-flip-inner {
+    @apply relative inline-block overflow-hidden text-transparent;
+
+    &::before,
+    &::after {
+      content: attr(data-content);
+      @apply pointer-events-none absolute inset-0 text-center transition-all duration-300 ease-in-out;
+    }
+
+    &::before {
+      @apply top-1/3 -translate-y-1/3 opacity-100;
+    }
+
+    &::after {
+      @apply top-full opacity-0;
+    }
+  }
+
+  &:hover .text-flip-inner {
+    &::before {
+      @apply -top-full opacity-0;
+    }
+
+    &::after {
+      @apply top-1/3 -translate-y-1/3 opacity-100;
+    }
+  }
+
+  &.btn-accent,
+  &.btn-light {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-dark;
+      }
+    }
+  }
+
+  &.btn-primary {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-light;
+      }
+    }
+  }
+
+  &.btn-outline {
+    .text-flip-inner {
+      &::before,
+      &::after {
+        @apply text-dark;
+      }
+    }
+  }
+}
+
+.has-icon-moving-animation {
+  /* @apply overflow-hidden; */
+  &:hover .icon {
+    &.icon-before {
+      @apply start-full -top-full;
+    }
+
+    &.icon-after {
+      @apply inset-s-0 top-0;
+    }
+  }
+
+  .icons-wrapper {
+    @apply relative overflow-hidden;
+  }
+
+  .icon {
+    @apply transition-[top,left] duration-500 ease-in-out;
+
+    &.icon-before,
+    &.icon-after {
+      @apply absolute inset-0 size-full;
+    }
+
+    &.icon-before {
+      @apply top-0;
+    }
+
+    &.icon-after {
+      @apply -start-full top-full;
+    }
+  }
+}

@@ -1,0 +1,171 @@
+---
+import Logo from "@/components/global/Logo.astro";
+import Offcanvas from "../../widgets/Offcanvas.astro";
+import config from ".astro/config.generated.json";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import NavbarToggler from "@/layouts/components/global/header/NavbarToggler.astro";
+import HeaderOffcanvasContent from "@/components/widgets/HeaderOffcanvasContent.astro";
+import Navbar from "./Navbar.astro";
+import TopBarTwo from "./TopBarTwo.astro";
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+const {
+  settings: {
+    stickyHeader,
+    navigationButton,
+    headerOffcanvas,
+    contactInfo,
+    announcementBar,
+  },
+} = config;
+const announcementEnabled = announcementBar?.enable;
+const announcement = announcementBar?.label || t("header.announcement");
+
+const { position, hideOffcanvas, class: ClassName } = Astro.props;
+---
+
+<TopBarTwo announcement={announcementEnabled ? announcement : null} />
+
+<header
+  class:list={[
+    "bg-light header group/header transform",
+    { sticky: position === "sticky" },
+    { fixed: position === "fixed" },
+    { "has-sticky-behavior": stickyHeader || position === "fixed" },
+    ClassName,
+  ]}>
+  <div class="relative container rounded-b-2xl">
+    <div
+      class="hs-dropdown relative flex flex-wrap items-stretch justify-between [--auto-close:inside] [--gpu-acceleration:false] [--strategy:absolute] lg:justify-center lg:[--strategy:static]">
+      <div
+        class="logo-section after:bg-accent relative z-10 flex transform flex-row-reverse items-center justify-center gap-6 py-4 pe-10 after:pointer-events-none after:absolute after:right-0 after:-z-10 after:h-full after:w-screen after:-skew-x-20 after:select-none lg:flex-row lg:py-2 xl:pe-16">
+        <Logo />
+      </div>
+
+      {/* Navbar For Header */}
+      <Navbar hasActiveBorder={true} />
+
+      {/* Navigation Actions - Search + CTA Button */}
+      {
+        (navigationButton.enable || config.settings.multilingual.enable) && (
+          <div class="hidden gap-3.5 justify-self-end max-lg:ms-auto max-lg:me-4 lg:flex lg:items-center">
+            <a href="/contact/" class="flex items-center gap-2">
+              <Icons icon="MessagesSquare" class="stroke-accent size-8" />
+              <div>
+                <div class="text-sm opacity-80">{t("common.letsChat")}</div>
+                <div
+                  class="font-secondary leading-none font-medium"
+                  set:html={markdownify(contactInfo.phone)}
+                />
+              </div>
+            </a>
+          </div>
+        )
+      }
+
+      {/* Desktop Sidebar Offcanvas Toggle Button */}
+      {
+        headerOffcanvas?.enable && (
+          <NavbarToggler
+            title="Open sidebar content"
+            isOffcanvasToggler={true}
+            class:list={[
+              "ring-primary/25 rounded-full duration-500 ease-out",
+              hideOffcanvas ? "lg:hidden" : "",
+            ]}
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="offcanvas-main"
+            data-hs-overlay="#offcanvas-main"
+            data-hs-overlay-options='{"emulateScrollbarSpace": true}'
+          />
+        )
+      }
+    </div>
+  </div>
+</header>
+
+<div>
+  {/* Desktop Sidebar Offcanvas */}
+  {
+    headerOffcanvas?.enable && (
+      <Offcanvas
+        class={hideOffcanvas ? "lg:hidden" : ""}
+        id="offcanvas-main"
+        direction="right"
+        size="2xl">
+        <HeaderOffcanvasContent offcanvas={"offcanvas-main"} />
+      </Offcanvas>
+    )
+  }
+  <script>
+    import { HSDropdown } from "preline";
+
+    if (
+      [".hs-dropdown", "[data-hs-dropdown]"].some((selector) =>
+        document.querySelector(selector),
+      )
+    ) {
+      HSDropdown?.autoInit();
+    }
+
+    function updateMegaMenuOffset(): void {
+      const header = document.querySelector(".header") as HTMLElement | null;
+      if (!header) return;
+
+      const headerBottom = Math.round(header.getBoundingClientRect().bottom);
+      document.documentElement.style.setProperty(
+        "--header-bottom",
+        `${Math.max(headerBottom, 0)}px`,
+      );
+    }
+
+    function stickyHeader(): void {
+      const header = document.querySelector(
+        ".has-sticky-behavior",
+      ) as HTMLElement | null;
+      if (!header) return;
+
+      let prevScrollPos = window.scrollY;
+      let ticking = false;
+
+      // Initial state
+      if (prevScrollPos > 0) {
+        header.classList.add("scroll-up");
+      }
+      updateMegaMenuOffset();
+
+      const updateHeader = () => {
+        const currentScrollPos = Math.max(0, window.scrollY);
+
+        if (currentScrollPos === 0) {
+          header.classList.remove("scroll-up", "scroll-down");
+        } else {
+          header.classList.add("scroll-up");
+        }
+
+        updateMegaMenuOffset();
+        ticking = false;
+      };
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateHeader);
+            ticking = true;
+          }
+        },
+        { passive: true },
+      );
+      window.addEventListener("resize", updateMegaMenuOffset, {
+        passive: true,
+      });
+    }
+
+    stickyHeader();
+  </script>
+</div>

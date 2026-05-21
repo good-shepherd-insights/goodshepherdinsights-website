@@ -1,0 +1,191 @@
+---
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import { slugifyyy } from "@/lib/utils/textConverter";
+import type { SocialLink } from "@/types";
+import Button from "../Button.astro";
+const t = await useTranslations(Astro.currentLocale as string);
+
+const baseURL = process.env.SITE;
+
+interface BaseProps {
+  class?: string;
+  size?: "sm" | "md" | "lg";
+  list: SocialLink[];
+  linkType?: "share" | "follow" | "share-project"; // Remove the optional type; it's always defined in Props.
+  layout: "classic" | "minimal" | "modern";
+  [key: string]: any;
+}
+
+interface ShareProps extends BaseProps {
+  slug: string;
+  linkType?: "share";
+  title?: string;
+  description?: string;
+  disabled?: string[];
+}
+
+interface FollowProps extends BaseProps {
+  linkType?: "follow";
+}
+
+interface ShareProjectProps extends BaseProps {
+  linkType?: "share-project";
+}
+
+type Props = ShareProps | FollowProps | ShareProjectProps;
+
+// Correctly define Astro.props to match Props
+let {
+  list,
+  size = "md",
+  title,
+  slug,
+  disabled,
+  layout = "modern",
+  linkType = "follow",
+  description,
+  class: className,
+  ...rest
+} = Astro.props as Props; // Ensure Astro.props is typed as Props
+
+slug = slug ? getLocaleUrlCTM(slug, Astro.currentLocale) : "";
+list = linkType === "share" ? list : list.filter((social) => social.url);
+
+const shareLinks: { [key: string]: string } = {
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${slug}`,
+  twitter: `https://twitter.com/intent/tweet/?text=${title || ""}&amp;url=${slug}`,
+  linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${slug}&title=${title || ""}&summary=${slugifyyy(description) || ""}&source=${baseURL}`,
+  pinterest: `https://pinterest.com/pin/create/button/?url=${slug}&media=&description=${slugifyyy(description) || ""}`,
+  mail: `mailto:?subject=${title}&body=${slug || ""}`,
+  link: ``,
+};
+
+if (disabled) {
+  list = list.filter((social) => !disabled.includes(social.label));
+}
+// This component is used in Contact Page, Footer
+---
+
+{
+  list && list[0] && (
+    <ul
+      class:list={["flex flex-wrap items-center gap-3 xl:gap-3", className]}
+      {...rest}>
+      {list.map((social) => (
+        <>
+          <li>
+            {linkType === "share" && (
+              <>
+                {social.label.toLowerCase() === "link" ? (
+                  <Button
+                    tag="button"
+                    variant="outline"
+                    label=""
+                    icon={{
+                      enable: true,
+                      name: "Link",
+                      position: "left",
+                      className: "size-5",
+                    }}
+                    onclick="navigator.clipboard.writeText(window.location.href);"
+                    aria-label={
+                      social.label.charAt(0).toUpperCase() +
+                      social.label.slice(1)
+                    }
+                    class:list={[
+                      "bg-text-light flex items-center justify-center rounded-full p-0! transition-colors",
+                      layout !== "minimal" && {
+                        "size-6": size === "sm",
+                        "size-11.5": size === "md",
+                        "size-16": size === "lg",
+                      },
+                    ]}
+                  />
+                ) : (
+                  <Button
+                    tag="a"
+                    variant="fill"
+                    hoverEffect="creative-fill"
+                    url={
+                      linkType === "share"
+                        ? shareLinks[social.label.toLowerCase()]
+                        : social.url
+                    }
+                    aria-label={`${t("blog.share")} ${
+                      social.label.charAt(0).toUpperCase() +
+                      social.label.slice(1)
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    icon={{
+                      enable: true,
+                      name: social.label,
+                      position: "left",
+                      className: `${social.label.toLowerCase() !== "dribbble" && "stroke-none fill-text-light group-hover:fill-text-dark"}`,
+                    }}
+                    label=""
+                    class:list={[
+                      "group border-border-light/30 hover:border-accent flex size-8 items-center justify-center rounded-full border p-0! text-base text-white shadow-none transition-colors xl:size-10",
+                      "btn-primary effect-color-accent",
+                    ]}
+                  />
+                )}
+              </>
+            )}
+            {linkType === "share-project" && (
+              <Button
+                tag="a"
+                variant="text"
+                url={social.url}
+                aria-label={`${t("blog.follow")} ${
+                  social.label.charAt(0).toUpperCase() + social.label.slice(1)
+                }`}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                icon={{
+                  enable: true,
+                  name:
+                    social.label.charAt(0).toUpperCase() +
+                    social.label.slice(1),
+                  position: "left",
+                  className: `${(social.label.toLowerCase() === "linkedin" || social.label.toLowerCase() === "twitter") && "fill-black"} ${social.label.toLowerCase() === "facebook" && "fill-primary stroke-primary"}`,
+                }}
+                label=""
+                class:list={[
+                  `flex size-6 items-center justify-center rounded-full p-0! transition-colors`,
+                ]}
+              />
+            )}
+            {linkType === "follow" && (
+              <Button
+                tag="a"
+                variant="fill"
+                hoverEffect="creative-fill"
+                url={social.url}
+                aria-label={`${t("blog.follow")} ${
+                  social.label.charAt(0).toUpperCase() + social.label.slice(1)
+                }`}
+                icon={{
+                  enable: true,
+                  name: social.label,
+                  position: "left",
+                  className: `${social.label.toLowerCase() !== "dribbble" && "stroke-none fill-text-light group-hover:fill-text-dark"} ${size === "lg" && "size-6"}`,
+                }}
+                label=""
+                class:list={[
+                  "group border-border-light/30 flex items-center justify-center rounded-full border p-0! text-base text-white shadow-none transition-colors xl:size-10",
+                  "btn-primary effect-color-accent",
+                  {
+                    "size-6": size === "sm",
+                    "size-8": size === "md",
+                    "size-12": size === "lg",
+                  },
+                ]}
+              />
+            )}
+          </li>
+        </>
+      ))}
+    </ul>
+  )
+}

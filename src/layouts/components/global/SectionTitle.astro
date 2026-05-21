@@ -1,0 +1,29 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  title: string;
+  variant?: "dark" | "light";
+  className?: string;
+  dataAos?: string;
+}
+
+const {
+  title,
+  variant = "light",
+  className = "",
+  dataAos = "reveal-anim-left",
+} = Astro.props;
+---
+
+<h2
+  data-aos={dataAos}
+  data-aos-offset="0"
+  data-aos-duration="600"
+  class:list={[
+    variant === "dark" ? "text-text-light" : "text-text-dark",
+    "text-h2-sm md:text-h2",
+    className,
+  ]}
+  set:html={markdownify(title)}
+/>

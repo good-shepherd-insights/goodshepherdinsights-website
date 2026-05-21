@@ -1,0 +1,80 @@
+---
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+interface Props {
+  image?: string;
+  direction?: "left" | "right";
+  map?: {
+    enable: boolean;
+    title: string;
+    url: string;
+  };
+}
+
+const { image, map, direction = "left" } = Astro.props;
+const isRight = direction === "right";
+
+const isMapEnabled = map?.enable && map?.url;
+---
+
+<section>
+  <div class="bg-accent relative py-16 md:py-20 lg:mt-28 lg:py-28">
+    <div class="container">
+      <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-36">
+        {
+          (image || isMapEnabled) && (
+            <div
+              data-aos="reveal-anim-left"
+              data-aos-delay="300"
+              data-aos-offset="0"
+              class:list={[
+                "-top-28 h-full w-full lg:absolute",
+                "lg:w-[calc(50%-8rem)] xl:w-[calc(50%-13rem)]",
+                isRight ? "lg:inset-e-0" : "lg:inset-s-0",
+              ]}>
+              {isMapEnabled ? (
+                <div class="bg-body h-full min-h-100 w-full">
+                  <span class="translate-centered text-h4-sm md:text-h4 absolute tracking-wider">
+                    Loading Map....
+                  </span>
+                  <iframe
+                    class="relative z-10 h-full min-h-100 w-full"
+                    src={map?.url}
+                    title={map?.title}
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              ) : (
+                image && (
+                  <OptimizedImage
+                    src={image}
+                    alt={"Highlighted Info Block"}
+                    width={800}
+                    height={800}
+                    widths={[400, 600, 800]}
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    quality={60}
+                    class="h-full w-full object-cover"
+                  />
+                )
+              )}
+            </div>
+          )
+        }
+
+        <div
+          class:list={[
+            "space-y-12 lg:col-span-3",
+            isRight ? "lg:col-start-1" : "lg:col-start-3",
+          ]}>
+          <slot />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,57 @@
+---
+import type { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { brandLogosSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+
+// Type
+type SectionType = z.infer<typeof brandLogosSchema>;
+type Props = {
+  content?: SectionType;
+  noSectionPadding?: boolean;
+};
+
+// Default content fetch
+let defaultContent = (
+  await getEntryCTM("sections", "brand-logos", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, list } = actualContent ?? {};
+
+if (!enable) return;
+---
+
+<section class="bg-light overflow-hidden">
+  {
+    list && (
+      <div class="container">
+        {list && list.length > 0 && (
+          <div
+            class="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6 xl:gap-7.5"
+            data-aos="fade-up-sm"
+            data-aos-duration="700"
+            data-aos-delay="100">
+            {list.map((logo) => (
+              <OptimizedImage
+                src={logo.src}
+                alt={logo.alt}
+                width={256}
+                height={76}
+                widths={[128, 192, 256]}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                class="border-border-dark/5 h-19 w-auto rounded-sm border object-contain"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+</section>

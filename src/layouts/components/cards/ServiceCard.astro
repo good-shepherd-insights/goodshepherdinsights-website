@@ -1,0 +1,135 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import Icons from "@/helpers/Icons.astro";
+import type { CollectionEntry } from "astro:content";
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+interface Props {
+  content: CollectionEntry<"services">;
+  options?: CollectionEntry<"services">["data"]["options"];
+  index?: number;
+  class?: string;
+  tag?: string;
+}
+
+let {
+  content,
+  options,
+  index = 0,
+  class: className,
+  tag = "h3",
+  ...rest
+} = Astro.props;
+
+const layout = options?.layout || "horizontal";
+
+let { title, description, image, image3, imagePosition } = content.data || {};
+
+// Resolve URL from content id/collection
+let slug =
+  content.id && content.collection
+    ? getEntrySlugCTM(content, Astro.currentLocale)
+    : "#";
+const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
+---
+
+{
+  /* ─── LAYOUT: horizontal ─── Used by OurServicesSection */
+  layout === "horizontal" ? (
+    <a
+      href={slug}
+      class:list={[
+        "group flex flex-col gap-3 py-4 transition-colors md:gap-2 lg:py-4 xl:gap-4 xl:py-5",
+        className,
+      ]}
+      data-aos="reveal-anim-left"
+      data-aos-duration="700"
+      data-aos-delay={index * 80}
+      {...rest}>
+      {/* Title */}
+      <HeadingTag
+        class="text-h4-sm lg:text-h4 transition-colors md:text-2xl"
+        set:html={markdownify(title)}
+      />
+
+      {/* Description */}
+      <div class="flex items-center gap-2">
+        {description && (
+          <p
+            class="text-text-dark/80 w-full lg:text-lg"
+            set:html={markdownify(description)}
+          />
+        )}
+
+        {/* Arrow button */}
+        <div class="flex grow justify-end">
+          <span class="bg-primary group-hover:bg-accent group-hover:text-text-dark text-text-light flex size-12 shrink-0 items-center justify-center transition-all">
+            <Icons icon="ArrowUpRight" class="size-6 max-md:rotate-45" />
+          </span>
+        </div>
+      </div>
+    </a>
+  ) : layout === "listImage" ? (
+    /* ─── LAYOUT: listImage ─── Used by OurServicesSectionTwo */
+    <div
+      class="group relative cursor-pointer py-2 transition-colors lg:py-5"
+      data-aos="fade-up"
+      data-aos-delay={index * 80}
+      data-aos-duration="600"
+      {...rest}>
+      <div class="flex flex-col gap-2 md:items-start xl:gap-4">
+        {/* Title & Desc Container */}
+        <div class="relative z-10 flex flex-1 flex-col justify-center">
+          <HeadingTag
+            class="text-h4-sm lg:text-h4 group-hover:text-accent flex items-center gap-4 transition-colors md:text-2xl"
+            set:html={markdownify(
+              `<span>${String(index + 1).padStart(2, "0")}/</span><span>${title}</span>`,
+            )}
+          />
+        </div>
+
+        {/* Arrow */}
+        <div class="flex w-full justify-between gap-2">
+          {description && (
+            <p
+              class="text-text-dark/80 w-full max-w-md lg:text-lg"
+              set:html={markdownify(description)}
+            />
+          )}
+          <a
+            href={slug}
+            aria-label={`${t("button.readMore")} ${title}`}
+            class="bg-primary group-hover:bg-accent group-hover:text-text-dark text-text-light flex size-12 shrink-0 items-center justify-center transition-all">
+            <Icons icon="ArrowUpRight" class="size-6 max-md:rotate-45" />
+          </a>
+        </div>
+      </div>
+
+      {(image || image3) && (
+        <div
+          class:list={[
+            "pointer-events-none absolute right-28 z-20 hidden w-80 transform overflow-hidden shadow-2xl transition-all duration-600 lg:block xl:right-41 xl:h-115.75 xl:w-97.5",
+            {
+              "top-8.5": imagePosition === "top" || !imagePosition,
+              "bottom-8.5": imagePosition === "bottom",
+              "top-1/2 -translate-y-1/2": imagePosition === "center",
+            },
+            index === 0
+              ? "scale-100 opacity-100 group-hover:scale-100! group-hover:opacity-100! group-hover/list:scale-95 group-hover/list:opacity-0"
+              : "scale-95 opacity-0 delay-75 group-hover:scale-100 group-hover:opacity-100",
+          ]}>
+          <OptimizedImage
+            src={image || image3 || ""}
+            alt={title}
+            width={376}
+            height={410}
+            class="h-full w-full object-cover"
+          />
+        </div>
+      )}
+    </div>
+  ) : null
+}

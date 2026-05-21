@@ -1,0 +1,88 @@
+---
+/**
+ * Example Usage
+
+  <Testimonial
+    customerImage="/images/customers/avatar/customer-1.jpg"
+    customerName="Sarah Jones"
+    customerRole="CEO, Founder"
+    rating={5}
+  >
+    Our partnership with Taxo demonstrates the power of a well-executed customer
+    engagement strategy. By integrating advanced technologies and data-driven
+    insights, we helped them achieve a more personalized, consistent, and
+    rewarding customer experience. At Taxo, we are committed to helping
+    businesses like Oloyon revolutionize their customer engagement and drive
+    long-term success.
+  </Testimonial>
+
+ */
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Rating from "@/layouts/components/widgets/Rating.astro";
+
+interface Props {
+  class?: string;
+  customerImage?: string;
+  customerName?: string;
+  customerRole?: string;
+  rating?: number;
+}
+
+const {
+  class: className,
+  customerImage,
+  customerName,
+  customerRole,
+  rating = 5,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "bg-body not-prose flex flex-col items-center justify-between gap-4 p-6 md:flex-row lg:gap-6 xl:p-9",
+    className,
+  ]}>
+  <div class="flex items-center gap-4">
+    <OptimizedImage
+      src={customerImage ?? "/images/customers/avatar/devid-marko.png"}
+      alt={customerName ?? "Customer"}
+      width={122}
+      height={224}
+      class="h-56 min-w-30.5! object-cover"
+    />
+  </div>
+  <div>
+    <div class="flex justify-center md:justify-start">
+      <OptimizedImage
+        src="/images/icons/svg/quote.svg"
+        width={46}
+        height={46}
+        class="text-primary size-11.5 h-auto"
+      />
+    </div>
+    <div class="my-6 xl:my-6">
+      <div
+        class="text-text-dark lg:text-lg xl:text-xl xl:leading-7.5 xl:font-medium">
+        <slot />
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <div class="flex flex-col gap-2.5">
+        {
+          customerName && (
+            <div class="text-text-dark font-secondary text-xl leading-none font-bold">
+              {customerName}
+            </div>
+          )
+        }
+        {
+          customerRole && (
+            <p class="text-primary leading-none font-medium">{customerRole}</p>
+          )
+        }
+      </div>
+
+      <Rating content={{ rating }} />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,194 @@
+---
+import TOC from "./widgets/TableOfContents.astro";
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import config from ".astro/config.generated.json";
+import { useTranslations } from "@/lib/utils/i18nUtils";
+import OptimizedImage from "./utilities/OptimizedImage.astro";
+import PaginationForSingle from "./widgets/PaginationForSingle.astro";
+import { render } from "astro:content";
+
+let {
+  collection,
+  data: { title, images, information },
+}: {
+  render: any;
+  id: string;
+  collection: string;
+  data: {
+    title: string;
+    images: string[];
+    categories: string[];
+    information: { label: string; value: string }[];
+  };
+} = Astro.props.content;
+
+const t = await useTranslations(Astro.currentLocale as string);
+const tocHeadings = Astro.props.content.rendered?.metadata.headings;
+const { Content } = await render(Astro.props.content);
+
+const tocEnabled = !!(
+  config.settings.markup.tableOfContents?.enable && tocHeadings?.length
+);
+
+if (Array.isArray(information)) {
+  information = information.map((item) => {
+    const newItem = { ...item };
+    switch (item.value) {
+      case "date":
+        if (Astro.props.content.data.date) {
+          newItem.value = new Date(
+            Astro.props.content.data.date,
+          ).toLocaleDateString(Astro.currentLocale, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+        }
+        break;
+      case "categories":
+        if (Astro.props.content.data.categories) {
+          newItem.value = Astro.props.content.data.categories.join(", ");
+        }
+        break;
+    }
+    return newItem;
+  });
+}
+---
+
+<section class="relative overflow-hidden pt-8 lg:pt-12">
+  <div
+    class="bg-light absolute top-118 bottom-0 left-0 z-[-1] h-full w-full md:top-134 lg:top-114">
+  </div>
+  <div class="container">
+    <div class="mx-auto w-full space-y-6 md:space-y-10">
+      {
+        information && Array.isArray(information) && (
+          <ul
+            class:list={[
+              "mx-auto w-full max-w-5xl justify-center",
+              "border-border-dark/30 grid grid-cols-2 border-t border-l",
+              "lg:flex lg:flex-nowrap lg:border-0",
+            ]}>
+            {information.map((item) => (
+              <li
+                class:list={[
+                  "px-4 py-4 lg:px-10 xl:px-16",
+                  "border-border-dark/30 border-r border-b lg:border-0",
+                  "lg:after:bg-border-dark/30 lg:relative lg:after:absolute lg:after:top-1/2 lg:after:right-0 lg:after:h-14 lg:after:w-px lg:after:-translate-y-1/2 lg:after:content-['']",
+                  "last:lg:after:hidden",
+                ]}>
+                {item.label && (
+                  <div
+                    class="text-h5-sm sm:text-h5-sm mb-1"
+                    set:html={markdownify(item.label)}
+                  />
+                )}
+                <div
+                  class="opacity-90"
+                  set:html={markdownify(item.value, true)}
+                />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        Array.isArray(images) && images.length > 1 && (
+          <div
+            id="case-studies-slider"
+            class="swiper text-text-light relative overflow-hidden lg:mt-20"
+            aria-label="Case studies image slider">
+            <div class="swiper-wrapper box-content flex w-full">
+              {images.map((item: string, index: number) => (
+                <div class="swiper-slide h-auto! w-full shrink-0">
+                  <OptimizedImage
+                    src={item}
+                    alt={`${title} image ${index + 1}`}
+                    class="h-112.5 w-full object-cover md:h-137.5"
+                  />
+                </div>
+              ))}
+            </div>
+            {/* <!-- Left Arrow --> */}
+            <button
+              class="case-studies-slider-btn-prev hover:bg-accent hover:text-dark bg-primary absolute inset-s-0 top-1/2 z-10 flex min-h-16 min-w-16 -translate-y-1/2 items-center justify-center transition duration-300 [--swiper-navigation-size:1.25rem]"
+              aria-label="Previous slide">
+              <Icons icon="ArrowLeft" class="size-7" />
+            </button>
+
+            {/* <!-- Right Arrow --> */}
+            <button
+              class="case-studies-slider-btn-next hover:bg-accent hover:text-dark bg-primary absolute inset-e-0 top-1/2 z-10 flex min-h-16 min-w-16 -translate-y-1/2 items-center justify-center transition duration-300 [--swiper-navigation-size:1.25rem]"
+              aria-label="Next slide">
+              <Icons icon="ArrowRight" class="size-7" />
+            </button>
+          </div>
+        )
+      }
+
+      <div class="grid max-w-full max-xl:space-y-8">
+        <div class="space-y-10">
+          {
+            tocEnabled && tocHeadings && (
+              <TOC toc={tocHeadings} marker={false} />
+            )
+          }
+          {
+            Content && (
+              <div class="prose-styles has-video-modal [&_.image-list-component]:xl:-ms-31.5 [&_.image-list-component]:xl:w-6xl">
+                <Content />
+              </div>
+            )
+          }
+        </div>
+      </div>
+      <div
+        class="border-border-dark/20 mt-10 flex justify-between border-y py-6">
+        <PaginationForSingle
+          prevBtnText={t("common.paginationCaseStudiesPrev")}
+          nextBtnText={t("common.paginationCaseStudiesNext")}
+          currentPage={Astro.props.content}
+          collection={collection}
+        />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (typeof window !== "undefined") {
+      window.addEventListener("load", async function () {
+        const { Swiper } = await import("swiper");
+        const { Autoplay, Pagination, Navigation } =
+          await import("swiper/modules");
+
+        // Initialize banner Swiper
+        const caseStudiesSlider = document.querySelector(
+          "#case-studies-slider",
+        ) as HTMLElement;
+
+        if (caseStudiesSlider) {
+          // Initialize content Swiper with navigation
+          new Swiper(caseStudiesSlider, {
+            modules: [Autoplay, Pagination, Navigation],
+            navigation: {
+              nextEl: ".case-studies-slider-btn-next",
+              prevEl: ".case-studies-slider-btn-prev",
+            },
+            speed: 800,
+            spaceBetween: 40,
+            slidesPerView: 1,
+            centeredSlides: true,
+            loopAdditionalSlides: 2,
+            autoplay: {
+              delay: 4000,
+              disableOnInteraction: true,
+            },
+            loop: true,
+          });
+        }
+      });
+    }
+  </script>
+</section>

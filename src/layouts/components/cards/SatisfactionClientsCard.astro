@@ -1,0 +1,102 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Icons from "@/helpers/Icons.astro";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import Button from "../Button.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  classText?: string;
+  avatars?: string[];
+  avatarAlt?: string;
+  count?: string;
+  label?: string;
+  class?: string;
+  helpDropdown?: {
+    enable?: boolean;
+    label?: string;
+    items?: {
+      label: string;
+      url: string;
+    }[];
+  };
+}
+
+const {
+  classText = "primary",
+  avatars,
+  avatarAlt,
+  count,
+  label,
+  helpDropdown,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "bg-body font-secondary flex w-full flex-col items-center gap-5 p-5 py-2 lg:p-9",
+    className,
+  ]}
+  {...rest}>
+  <div class="flex w-full items-center gap-4">
+    <div class="flex items-center">
+      {
+        avatars?.map((avatar: string, i: number) => (
+          <div
+            class:list={[
+              "size-12 overflow-hidden rounded-full border-5 border-white shadow-lg md:size-16 lg:size-20",
+              { "-ml-4 md:-ml-5 lg:-ml-6": i > 0 },
+            ]}>
+            <OptimizedImage
+              src={avatar}
+              alt={avatarAlt}
+              width={120}
+              height={120}
+              class="size-24 object-cover"
+            />
+          </div>
+        ))
+      }
+    </div>
+    <div
+      class:list={[
+        "text-dark flex w-full text-sm leading-tight font-bold md:text-base xl:text-xl",
+        classText,
+      ]}>
+      <span class="w-full" set:html={label} />
+    </div>
+  </div>
+  {
+    helpDropdown?.enable && (
+      <div class="w-full">
+        <div class="hs-dropdown relative w-full [--auto-close:inside] [--strategy:absolute]">
+          <button
+            type="button"
+            class="hs-dropdown-toggle bg-accent text-dark flex w-full items-center justify-between px-4 py-4 text-base font-bold transition-colors duration-300 hover:brightness-105 max-sm:py-2 md:px-6">
+            {helpDropdown.label && (
+              <span set:html={markdownify(helpDropdown.label)} />
+            )}
+            <Icons
+              icon="ChevronDown"
+              class="hs-dropdown-open:rotate-180 h-5 w-5 transition-transform duration-300"
+            />
+          </button>
+          <ul class="hs-dropdown-menu hs-dropdown-open:opacity-100 z-50 mt-1 hidden w-full bg-white py-2 opacity-0 shadow-xl">
+            {helpDropdown.items?.map((item) => (
+              <li>
+                <Button
+                  variant="text"
+                  url={getLocaleUrlCTM(item.url, Astro.currentLocale)}
+                  label={item.label}
+                  class="text-dark hover:bg-body block border-none px-6 py-2.5 text-sm transition-colors duration-200"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+</div>

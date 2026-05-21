@@ -1,0 +1,106 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { ctaBarSectionSchema } from "@/sections.schema";
+import Button from "../Button.astro";
+import config from ".astro/config.generated.json";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const { contactInfo } = config.settings;
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof ctaBarSectionSchema>>;
+type Props = {
+  content?: SectionType;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "cta-bar-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, title, subTitle, button } = actualContent ?? {};
+
+if (!enable) return;
+---
+
+<section class="container">
+  <div class="relative py-4 max-md:my-12 max-sm:px-4">
+    <div
+      class="bg-primary text-text-light absolute right-0 -bottom-24 flex w-full origin-top-left items-center justify-between rounded-lg px-4 py-4 sm:px-6 md:-bottom-12 lg:w-[calc(100%-2rem)] lg:-skew-x-25 lg:px-16">
+      <div
+        class="flex flex-col justify-between gap-2 lg:skew-x-25 lg:flex-row lg:items-center lg:justify-around lg:gap-8">
+        {/* Title (left) */}
+        {
+          title && (
+            <h2
+              class="text-h5 xl:text-h4 text-sm text-inherit md:flex-1"
+              set:html={markdownify(title)}
+            />
+          )
+        }
+
+        {/* Button (center) */}
+        {
+          button && (
+            <div class="hidden justify-center lg:flex">
+              <Button
+                tag="a"
+                variant="fill"
+                {...button}
+                aria-label={`Call ${contactInfo.phone}`}
+                icon={{
+                  enable: true,
+                  name: "Phone",
+                  position: "right",
+                  className: "size-5 lg:size-6 fill-dark",
+                }}
+                class="btn-accent effect-color-dark flex size-12 items-center justify-center rounded-full p-2 lg:size-14"
+              />
+            </div>
+          )
+        }
+
+        {/* Phone (right) */}
+        {
+          subTitle && (
+            <div
+              class="lg:text-h6 xl:text-h4 sm:text-h6-sm prose-strong:text-text-light prose-strong:font-secondary prose-strong:font-bold flex items-center gap-2 text-sm font-normal whitespace-nowrap text-inherit sm:text-base lg:flex-1 lg:justify-end"
+              set:html={markdownify(
+                subTitle + `<strong>` + contactInfo.phone + `</strong>`,
+              )}
+            />
+          )
+        }
+      </div>
+      {/* Button (center) */}
+      {
+        button && (
+          <div class="flex justify-center lg:hidden lg:flex-none">
+            <Button
+              tag="a"
+              variant="fill"
+              {...button}
+              aria-label={`Call ${contactInfo.phone}`}
+              icon={{
+                enable: true,
+                name: "Phone",
+                position: "right",
+                className: "size-5 lg:size-6 fill-dark",
+              }}
+              class="btn-accent effect-color-dark flex size-10 items-center justify-center rounded-full p-1 sm:size-12 lg:size-14"
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

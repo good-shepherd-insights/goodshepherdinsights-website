@@ -1,0 +1,93 @@
+---
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
+import config from ".astro/config.generated.json";
+import { markdownify } from "@/lib/utils/textConverter";
+import { splitProtectedText } from "@/lib/utils/splitProtectedText";
+import SubscriptionForm from "@/components/widgets/SubscriptionForm.astro";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import type { NavigationLink } from "@/types";
+import Button from "../Button.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+const { footerSpaceTop = true } = Astro.props;
+const t = await useTranslations(Astro.currentLocale as string);
+let footerMenus = t("footerSecondary") as NavigationLink[];
+
+let {
+  copyright,
+  footerDescription,
+  subscription,
+  contactInfo: { email, phone },
+} = config.settings;
+
+footerDescription = footerDescription || t("footer.description");
+
+const copyrightText = copyright.text || t("footer.copyright");
+const copyrightParts = splitProtectedText(copyrightText);
+---
+
+<footer class:list={["section-spacing relative", !footerSpaceTop && "mt-0"]}>
+  <div class="pointer-events-none absolute inset-0 bottom-0 z-0">
+    <OptimizedImage
+      src={"/images/decorative/pattern/pattern-3.png"}
+      alt={"pattern"}
+      width={1320}
+      height={420}
+      class="h-full w-full object-cover object-center"
+    />
+  </div>
+  <div class="text-text-light relative container pt-8">
+    <div
+      class="has-footer-padding border-border-light/10 flex flex-col gap-8 border-b py-8 md:gap-10 md:py-10 xl:gap-14 xl:py-14">
+      <div class="flex flex-col gap-8 md:gap-10 xl:gap-14">
+        <SubscriptionForm {...subscription} />
+      </div>
+
+      <div
+        class="flex flex-col justify-between gap-4 max-md:items-center md:flex-row">
+        <div class="flex items-center gap-4 max-sm:flex-col lg:gap-8">
+          <div class="flex items-center gap-4">
+            <div set:html={t("common.callUs") + ":"} />
+            {
+              phone && (
+                <p class="text-lg font-bold" set:html={markdownify(phone)} />
+              )
+            }
+          </div>
+          <div class="bg-border-light/10 h-full w-px max-sm:hidden"></div>
+          {email && <p set:html={markdownify(email)} />}
+        </div>
+
+        <ul
+          class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm font-bold uppercase">
+          {
+            footerMenus?.map((item, i, arr) => (
+              <li class="flex items-center gap-4">
+                <Button
+                  tag="a"
+                  variant="text"
+                  label={item.name}
+                  url={getLocaleUrlCTM(item.url as string, Astro.currentLocale)}
+                  class="hover:text-accent border-none text-base font-bold text-inherit capitalize transition-colors"
+                />
+                {i !== arr.length - 1 && <span class="select-none">/</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center justify-center py-8">
+      {
+        config.settings.copyright?.enable && (
+          <ul class="has-list has-list-slash prose-a:text-inherit flex flex-wrap gap-y-2">
+            {copyrightParts.map((value) => (
+              <li class="prose-a:text-text-light prose-a:hover:text-accent">
+                <span set:html={markdownify(value)} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</footer>

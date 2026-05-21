@@ -1,0 +1,70 @@
+---
+import type { z } from "astro/zod";
+import Icons from "@/helpers/Icons.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { pricingSectionSchema } from "@/sections.schema";
+import Button from "../Button.astro";
+
+type PricingCardType = NonNullable<
+  z.infer<typeof pricingSectionSchema>
+>["list"][0];
+
+type Props = {
+  content: PricingCardType;
+  class?: string;
+};
+
+const {
+  class: className,
+  content: { enable, name, price, description, features, button },
+  ...rest
+} = Astro.props;
+---
+
+{
+  enable && (
+    <div
+      class:list={[
+        "group bg-light hover:bg-accent flex flex-col justify-between space-y-6 p-8 pb-0 text-center transition-all duration-300 ease-in-out max-sm:p-4",
+        className,
+      ]}
+      {...rest}>
+      <div>
+        <div class="space-y-2">
+          {name && (
+            <h3 class="text-h5 md:text-h4" set:html={markdownify(name)} />
+          )}
+          {description && (
+            <p class="text-lg" set:html={markdownify(description)} />
+          )}
+        </div>
+        {price && (
+          <div class="sm:text-display-5 text-display-6 md:text-display-5 xl:text-display-4 font-secondary leading-normal font-bold">
+            {price.prependValue}
+            {price.value}
+            <span class="ml-2 text-lg lg:ml-3">{price.appendValue}</span>
+          </div>
+        )}
+      </div>
+      <div class="bg-primary text-text-light flex flex-col items-center gap-10 py-6 lg:py-10">
+        {features && (
+          <ul class="space-y-2">
+            {features.map((feature) => (
+              <li class="flex items-center gap-2">
+                <Icons icon="SquareCheckBig" class="text-accent text-xl" />
+                <span set:html={markdownify(feature)} />
+              </li>
+            ))}
+          </ul>
+        )}
+        {button?.enable && (
+          <Button
+            class="btn-light effect-color-accent py-3.5 text-center"
+            hoverEffect="creative-fill"
+            {...button}
+          />
+        )}
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,137 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Icons from "@/helpers/Icons.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import { sortByDate } from "@/lib/utils/sortFunctions";
+import dateFormat from "@/lib/utils/dateFormat";
+import { humanize, markdownify, slugifyyy } from "@/lib/utils/textConverter";
+import { getEntrySlugCTM } from "@/lib/utils/i18nUtils.ts";
+
+// Fetch blog posts for the slider (only on list page)
+let sliderPosts: CollectionEntry<"blog">[] = [];
+const allPosts = await getCollectionCTM(
+  config.settings.blogFolder as "blog",
+  Astro.currentLocale,
+);
+sliderPosts = sortByDate(allPosts).slice(0, 5);
+if (sliderPosts.length < 1) return null;
+---
+
+<section class:list={["relative"]}>
+  <div
+    class="bg-light absolute top-76 bottom-0 left-0 z-[-1] h-full w-full md:top-100">
+  </div>
+  <div class="relative container">
+    <div
+      id="blog-hero-slider"
+      class="swiper overflow-hidden"
+      aria-label="Blog posts slider">
+      <div class="swiper-wrapper box-content flex w-full">
+        {
+          sliderPosts.map((post, i) => {
+            const { title, image, date, categories, metaDescription } =
+              post.data;
+            const postSlug = getEntrySlugCTM(post, Astro.currentLocale);
+            const categoriesArray = categories?.map((cat: string) => ({
+              name: cat,
+              slug: slugifyyy(cat),
+            }));
+
+            return (
+              <div class="swiper-slide h-auto! w-full shrink-0">
+                <a href={postSlug} class="group relative block">
+                  {image && (
+                    <OptimizedImage
+                      src={image}
+                      alt={title ?? ""}
+                      class="h-112.5 w-full object-cover md:h-137.5"
+                      width={1200}
+                      height={550}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      fetchpriority={i === 0 ? "high" : "auto"}
+                    />
+                  )}
+                  <div class="absolute inset-0 bg-black/40" />
+
+                  <div class="bg-light absolute bottom-0 left-1/2 w-full max-w-xl -translate-x-1/2 rounded-t-lg px-8 py-6 text-center shadow-lg md:px-10 md:py-8">
+                    <div class="text-dark/60 mb-3 flex items-center justify-center gap-3 text-sm">
+                      {categoriesArray && categoriesArray.length > 0 && (
+                        <span
+                          class="font-medium capitalize"
+                          set:html={humanize(categoriesArray[0].name)}
+                        />
+                      )}
+                      {categoriesArray && categoriesArray.length > 0 && (
+                        <span class="bg-dark/30 inline-block h-3 w-px" />
+                      )}
+                      {date && <span>{dateFormat(date, "dd MMMM yyyy")}</span>}
+                    </div>
+                    {title && (
+                      <div
+                        class="text-dark text-h5 sm:text-h4-sm mb-3 leading-snug"
+                        set:html={markdownify(title)}
+                      />
+                    )}
+                    {metaDescription && (
+                      <p
+                        class="line-clamp-2 leading-relaxed opacity-90"
+                        set:html={markdownify(metaDescription)}
+                      />
+                    )}
+                  </div>
+                </a>
+              </div>
+            );
+          })
+        }
+      </div>
+
+      {/* Left Arrow */}
+      <button
+        class="blog-slider-btn-prev hover:bg-accent hover:text-dark bg-primary text-text-light absolute inset-s-0 top-1/2 z-10 flex min-h-16 min-w-16 -translate-y-1/2 items-center justify-center transition duration-300 [--swiper-navigation-size:1.25rem]"
+        aria-label="Previous slide">
+        <Icons icon="ArrowLeft" class="size-7" />
+      </button>
+
+      {/* Right Arrow */}
+      <button
+        class="blog-slider-btn-next hover:bg-accent text-text-light hover:text-dark bg-primary absolute inset-e-0 top-1/2 z-10 flex min-h-16 min-w-16 -translate-y-1/2 items-center justify-center transition duration-300 [--swiper-navigation-size:1.25rem]"
+        aria-label="Next slide">
+        <Icons icon="ArrowRight" class="size-7" />
+      </button>
+    </div>
+  </div>
+
+  <script>
+    if (typeof window !== "undefined") {
+      window.addEventListener("load", async function () {
+        const { Swiper } = await import("swiper");
+        const { Autoplay, Navigation } = await import("swiper/modules");
+
+        const blogSlider = document.querySelector(
+          "#blog-hero-slider",
+        ) as HTMLElement;
+
+        if (blogSlider) {
+          new Swiper(blogSlider, {
+            modules: [Autoplay, Navigation],
+            navigation: {
+              nextEl: ".blog-slider-btn-next",
+              prevEl: ".blog-slider-btn-prev",
+            },
+            speed: 800,
+            spaceBetween: 0,
+            slidesPerView: 1,
+            autoplay: {
+              delay: 5000,
+              disableOnInteraction: true,
+            },
+            loop: true,
+          });
+        }
+      });
+    }
+  </script>
+</section>

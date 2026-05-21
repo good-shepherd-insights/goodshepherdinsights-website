@@ -1,0 +1,289 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import type { NavigationLink } from "@/types";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import Button from "@/components/Button.astro";
+import Icons from "@/helpers/Icons.astro";
+import { isActiveUrl } from "@/lib/utils/navigationActive";
+import type { IconName as SupportedIconName } from "@/lib/iconNames";
+
+const menu = Astro.props.menu as NavigationLink;
+const pathname = Astro.url.pathname;
+const visibleGroups =
+  menu.menus
+    ?.filter((group) => group.enable !== false)
+    .map((group) => ({
+      ...group,
+      children: group.children?.filter((child) => child.enable !== false) || [],
+    }))
+    .filter((group) => group.children.length > 0) || [];
+const ctaItems = menu.cta?.items?.filter(Boolean) || [];
+const hasCtaContent = Boolean(
+  menu.cta?.enable &&
+  (menu.cta.image ||
+    menu.cta.eyebrow ||
+    menu.cta.title ||
+    menu.cta.description ||
+    ctaItems.length > 0 ||
+    menu.cta.button?.enable),
+);
+const hasGroups = visibleGroups.length > 0;
+if (!hasGroups && !hasCtaContent) return;
+
+const columnCountClass =
+  visibleGroups.length >= 4
+    ? "lg:grid-cols-2 xl:grid-cols-4"
+    : visibleGroups.length === 3
+      ? "lg:grid-cols-2 xl:grid-cols-3"
+      : visibleGroups.length === 2
+        ? "lg:grid-cols-2"
+        : "grid-cols-1";
+---
+
+<div
+  class:list={[
+    "hs-dropdown-menu mega-menu hs-dropdown-open:pointer-events-auto hs-dropdown-open:opacity-100 border-border-dark/10 hs-dropdown-open:mt-0! pointer-events-none top-0 mt-4 hidden max-h-[80vh] overflow-auto overflow-x-hidden rounded-2xl border bg-white opacity-0 transition-[opacity,margin] max-lg:static! max-lg:mt-1 max-lg:max-h-none max-lg:w-full max-lg:transform-none! max-lg:overflow-visible max-lg:rounded-sm max-lg:border-0 max-lg:bg-transparent max-lg:shadow-none lg:fixed lg:top-(--header-bottom,88px) lg:right-0 lg:left-0 lg:mt-2 lg:w-screen lg:max-w-none lg:rounded-none lg:border-0 lg:border-t",
+  ]}>
+  <div class="mx-auto w-full max-lg:ps-0 lg:container">
+    <div
+      class:list={[
+        "bg-white",
+        hasGroups &&
+          hasCtaContent &&
+          "lg:grid lg:grid-cols-[minmax(0,1fr)_340px]",
+        !hasGroups && hasCtaContent && "py-3 md:py-4 lg:py-5",
+      ]}>
+      {
+        hasGroups && (
+          <div
+            class:list={[
+              "grid gap-0 py-3 md:py-4 lg:py-5",
+              columnCountClass,
+              !hasCtaContent && "w-full",
+            ]}>
+            {visibleGroups.map((group) => (
+              <section class="border-border-dark/8 flex h-full flex-col border-s px-2 py-2 md:px-3">
+                {(group.name || group.description) && (
+                  <div class="mb-5 space-y-2 px-2 pb-1">
+                    {group.name && (
+                      <div
+                        class="text-text-dark text-[11px] font-medium tracking-[0.2em] uppercase"
+                        set:html={group.name}
+                      />
+                    )}
+                    {group.description && (
+                      <p
+                        class="text-text-dark/60 max-w-[32ch] text-sm/relaxed"
+                        set:html={group.description}
+                      />
+                    )}
+                  </div>
+                )}
+
+                <ul class="space-y-1">
+                  {group.children?.map((child) => (
+                    <li role="none">
+                      <a
+                        role="menuitem"
+                        {...{
+                          rel: child.url?.startsWith("http")
+                            ? child.rel || "noopener noreferrer"
+                            : child.rel || undefined,
+                          target: child.url?.startsWith("http")
+                            ? child.target || "_blank"
+                            : child.target || undefined,
+                        }}
+                        target={
+                          child.url?.startsWith("http") ? "_blank" : undefined
+                        }
+                        href={getLocaleUrlCTM(
+                          child.url || Astro.url.origin,
+                          Astro.currentLocale,
+                        )}
+                        class:list={[
+                          "mega-menu-link group/item flex items-start gap-3 rounded-lg border border-transparent px-3 py-3 text-inherit transition-all duration-200 hover:border-slate-200/80 hover:bg-white",
+                          {
+                            active: isActiveUrl(
+                              child.url,
+                              pathname,
+                              Astro.currentLocale,
+                            ),
+                          },
+                        ]}>
+                        {child.icon && (
+                          <span class="text-text-dark group-hover/item:text-primary inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 transition-all duration-200 group-hover/item:border-slate-300 group-hover/item:bg-white">
+                            <Icons
+                              icon={child.icon as SupportedIconName}
+                              class="size-4"
+                            />
+                          </span>
+                        )}
+
+                        <span class="min-w-0 flex-1 space-y-1">
+                          {child.name && (
+                            <span class="flex items-center gap-2 text-[15px] leading-snug font-medium tracking-normal text-slate-950">
+                              <span set:html={child.name} />
+                              {child.badge?.enable &&
+                                (child.badge.type === "dot" ? (
+                                  <sup
+                                    class:list={[
+                                      "badge badge-dot static ms-1 inline-block",
+                                      child.badge.color &&
+                                        `badge-${child.badge.color}`,
+                                    ]}
+                                  />
+                                ) : (
+                                  <span
+                                    class:list={[
+                                      "badge text-[11px]",
+                                      child.badge.color &&
+                                        `badge-${child.badge.color}`,
+                                    ]}>
+                                    {child.badge.label}
+                                  </span>
+                                ))}
+                            </span>
+                          )}
+
+                          {child.description && (
+                            <p
+                              class="text-text-dark/60 text-sm/relaxed"
+                              set:html={child.description}
+                            />
+                          )}
+                        </span>
+
+                        <Icons
+                          icon="ArrowRight"
+                          class="mt-1 size-4 shrink-0 text-slate-300 opacity-0 transition-all duration-200 group-hover/item:translate-x-0.5 group-hover/item:text-slate-950 group-hover/item:opacity-100"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        hasCtaContent &&
+          (hasGroups ? (
+            <div
+              class:list={[
+                "border-border-dark/8 bg-primary flex h-full flex-col justify-between gap-6 border-t py-5 ps-5 pe-0 text-white lg:border-t-0 lg:border-l",
+              ]}>
+              <div class="space-y-5 pe-5">
+                <div class="border-border-light/20 rounded-lg border bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0))] p-4 shadow-[0_24px_60px_-40px_rgba(0,0,0,0.8)]">
+                  {menu.cta?.image && (
+                    <OptimizedImage
+                      width={340}
+                      src={menu.cta.image}
+                      alt={menu.cta.title}
+                      class="h-44 w-full rounded-lg object-cover object-center"
+                    />
+                  )}
+
+                  <div class="space-y-2 pt-4">
+                    {menu.cta?.eyebrow && (
+                      <p class="text-xs font-medium tracking-[0.18em] text-white/60 uppercase">
+                        {menu.cta.eyebrow}
+                      </p>
+                    )}
+                    {menu.cta?.title && (
+                      <div
+                        class="text-xl tracking-normal text-white"
+                        set:html={menu.cta.title}
+                      />
+                    )}
+                    {menu.cta?.description && (
+                      <p
+                        class="text-sm/relaxed text-white/75"
+                        set:html={menu.cta.description}
+                      />
+                    )}
+                  </div>
+
+                  {ctaItems.length > 0 && (
+                    <ul class="space-y-2.5">
+                      {ctaItems.map((item: string) => (
+                        <li class="flex items-start gap-2.5 text-sm text-white/80">
+                          <span class="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-white/60" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              {menu.cta?.button?.enable && (
+                <div class="pe-5">
+                  <Button
+                    {...menu.cta.button}
+                    content={menu.cta.button}
+                    class="btn-accent effect-color-light w-fit px-6 py-3"
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div
+              class:list={[
+                "bg-primary after:bg-accent relative flex w-full flex-col justify-between gap-6 rounded-lg p-5 text-white shadow-[0_28px_80px_-48px_rgba(15,23,42,0.85)] after:pointer-events-none after:absolute after:right-0 after:-z-10 after:h-full after:w-screen after:-skew-x-20 after:select-none lg:ms-auto lg:max-w-85",
+              ]}>
+              <div class="space-y-5">
+                {menu.cta?.image && (
+                  <OptimizedImage
+                    width={340}
+                    src={menu.cta.image}
+                    alt={menu.cta.title}
+                    class="h-44 w-full rounded-lg object-cover object-center"
+                  />
+                )}
+
+                <div class="space-y-2">
+                  {menu.cta?.eyebrow && (
+                    <p class="text-xs font-medium tracking-[0.18em] text-white/60 uppercase">
+                      {menu.cta.eyebrow}
+                    </p>
+                  )}
+                  {menu.cta?.title && (
+                    <div
+                      class="text-xl tracking-normal text-white"
+                      set:html={menu.cta.title}
+                    />
+                  )}
+                  {menu.cta?.description && (
+                    <p
+                      class="text-sm/relaxed text-white/75"
+                      set:html={menu.cta.description}
+                    />
+                  )}
+                </div>
+
+                {ctaItems.length > 0 && (
+                  <ul class="space-y-2.5">
+                    {ctaItems.map((item: string) => (
+                      <li class="flex items-start gap-2.5 text-sm text-white/80">
+                        <span class="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-white/60" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {menu.cta?.button?.enable && (
+                <Button
+                  {...menu.cta.button}
+                  class="btn-accent effect-color-light w-fit px-6 py-3"
+                />
+              )}
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</div>

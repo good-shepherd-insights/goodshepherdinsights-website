@@ -1,0 +1,34 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import handleDraftPage from "@/lib/utils/handleDraftPage";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import CaseStudiesListSection from "@/components/sections/CaseStudiesListSection.astro";
+import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+import config from ".astro/config.generated.json";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const entry = await getEntryCTM(
+  config.settings.caseStudiesFolder as "case-studies",
+  "-index",
+  Astro.currentLocale,
+);
+
+// Remove drafts pages in production
+const response = handleDraftPage(entry.data);
+if (response) return response;
+---
+
+<Base {...entry.data}>
+  <PageHeader content={entry.data} contentClass="max-w-2xl!" />
+  <CaseStudiesListSection content={entry.data} />
+  <StatsMarqueeSection hasLightBackground={true} />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

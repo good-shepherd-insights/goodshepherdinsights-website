@@ -1,0 +1,92 @@
+---
+import type { Section } from "@/types";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import type { ctaGallerySectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import Button from "../Button.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type for this section data
+type SectionType = Section & z.infer<typeof ctaGallerySectionSchema>;
+
+type Props = {
+  content?: SectionType;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "cta-gallery-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+// Extracting required values from 'content' object
+let {
+  enable = true,
+  title,
+  badge,
+  button,
+  list,
+} = actualContent as SectionType;
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="bg-light">
+  <div class="container space-y-8 md:space-y-14">
+    <div class="mx-auto flex max-w-5xl flex-col items-center text-center">
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            dataAos="reveal-anim-top"
+            variant="secondary"
+          />
+        )
+      }
+      {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
+      <div class="mt-4 lg:mt-8">
+        <Button label="" {...button} class="btn-accent effect-color-dark" />
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-4 md:grid-cols-6 lg:gap-6">
+      {
+        list?.map((item, index) => (
+          <a
+            href={item.url}
+            class="group relative overflow-hidden"
+            data-aos="reveal-anim-top"
+            data-aos-delay={index * 100}>
+            <OptimizedImage
+              src={item.image}
+              alt={item.title + " " + index}
+              width={200}
+              height={222}
+              quality={40}
+              widths={[80, 120, 160, 200]}
+              sizes="(min-width: 1024px) 200px, (min-width: 768px) 150px, 33vw"
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-black/70 transition-opacity duration-500 group-hover:opacity-100 md:opacity-0" />
+            <div class="absolute inset-0 flex items-center justify-center transition-opacity duration-500 group-hover:opacity-100 md:opacity-0">
+              <span
+                class="font-secondary bg-accent rounded-full px-2 py-1.5 text-xs font-bold sm:px-5 sm:text-sm"
+                set:html={markdownify(item.title)}
+              />
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

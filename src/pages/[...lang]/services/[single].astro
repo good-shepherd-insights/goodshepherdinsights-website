@@ -1,0 +1,77 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import config from ".astro/config.generated.json";
+import ServicesSingle from "@/components/ServicesSingle.astro";
+import extractSlug from "@/lib/utils/extractSlug";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
+import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
+import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const serviceFolder = config.settings.serviceFolder as "services";
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const serviceIndex = await getEntryCTM(
+        serviceFolder as "services",
+        "-index",
+        lang.languageCode,
+      );
+
+      let services = await getCollectionCTM(
+        serviceFolder as "services",
+        lang.languageCode,
+      );
+
+      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
+      if (serviceIndex?.data.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      return services.map((service) => ({
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+          single: extractSlug(service).split("/").pop(),
+        },
+        props: {
+          service,
+          serviceIndex,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { service, serviceIndex } = Astro.props;
+---
+
+<Base {...service.data} hideOffcanvas={true}>
+  <PageHeader
+    content={{
+      badge: service?.data?.title,
+      title: serviceIndex?.data?.titleSecondary,
+      image: service?.data?.image,
+      imageText: service?.data?.title,
+    }}
+    contentClass="max-w-2xl!"
+  />
+  <ServicesSingle content={service} hasPaddingBottom={true} />
+  <FeaturesGridThree />
+  <StatsMarqueeSection hasLightBackground={false} />
+  <FaqSectionTwo mode="shadow" />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

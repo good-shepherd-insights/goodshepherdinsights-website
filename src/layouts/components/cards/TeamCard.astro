@@ -1,0 +1,71 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { markdownify } from "@/lib/utils/textConverter";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "../Button.astro";
+
+interface Props {
+  content: NonNullable<CollectionEntry<"team">["data"]["list"]>[number];
+  class?: string;
+}
+
+const { content, class: className, ...rest } = Astro.props;
+const { title, image, profession, description, social } = content;
+
+const socialLinks = social?.filter((link) => link.enable);
+---
+
+{
+  image && (
+    <div
+      class:list={[
+        "group bg-light relative flex items-center overflow-hidden",
+        className,
+      ]}
+      {...rest}>
+      <div class="h-62 min-w-38">
+        <OptimizedImage
+          src={image}
+          alt={title}
+          width={152}
+          height={248}
+          class:list={[
+            "pointer-events-none h-full w-full object-cover transition duration-500",
+          ]}
+        />
+      </div>
+      <div class="flex w-full flex-col gap-4 p-4 transition-all duration-300 sm:p-6 lg:gap-6">
+        <div class="flex flex-col gap-2">
+          {title && (
+            <h3 class="sm:text-h5-sm text-h5" set:html={markdownify(title)} />
+          )}
+          {profession && (
+            <div class="text-primary" set:html={markdownify(profession)} />
+          )}
+        </div>
+        <div>
+          {description && (
+            <p
+              class="text-sm lg:text-base"
+              set:html={markdownify(description)}
+            />
+          )}
+        </div>
+        {socialLinks && (
+          <div class="flex items-center gap-4">
+            {socialLinks.map((link) => (
+              <Button
+                tag="a"
+                variant="text"
+                label={link.label}
+                url={getLocaleUrlCTM(link.url, Astro.currentLocale)}
+                class="hover:border-accent hover:text-accent border-b-transparent leading-5"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

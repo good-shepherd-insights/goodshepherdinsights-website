@@ -1,0 +1,71 @@
+{
+  "common": {
+    "readMore": "Lire la suite",
+    "viewDetails": "Voir les détails",
+    "readMoreAbout": "En savoir plus sur",
+    "viewProject": "Voir le projet",
+    "learnMoreAbout": "En apprendre davantage sur",
+    "emailPlaceholder": "Adresse e-mail",
+    "paginationPrevious": "Précédent",
+    "paginationNext": "Suivant",
+    "paginationCaseStudiesPrev": "CaseStudies précédent",
+    "paginationCaseStudiesNext": "CaseStudies suivant",
+    "workHour": "Heure de travail",
+    "workingHours": "Heures d'ouverture",
+    "workingHoursValue": "Lun-sam, 09h-17h",
+    "workHourValue": "Du lundi au vendredi : 9 h – 17 h. Samedi : fermé.",
+    "call": "Appel",
+    "callUs": "Appelez-nous",
+    "play": "Play",
+    "contactUs": "Parlons-en",
+    "ourServices": "Nos services",
+    "recentProjects": "Projets récents",
+    "discoverMore": "Découvrir plus",
+    "hotLine": "Ligne d'urgence",
+    "searchHere": "Rechercher ici",
+    "letsChat": "Discutons",
+    "sendRequest": "Envoyer demande",
+    "noFaqsFoundFor": "Aucune FAQ trouvée pour",
+    "loadingMap": "Chargement de la carte...",
+    "comments": "Commentaires",
+    "reply": "Répondre"
+  },
+  "widgets": {
+    "postSearchFormPlaceholder": "Essayez de rechercher 'conseils'...",
+    "categoriesTitle": "Catégories",
+    "tagsTitle": "Étiquettes",
+    "popularTagsTitle": "Tags populaires",
+    "recentPostsTitle": "Articles récents",
+    "haveAnyQuestionsTitle": "Vous avez des questions?",
+    "haveAnyQuestionsDescription": "Il existe de nombreuses variantes de passages du Lorem Ipsum disponibles, mais la plupart ont subi"
+  },
+  "header": {
+    "announcement": "Conseiller fiscal gratuit aujourd’hui, -10 % sur votre première séance. [Commencer](/contact/)"
+  },
+  "headerOffcanvas": {
+    "description": "Nous sommes une agence numérique qui aide les entreprises à créer des expériences immersives.",
+    "buttonLabel": "Discutons ensemble"
+  },
+  "blog": {
+    "category": "Catégorie",
+    "share": "Partager:",
+    "follow": "Suivre:",
+    "paginationPrevious": "Article précédent",
+    "paginationNext": "Article suivant"
+  },
+  "navigation": {
+    "buttonLabel": "Parlons-en"
+  },
+  "subscription": {
+    "title": "Ajoutez vos propres détails et informez toutes vos exigences fiscales"
+  },
+  "footer": {
+    "menuTitleLinks": "Liens",
+    "freeSupport": "Support gratuit",
+    "description": "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus id quod maxime placeat facere assumenda est omnis dolor repellendus.",
+    "contact": "Contact",
+    "copyright": "Copyright © {{ year }}. [Taxo](https://taxo-dev.netlify.app/) Tous droits réservés.",
+    "_comment": "Nous vous serions reconnaissants de conserver le copyright du thème. Merci de soutenir Taxo !",
+    "since": "depuis 1990"
+  }
+}

@@ -1,0 +1,201 @@
+---
+import { z } from "astro/zod";
+import { getCollectionCTM, getEntryCTM } from "@/lib/contentParser.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { caseStudiesSectionSchema } from "@/sections.schema";
+import SectionTitle from "../global/SectionTitle.astro";
+import config from ".astro/config.generated.json";
+import SectionBadge from "../global/SectionBadge.astro";
+import Button from "../Button.astro";
+import CaseStudyCard from "@/layouts/components/cards/CaseStudyCard.astro";
+
+// Type
+export type TestimonialSectionType = z.infer<typeof caseStudiesSectionSchema>;
+
+// Default content fetch
+let defaultContent = (
+  await getEntryCTM("sections", "case-studies-section", Astro.currentLocale)
+)?.data as TestimonialSectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as TestimonialSectionType;
+
+let {
+  enable = true,
+  title,
+  badge,
+  scribbleShapeImage,
+  scribbleShapeImageAlt,
+  button,
+  limit,
+} = (actualContent as TestimonialSectionType) || {};
+if (!enable) return;
+
+let list = await getCollectionCTM(
+  config.settings.caseStudiesFolder as "case-studies",
+  Astro.currentLocale,
+);
+list.sort((a, b) => (b.data.weight || 0) - (a.data.weight || 0));
+list = list.slice(0, limit);
+const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
+---
+
+<section
+  class:list={[
+    "bg-light",
+    hasSectionSpacingBottom && "section-spacing-bottom",
+  ]}>
+  <div class="relative">
+    <div class="container">
+      <div
+        class="grid grid-cols-1 items-center gap-6 md:items-end lg:grid-cols-12 lg:gap-20"
+        data-aos="fade-right"
+        data-aos-duration="600">
+        <div class="col-span-1 max-w-3xl lg:col-span-9">
+          {badge && <SectionBadge title={badge} className="lg:mb-8" />}
+          {title && <SectionTitle title={title} />}
+        </div>
+        <div
+          class="col-span-1 flex items-center gap-4 max-md:justify-center md:mt-0 md:gap-8 lg:col-span-3 lg:justify-end">
+          {
+            button?.label && (
+              <div class="relative">
+                <div class="bg-accent absolute top-4 left-1/2 flex size-3 -translate-x-1/2 rounded-full" />
+                <Button
+                  {...button}
+                  class="border-border-dark text-text-dark btn-primary effect-color-accent border bg-transparent text-start"
+                />
+              </div>
+            )
+          }
+          {
+            scribbleShapeImage && (
+              <div class="pointer-events-none inset-0 z-0">
+                <OptimizedImage
+                  src={scribbleShapeImage}
+                  alt={scribbleShapeImageAlt}
+                  width={86}
+                  height={56}
+                  inlineSvg={true}
+                  class="text-text-dark h-21.5 w-14 object-cover object-center"
+                />
+              </div>
+            )
+          }
+        </div>
+      </div>
+
+      <div id="case-study-slider" class="swiper mt-6 overflow-hidden md:mt-10">
+        <div class="swiper-wrapper box-content flex w-full">
+          {
+            list?.map((item) => (
+              <div class="swiper-slide w-full shrink-0 transition-all duration-500 ease-in-out">
+                <CaseStudyCard content={item} options={{ layout: "slider" }} />
+              </div>
+            ))
+          }
+        </div>
+
+        <div
+          class="mt-8 flex items-center justify-center gap-8 md:gap-14 lg:mt-14">
+          <div
+            class="text-text-dark flex items-center gap-4 text-base font-bold">
+            <span class="cs-current-slide w-5 text-right leading-none">01</span>
+
+            <div class="bg-dark relative h-0.5 w-20 overflow-hidden">
+              <div
+                class="cs-progress-bar bg-accent absolute top-0 left-0 h-full w-full origin-left scale-x-100 transition-transform duration-300 ease-out">
+              </div>
+            </div>
+
+            <span class="cs-total-slides w-5 leading-none">
+              {String(list?.length || 0).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div>
+            <div
+              class:list={[
+                "case-study-pagination flex justify-center",
+                "[--swiper-pagination-bullet-height:6px]",
+                "[--swiper-pagination-bullet-inactive-opacity:1]",
+                "[--swiper-pagination-bullet-width:6px]",
+                "[--swiper-pagination-color:var(--color-primary)]",
+                "max-md:[--swiper-pagination-bottom:10px]",
+                "md:[--swiper-pagination-bottom:20px]",
+                "[&_.swiper-pagination-bullet:not(.swiper-pagination-bullet-active)]:border",
+                "[&_.swiper-pagination-bullet]:border-primary",
+                "[&_.swiper-pagination-bullet:not(.swiper-pagination-bullet-active)]:bg-transparent!",
+                "gap-4!",
+              ]}>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.addEventListener("load", async function () {
+      const { Swiper } = await import("swiper");
+      const { Autoplay, Pagination } = await import("swiper/modules");
+
+      const sliderEl = document.querySelector(
+        "#case-study-slider",
+      ) as HTMLElement;
+      if (!sliderEl) return;
+
+      const totalSlides = sliderEl.querySelectorAll(".swiper-slide").length;
+      const currentEl = sliderEl.querySelector(".cs-current-slide");
+      const progressEl = sliderEl.querySelector(
+        ".cs-progress-bar",
+      ) as HTMLElement;
+
+      new Swiper(sliderEl, {
+        modules: [Autoplay, Pagination],
+
+        speed: 800,
+        spaceBetween: 20,
+        slidesPerView: 1,
+        loop: true,
+        pagination: {
+          el: ".case-study-pagination",
+          clickable: true,
+          renderBullet(_index, className) {
+            return `<span class="${className} cursor-pointer inline-block size-1 relative rounded-full border border-accent bg-transparent opacity-100 transition-all [.swiper-pagination-bullet-active&]:bg-primary">
+              <span class="absolute size-4 rounded-full border border-primary opacity-0 transition-all [.swiper-pagination-bullet-active_&]:opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></span>
+            </span>`;
+          },
+        },
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: true,
+        },
+
+        on: {
+          init(sw) {
+            update(sw);
+          },
+          slideChange(sw) {
+            update(sw);
+          },
+        },
+      });
+
+      function update(sw: any) {
+        const realIndex = sw.realIndex;
+
+        if (currentEl) {
+          currentEl.textContent = String(realIndex + 1).padStart(2, "0");
+        }
+
+        if (progressEl) {
+          const progress = (realIndex + 1) / totalSlides;
+          progressEl.style.transform = `scaleX(${progress})`;
+        }
+      }
+    });
+  </script>
+</section>

@@ -1,0 +1,207 @@
+---
+import { getEntrySlugCTM, getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
+import config from ".astro/config.generated.json";
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { sortByDate } from "@/lib/utils/sortFunctions.ts";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "@/layouts/components/Button.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import Logo from "./Logo.astro";
+import type { NavigationLink } from "@/types";
+import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
+const t = await useTranslations(Astro.currentLocale as string);
+let footerMenus = t("footerPrimary") as NavigationLink[];
+
+const { contactInfo, serviceFolder, caseStudiesFolder } = config.settings;
+
+// Fetch 6 Services
+let servicesList = await getCollectionCTM(
+  serviceFolder as "services",
+  Astro.currentLocale as string,
+);
+servicesList = servicesList.slice(0, 6);
+
+// Fetch 6 Blogs
+let list = await getCollectionCTM(
+  caseStudiesFolder as "case-studies",
+  Astro.currentLocale as string,
+);
+list = sortByDate(list);
+const projects = list.slice(0, 6);
+const bg = await bgOptimizedImage(
+  "/images/decorative/pattern/footer-font-bg.png",
+);
+---
+
+<footer class="pt-32 lg:pt-48">
+  <div class="relative container pb-8 lg:pb-12">
+    <div
+      class="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-10 lg:gap-12 xl:gap-20">
+      {/* Col 1: Brand & Contact Strip */}
+      <div class="col-span-3 flex flex-col gap-2 sm:gap-6 lg:px-6">
+        <Logo />
+        <p class="text-text-dark/90 leading-relaxed">
+          {t("footer.description")}
+        </p>
+        <hr class="border-border-dark/20 w-full border-t" />
+        <div class="flex items-center gap-4">
+          <OptimizedImage
+            src="/images/icons/svg/phone-icon.svg"
+            alt="Phone"
+            width={40}
+            height={48}
+            class="h-12 w-10"
+          />
+          <div class="flex flex-col">
+            <span class="font-medium">
+              {t("footer.freeSupport")}
+            </span>
+            <span
+              class="sm:text-h6-sm text-h6 font-secondary font-bold tracking-wide"
+              set:html={markdownify(contactInfo.phone, true)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:gap-12 lg:pt-2 xl:gap-20">
+        {/* Col 2: Our Services */}
+        <div class="flex flex-col gap-2 sm:gap-4 lg:gap-8">
+          <h3 class="sm:text-h5 text-h5-sm">{t("common.ourServices")}</h3>
+          <ul class="flex flex-col gap-1 lg:gap-2">
+            {
+              servicesList.map((svc) => (
+                <li class="flex items-center gap-3">
+                  <span class="text-accent text-lg leading-none">✦</span>
+                  <Button
+                    tag="a"
+                    variant="text"
+                    label={svc.data.title}
+                    url={getEntrySlugCTM(svc, Astro.currentLocale)}
+                    aria-label={`${t("button.readMore")} ${svc.data.title}`}
+                    srOnly={`${t("button.readMore")} ${svc.data.title}`}
+                    class="text-text-dark/90 hover:text-accent border-none font-normal transition-colors hover:opacity-100">
+                    {svc.data.title}
+                  </Button>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        {/* Col 3: Contact Us */}
+        <div class="flex flex-col gap-2 sm:gap-4 lg:gap-8">
+          <h3 class="sm:text-h5 text-h5-sm">{t("common.contactUs")}</h3>
+          <div class="text-text-dark/90 flex flex-col gap-1 sm:gap-3">
+            <div set:html={markdownify(contactInfo.address, true)} />
+            <div set:html={markdownify(contactInfo.phone, true)} />
+            <div set:html={markdownify(contactInfo.email, true)} />
+            <div class="font-medium">
+              {t("common.workHour")}
+            </div>
+            <div class="text-text-dark/90 flex flex-col gap-2">
+              <div
+                class="leading-relaxed"
+                set:html={markdownify(t("common.workHourValue"), true)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Col 4: Recent Projects (Blogs) */}
+      <div class="col-span-3 flex flex-col gap-2 sm:gap-4 lg:gap-8 lg:pt-2">
+        <h3 class="sm:text-h5 text-h5-sm">{t("common.recentProjects")}</h3>
+        <div class="grid grid-cols-3 gap-2">
+          {
+            projects.map((post) => (
+              <a
+                href={getEntrySlugCTM(post, Astro.currentLocale)}
+                aria-label={`${t("button.readMore")} ${post.data.title}`}
+                class="group relative aspect-square overflow-hidden bg-gray-200">
+                {post.data.image && (
+                  <OptimizedImage
+                    src={post.data.image}
+                    alt={post.data.title}
+                    width={140}
+                    height={140}
+                    quality={50}
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                )}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    {/* Middle Area: Decorations & Giant 'Since 1990' */}
+    <div
+      class="relative container mt-8 flex flex-col items-center justify-between gap-10 lg:mt-24 lg:flex-row">
+      <div
+        class="absolute top-0 right-full flex h-32 w-full items-center justify-center gap-10 lg:w-auto lg:justify-start">
+        <div class="relative flex h-full">
+          {/* Circle decoration */}
+          <div
+            class="border-dark absolute right-14 bottom-6 size-20 rounded-full border-2"
+            style="transform: translateX(-50%)">
+          </div>
+          {/* 4-point Sparkle SVG CSS */}
+          <div
+            class="bg-dark absolute right-17 bottom-0 size-20"
+            style="clip-path: polygon(50% 0, 55% 45%, 100% 50%, 55% 55%, 50% 100%, 45% 55%, 0 50%, 45% 45%);">
+          </div>
+          <div
+            class="bg-dark absolute top-0 right-10 size-8"
+            style="clip-path: polygon(50% 0, 55% 45%, 100% 50%, 55% 55%, 50% 100%, 45% 55%, 0 50%, 45% 45%);">
+          </div>
+          <div
+            class="bg-dark absolute top-[30%] right-0 size-5"
+            style="clip-path: polygon(50% 0, 55% 45%, 100% 50%, 55% 55%, 50% 100%, 45% 55%, 0 50%, 45% 45%);">
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={`background-image: url(${bg})`}
+        class="font-secondary mx-auto bg-cover bg-clip-text bg-position-[30%_70%] text-center text-[clamp(3rem,5vw,3.5rem)] leading-none font-bold text-transparent">
+        {t("footer.since")}
+      </div>
+    </div>
+
+    {/* Navigation Links */}
+    <ul
+      class="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm font-bold uppercase lg:mt-12">
+      {
+        footerMenus?.map((item, i, arr) => (
+          <li class="flex items-center gap-4">
+            <Button
+              tag="a"
+              variant="text"
+              label={item.name}
+              url={getLocaleUrlCTM(item.url as string, Astro.currentLocale)}
+              class="hover:text-accent border-none text-base font-bold capitalize transition-colors"
+            />
+            {i !== arr.length - 1 && <span class="select-none">/</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  {/* Copyright Banner */}
+  <div class="bg-accent w-full px-4 py-4 text-center">
+    <div
+      class="font-secondary font-bold"
+      set:html={markdownify(
+        t("footer.copyright")?.replace(
+          "{{ year }}",
+          String(new Date().getFullYear()),
+        ),
+        true,
+      )}
+    />
+  </div>
+</footer>

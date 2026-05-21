@@ -1,0 +1,118 @@
+---
+import type { Section } from "@/types";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import type { ctaSectionSchema } from "@/sections.schema";
+import type { z } from "astro/zod";
+import Button from "../Button.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type for this section data
+type SectionType = Section & z.infer<typeof ctaSectionSchema>;
+
+type Props = {
+  content?: SectionType;
+  hasNoLightBackground?: boolean;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "cta-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+// Extracting required values from 'content' object
+let {
+  enable = true,
+  title,
+  description,
+  backgroundImage,
+  backgroundImageAlt,
+  humanImage,
+  humanImageAlt,
+  button,
+} = actualContent as SectionType;
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class:list={[!Astro.props.hasNoLightBackground && "bg-light"]}>
+  <div class="container">
+    <div
+      class="relative -mb-36 overflow-hidden rounded-xl max-sm:px-4 lg:-mb-48">
+      {
+        backgroundImage && (
+          <div class="pointer-events-none absolute inset-0 bottom-0 z-0">
+            <OptimizedImage
+              src={backgroundImage}
+              alt={backgroundImageAlt}
+              width={1320}
+              height={420}
+              widths={[480, 640, 768, 1024, 1320]}
+              sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+              quality={60}
+              class="h-full w-full object-cover object-center"
+            />
+            <div class="bg-accent absolute -bottom-30 -left-30 size-44 rounded-full md:size-48 lg:size-52 xl:size-60" />
+            <div class="bg-accent absolute -top-30 -right-30 size-44 rounded-full md:size-48 lg:size-60 xl:size-72" />
+          </div>
+        )
+      }
+      <div
+        class="relative mx-auto max-w-sm rounded-xl py-6 md:max-w-lg md:py-12 lg:max-w-2xl lg:py-20">
+        <div class="mx-auto max-w-5xl space-y-4 text-center lg:space-y-5">
+          {
+            title && (
+              <SectionTitle
+                title={title}
+                dataAos="reveal-anim-top"
+                variant="dark"
+                className="sm:text-h4 md:text-h2-sm lg:text-h2"
+              />
+            )
+          }
+          {
+            description && (
+              <h3
+                class="text-text-light text-base font-medium lg:text-lg"
+                set:html={markdownify(description)}
+              />
+            )
+          }
+          {
+            button && (
+              <div class="mt-4 flex justify-center lg:mt-8">
+                <Button
+                  {...button}
+                  class="btn-accent effect-color-dark py-2 md:py-3.5"
+                />
+              </div>
+            )
+          }
+        </div>
+      </div>
+      {
+        humanImage && (
+          <OptimizedImage
+            src={humanImage}
+            alt={humanImageAlt}
+            width={180}
+            height={242}
+            widths={[112, 144, 180]}
+            sizes="(min-width: 1280px) 180px, (min-width: 768px) 144px, 112px"
+            class="bottom-0 left-4 z-1 w-28 scale-x-[-1] object-cover object-center max-md:mx-auto md:absolute md:w-36 lg:w-48 xl:w-auto"
+          />
+        )
+      }
+    </div>
+  </div>
+</section>

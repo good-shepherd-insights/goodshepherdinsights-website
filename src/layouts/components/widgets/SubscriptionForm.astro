@@ -1,0 +1,144 @@
+---
+import { useTranslations } from "@/lib/utils/i18nUtils.ts";
+import SectionTitle from "../global/SectionTitle.astro";
+import Button from "../Button.astro";
+
+const t = await useTranslations(Astro.currentLocale as string);
+const { enable, formAction, mailchimpTagValue, title } = Astro.props;
+
+if (!enable) return;
+---
+
+<>
+  {
+    (title || t("subscription.title")) && (
+      <div class="mx-auto max-w-6xl text-center">
+        <SectionTitle title={t("subscription.title")} variant="dark" />
+      </div>
+    )
+  }
+  <form action={formAction} id="mc-embedded-subscribe-form" method="post">
+    <div class="relative mx-auto max-w-4xl overflow-hidden">
+      <label for="mce-EMAIL" class="sr-only">Email</label>
+      <input
+        required
+        type="email"
+        name="EMAIL"
+        id="mce-EMAIL"
+        aria-required="true"
+        placeholder={t("common.emailPlaceholder")}
+        class="bg-body-dark h-full w-full rounded-lg border-none px-4 py-4 outline-0 [--tw-ring-offset-shadow:none] placeholder:opacity-90 sm:px-8 sm:py-6"
+      />
+      <Button
+        hoverEffect="creative-fill"
+        buttonType="submit"
+        tag="button"
+        id="mc-embedded-subscribe"
+        label={t("common.sendRequest")}
+        variant="fill"
+        class="btn-accent effect-color-dark border-b-none text-text-dark absolute! top-2 right-2 flex w-fit items-center justify-center rounded-md px-2 py-1 sm:px-6 sm:py-3">
+        <span class="sr-only">{t("common.sendRequest")}</span>
+      </Button>
+    </div>
+    <div id="mce-responses" class="w-full text-sm opacity-60">
+      <div class="message message-error mt-4 hidden" id="mce-error-response">
+      </div>
+      <div
+        class="message message-success mt-4 hidden"
+        id="mce-success-response">
+      </div>
+    </div>
+    {
+      mailchimpTagValue && (
+        <input type="hidden" name="tags" value={mailchimpTagValue} />
+      )
+    }
+    <span class="sr-only">gats-fo-lex</span>
+  </form>
+  <script>
+    // Define the expected response structure
+    interface JsonpResponse {
+      result: "success" | "error";
+      msg: string;
+      type?: string;
+      webEngagementCookieValue?: string | null;
+    }
+
+    // Main function to handle form submission
+    document
+      .querySelector<HTMLFormElement>("#mc-embedded-subscribe-form")
+      ?.addEventListener("submit", async (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        const form = event.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const actionUrl = form.getAttribute("action"); // Get the form's action URL
+
+        if (!actionUrl) {
+          console.error("Form action URL is missing.");
+          return;
+        }
+
+        // Serialize form data to a query string
+        const queryString = new URLSearchParams(formData as any).toString();
+
+        // Select response containers
+        const errorContainer = document.querySelector<HTMLElement>(
+          "#mce-error-response",
+        );
+        const successContainer = document.querySelector<HTMLElement>(
+          "#mce-success-response",
+        );
+
+        if (!errorContainer || !successContainer) {
+          console.error("Error or success response containers are missing.");
+          return;
+        }
+
+        // Clear previous messages
+        errorContainer.style.display = "none";
+        successContainer.style.display = "none";
+
+        try {
+          // Create a dynamic script tag for JSONP
+          const script = document.createElement("script");
+          const callbackName = `jsonpCallback_${Date.now()}`;
+
+          // Add the JSONP callback function to the global scope
+          (window as any)[callbackName] = (data: JsonpResponse) => {
+            if (data.result === "success") {
+              successContainer.textContent =
+                data.msg || "Thank you for subscribing!";
+              successContainer.style.display = "block";
+            } else {
+              errorContainer.textContent =
+                data.msg || "An error occurred. Please try again.";
+              errorContainer.style.display = "block";
+            }
+
+            // Clean up after the callback is executed
+            delete (window as any)[callbackName];
+            script.remove();
+          };
+
+          // Append the JSONP callback and form data to the URL
+          script.src = `${actionUrl}&c=${callbackName}&${queryString}`;
+          script.onerror = () => {
+            errorContainer.textContent =
+              "There was an error processing your request. Please try again later.";
+            errorContainer.style.display = "block";
+            console.error("Error loading JSONP script.");
+          };
+
+          // Append the script tag to the document
+          document.body.appendChild(script);
+        } catch (error) {
+          // Handle any unexpected errors
+          errorContainer.textContent =
+            "There was an error processing your request. Please try again later.";
+          errorContainer.style.display = "block";
+          console.error("Error:", error);
+        }
+      });
+  </script>
+</>

@@ -1,0 +1,33 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import handleDraftPage from "@/lib/utils/handleDraftPage";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import ContactSectionTwo from "@/components/sections/ContactSectionTwo.astro";
+import ContactMap from "@/components/sections/ContactMap.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const contactIndex = await getEntryCTM(
+  "contact",
+  "-index",
+  Astro.currentLocale,
+);
+
+// Remove drafts pages in production
+const response = handleDraftPage(contactIndex?.data);
+if (response) return response;
+---
+
+<Base {...contactIndex?.data}>
+  <PageHeader content={contactIndex?.data} />
+  <ContactSectionTwo content={contactIndex?.data.contactSection} />
+  <ContactMap />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

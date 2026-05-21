@@ -1,0 +1,112 @@
+---
+import ContentList, {
+  type ContentListProps,
+} from "./widgets/ContentList.astro";
+import BlogSinglePageLayout from "./BlogSinglePageLayout.astro";
+import type { CollectionEntry } from "astro:content";
+import Sidebar from "./widgets/Sidebar.astro";
+import BlogCard from "./cards/BlogCard.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+
+type sidebarType = {
+  enable: boolean;
+  sticky: boolean;
+  widgets?: string[];
+};
+type Props = {
+  pageType?: "single" | "list"; // Default is "single"
+  hasLightBackground?: boolean;
+  sidebar?: sidebarType;
+  content: CollectionEntry<"blog">;
+  contentList?: ContentListProps;
+};
+
+// Destructure Astro props with default values
+const {
+  pageType = "single",
+  hasLightBackground = false,
+  sidebar,
+  content,
+  contentList,
+} = Astro.props;
+// Sidebar enabled flag
+const sidebarEnabled = sidebar?.enable;
+
+const templatePost = content.id.includes("-index")
+  ? await getEntryCTM(
+      config.settings.blogFolder as "blog",
+      "post-1",
+      Astro.currentLocale,
+    )
+  : content;
+---
+
+<section class:list={[hasLightBackground && "bg-light"]}>
+  <div class="relative container">
+    <div
+      class:list={[
+        sidebarEnabled &&
+          "grid grid-cols-1 gap-x-4 gap-y-16 lg:grid-cols-12 lg:items-start lg:gap-x-8",
+      ]}>
+      {
+        pageType === "list" && (
+          <div
+            class:list={[
+              "has-video-modal",
+              sidebarEnabled
+                ? "order-1 space-y-10 lg:col-span-8 lg:p-5"
+                : "grid grid-cols-1 justify-items-center space-y-12",
+            ]}>
+            <ContentList
+              {...contentList}
+              searchSection={content.data.searchSection}
+            />
+          </div>
+        )
+      }
+      {
+        sidebarEnabled && (
+          <Sidebar
+            content={{
+              ...sidebar,
+              currentPost: content,
+            }}
+          />
+        )
+      }
+      {
+        pageType === "single" && (
+          <BlogSinglePageLayout class="single-page-content" content={content} />
+        )
+      }
+
+      {/* Blog Search Results */}
+      <div
+        class:list={[
+          "blog-search-results bg-light hidden rounded-lg p-6 lg:col-span-8",
+          "gap-6",
+          contentList?.options &&
+            contentList.options.layout === "grid" && {
+              "grid grid-cols-1": contentList.options.columns === 1,
+              "grid md:grid-cols-2": contentList.options.columns === 2,
+              "grid md:grid-cols-2 lg:grid-cols-3":
+                contentList.options.columns === 3,
+            },
+        ]}>
+      </div>
+
+      {/* To support posts search functionality, this code is added */}
+      {
+        templatePost && (
+          <BlogCard
+            class="template-post-search hidden"
+            content={templatePost as CollectionEntry<"blog">}
+            options={contentList?.options}
+            aria-hidden={true}
+          />
+        )
+      }
+    </div>
+  </div>
+</section>

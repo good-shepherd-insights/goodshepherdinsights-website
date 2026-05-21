@@ -1,0 +1,89 @@
+---
+import type { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects";
+import AnimatedNumber from "../widgets/AnimatedNumber.astro";
+import type { statsSectionSchema } from "@/sections.schema";
+import type { Section } from "@/types";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+type StatsType = Section & z.infer<typeof statsSectionSchema>;
+
+type Props = {
+  content?: StatsType;
+  hasHalfBackground?: boolean;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "stats-section", Astro.currentLocale)
+)?.data as StatsType;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as StatsType;
+
+// Extracting required values from 'content' object
+let {
+  enable = true,
+  list,
+  backgroundImage,
+  backgroundImageAlt,
+} = actualContent as StatsType;
+
+if (!enable) {
+  return null;
+}
+
+const { hasHalfBackground = false } = Astro.props;
+---
+
+<section class:list={["bg-light", hasHalfBackground && "mb-32 lg:mb-20"]}>
+  <div
+    class:list={[
+      "bg-dark relative container overflow-hidden! rounded-md",
+      hasHalfBackground && "-mb-32 lg:-mb-20",
+    ]}>
+    {
+      backgroundImage && (
+        <div class="pointer-events-none absolute inset-0 bottom-0 z-0 overflow-hidden">
+          <OptimizedImage
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            width={1320}
+            height={160}
+            widths={[480, 640, 768, 1024, 1320]}
+            sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+            quality={60}
+            class="h-full w-full object-cover object-center"
+          />
+        </div>
+      )
+    }
+    <div
+      class="relative grid grid-cols-2 gap-y-10 py-6 max-sm:px-4 md:gap-x-10 md:py-8 lg:grid-cols-4">
+      {
+        list.map((item) => (
+          <div class="flex flex-col items-center justify-between gap-2">
+            {item.value && (
+              <AnimatedNumber
+                class="text-accent sm:text-display-5/none md:text-display-5/none font-secondary text-display-6/none leading-normal font-medium"
+                transitionTime="1.2s"
+                content={item}
+              />
+            )}
+            {item.label && (
+              <div
+                class="md:text-h6 sm:text-h6-sm text-text-light text-base"
+                set:html={markdownify(item.label)}
+              />
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,158 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { aboutSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import CircularProgressBar from "@/layouts/components/widgets/CircularProgressBar.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof aboutSectionSchema>>;
+type Props = {
+  content?: SectionType;
+  hasLightBackground?: boolean;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "about-metrics-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const { enable = true, list = [] } = actualContent ?? {};
+
+if (!enable) return;
+
+const hasLightBackground = Astro.props.hasLightBackground;
+---
+
+<section
+  class:list={["relative overflow-hidden", hasLightBackground && "bg-white"]}>
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-0">
+    {
+      list.map((item, index) => {
+        const isEven = index % 2 === 0;
+        const {
+          badge,
+          title,
+          description,
+          services,
+          image,
+          imageAlt,
+          imageSecondary,
+          imageSecondaryAlt,
+          deocrativeScribble,
+          deocrativeScribbleAlt,
+        } = item;
+
+        return (
+          <div
+            class:list={[
+              "flex flex-col items-start gap-10",
+              isEven
+                ? "relative flex-row items-start gap-4 max-lg:justify-center lg:text-right xl:gap-8"
+                : "max-lg:flex-col-reverse xl:mt-20 xl:gap-20",
+            ]}
+            data-aos={isEven ? "reveal-anim-right" : "reveal-anim-left"}
+            data-aos-duration="600">
+            {isEven ? (
+              <>
+                {deocrativeScribble && (
+                  <div
+                    class:list={[
+                      "pointer-events-none absolute top-10 right-0 left-0 mx-auto mix-blend-multiply",
+                      "h-60 w-52 md:h-78 md:w-70 lg:h-96 lg:w-88 xl:h-auto xl:w-auto",
+                    ]}>
+                    <OptimizedImage
+                      src={deocrativeScribble}
+                      width={469}
+                      height={512}
+                      class="object-cover object-top-right"
+                      alt={deocrativeScribbleAlt}
+                      aria-hidden="true"
+                    />
+                  </div>
+                )}
+                {imageSecondary && (
+                  <div
+                    class:list={[
+                      "relative mt-24 shrink-0 overflow-hidden rounded-3xl xl:mt-60",
+                      "h-44 w-36 md:h-64 md:w-52 xl:h-auto xl:w-auto",
+                    ]}>
+                    <OptimizedImage
+                      src={imageSecondary}
+                      alt={imageSecondaryAlt}
+                      width={280}
+                      height={330}
+                      class="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+                {image && (
+                  <div
+                    class:list={[
+                      "relative shrink-0 overflow-hidden rounded-3xl",
+                      "h-44 w-36 md:h-64 md:w-52 xl:h-auto xl:w-auto",
+                    ]}>
+                    <OptimizedImage
+                      src={image}
+                      alt={imageAlt}
+                      width={280}
+                      height={330}
+                      class="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div class="flex flex-col items-start gap-4 xl:gap-6">
+                <div>
+                  {badge && (
+                    <SectionBadge
+                      title={badge}
+                      dataAos="reveal-anim-left"
+                      variant="secondary"
+                    />
+                  )}
+                  {title && (
+                    <SectionTitle title={title} dataAos="reveal-anim-left" />
+                  )}
+                </div>
+                {description && (
+                  <p
+                    class="text-text-dark/90 text-lg"
+                    set:html={markdownify(description)}
+                  />
+                )}
+                {services && services.length > 0 && (
+                  <div class="flex w-full flex-wrap items-center justify-between pt-2 max-md:gap-6 lg:mt-6 lg:items-end">
+                    {services.map((service) => (
+                      <div>
+                        <CircularProgressBar
+                          percent={service.percent}
+                          title={service.title}
+                          size={96}
+                          stroke={2}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</section>

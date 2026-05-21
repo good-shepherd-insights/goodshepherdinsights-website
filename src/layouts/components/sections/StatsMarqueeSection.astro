@@ -1,0 +1,135 @@
+---
+import type { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { statsMarqueeSectionSchema } from "@/sections.schema";
+import Marquee from "@/components/widgets/Marquee.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+// Type
+type SectionType = z.infer<typeof statsMarqueeSectionSchema>;
+type Props = {
+  content?: SectionType;
+  hasLightBackground?: boolean;
+};
+
+// Default content fetch
+let defaultContent = (
+  await getEntryCTM("sections", "stats-marquee-section", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  marquee,
+  backgroundImage,
+  backgroundImageAlt,
+  shapeImage,
+  shapeImageAlt,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+// Generate enough items for seamless loop
+const loopCount = 12;
+const loopedItems = Array.from({ length: loopCount }, (_, i) => i);
+
+const { hasLightBackground = false } = Astro.props;
+---
+
+<section class:list={["overflow-hidden", hasLightBackground && "bg-light"]}>
+  <div
+    class:list={[
+      "bg-dark relative flex items-center overflow-hidden py-8 lg:py-12",
+    ]}>
+    {
+      backgroundImage && (
+        <div class="pointer-events-none absolute inset-0 bottom-0 z-0 overflow-hidden">
+          <OptimizedImage
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            width={1920}
+            height={276}
+            widths={[480, 640, 768, 1024, 1280, 1920]}
+            sizes="(min-width: 1536px) 1920px, (min-width: 1280px) 1280px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+            quality={60}
+            class="h-full w-full object-cover object-center"
+          />
+        </div>
+      )
+    }
+    {
+      shapeImage && (
+        <div class="pointer-events-none absolute bottom-0 left-0 z-0 w-20 md:w-30 lg:w-auto">
+          <OptimizedImage
+            src={shapeImage}
+            width={140}
+            height={64}
+            widths={[120, 140]}
+            sizes="(min-width: 1024px) 140px, 120px"
+            quality={80}
+            class="rotate-180 object-cover object-top-right"
+            alt={shapeImageAlt}
+          />
+        </div>
+      )
+    }
+    {
+      shapeImage && (
+        <div class="pointer-events-none absolute top-0 right-0 z-0 w-20 md:w-30 lg:w-auto">
+          <OptimizedImage
+            src={shapeImage}
+            width={140}
+            height={64}
+            widths={[120, 140]}
+            sizes="(min-width: 1024px) 140px, 120px"
+            quality={80}
+            class="object-cover object-top-right"
+            alt={shapeImageAlt}
+          />
+        </div>
+      )
+    }
+    <Marquee
+      marqueeElements={loopedItems.length}
+      marqueePauseOnHover={marquee?.pauseOnHover}
+      marqueeReverse={marquee?.reverse}
+      marqueeDuration={marquee?.duration}
+      marqueeElementWidth={marquee?.elementWidth ?? ""}
+      marqueeElementWidthAuto={marquee?.elementWidthAuto}
+      marqueeElementWidthResponsive={marquee?.elementWidthInSmallDevices ?? ""}>
+      {
+        loopedItems.map(() => (
+          <div
+            class:list={[
+              "flex items-center gap-11",
+              {
+                "min-w-(--marquee-element-width-responsive) md:min-w-(--marquee-element-width)":
+                  !marquee?.elementWidthAuto,
+              },
+              {
+                "min-w-fit": marquee?.elementWidthAuto,
+              },
+            ]}>
+            <span class="bg-text-dark -mb-2 ml-7 flex size-3 items-center gap-11 rounded-full leading-16 lg:-mb-5 lg:ml-5 lg:size-4" />
+            {marquee?.text && (
+              <span
+                class:list={[
+                  "text-body-dark bg-clip-text leading-relaxed font-medium tracking-widest whitespace-nowrap opacity-80",
+                  "[-webkit-background-clip:text] [text-shadow:-1px_-1px_0_var(--color-text-light),1px_-1px_0_var(--color-text-light),-1px_1px_0_var(--color-text-light),1px_1px_0_var(--color-text-light)]",
+                  "text-display-6 md:text-display-5",
+                ]}
+                set:html={marquee.text}
+              />
+            )}
+          </div>
+        ))
+      }
+    </Marquee>
+  </div>
+</section>

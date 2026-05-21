@@ -1,0 +1,112 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import Rating from "../widgets/Rating.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  data: NonNullable<CollectionEntry<"testimonial">["data"]["list"]>[number];
+  options?: {
+    layout?: "card" | "cardWithSign";
+  };
+  index?: number;
+}
+
+const { data, options, index = 0 } = Astro.props;
+const { customer, content } = data;
+const layout = options?.layout || "card";
+
+// Build per-star fill amounts for precise half/decimal star rendering
+const rating = customer?.rating ?? 0;
+---
+
+{
+  layout === "card" ? (
+    <div
+      class="bg-light group flex h-full justify-between gap-6 rounded-lg border border-transparent p-6 transition-all duration-300 max-sm:flex-col max-sm:items-center xl:gap-8 xl:p-8 2xl:gap-20 2xl:p-10"
+      data-aos="fade-up"
+      data-aos-delay={index * 120}
+      data-aos-duration="600">
+      <div class="flex items-center gap-4">
+        <OptimizedImage
+          src={customer?.avatar ?? "/images/customers/avatar/devid-marko.png"}
+          alt={customer?.name ?? "Customer"}
+          width={190}
+          height={236}
+          class="h-59 min-w-48! rounded-lg object-cover"
+        />
+      </div>
+      <div class="flex flex-col gap-4 sm:gap-6">
+        <div class="flex flex-col gap-1.5">
+          {customer?.name && (
+            <div
+              class="text-lg font-bold lg:text-xl"
+              set:html={markdownify(customer.name)}
+            />
+          )}
+          {customer?.role && (
+            <p
+              class="text-primary font-medium"
+              set:html={markdownify(customer.role)}
+            />
+          )}
+        </div>
+        {content && (
+          <p
+            class="text-text-dark text-base leading-relaxed xl:text-xl 2xl:text-2xl"
+            set:html={markdownify(content)}
+          />
+        )}
+        <Rating content={{ rating, variant: "secondary" }} />
+      </div>
+    </div>
+  ) : layout === "cardWithSign" ? (
+    <div class="bg-light flex h-full flex-col items-center justify-between gap-4 p-6 md:flex-row lg:gap-6 xl:p-9">
+      <div class="flex items-center gap-4">
+        <OptimizedImage
+          src={customer?.avatar ?? "/images/customers/avatar/devid-marko.png"}
+          alt={customer?.name ?? "Customer"}
+          width={122}
+          height={224}
+          class="h-56 min-w-30.5! object-cover"
+        />
+      </div>
+      <div>
+        <div class="flex justify-center md:justify-start">
+          <OptimizedImage
+            src="/images/icons/svg/quote.svg"
+            width={46}
+            height={46}
+            class="text-primary size-11.5 h-auto"
+          />
+        </div>
+        <div class="my-6 xl:my-6">
+          {content && (
+            <p
+              class="text-text-dark lg:text-lg xl:text-xl xl:leading-7.5 xl:font-medium"
+              set:html={markdownify(content)}
+            />
+          )}
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col gap-2.5">
+            {customer?.name && (
+              <div
+                class="text-text-dark font-secondary text-xl leading-none font-bold"
+                set:html={markdownify(customer.name)}
+              />
+            )}
+            {customer?.role && (
+              <p
+                class="text-primary leading-none font-medium"
+                set:html={markdownify(customer.role)}
+              />
+            )}
+          </div>
+
+          <Rating content={{ rating }} />
+        </div>
+      </div>
+    </div>
+  ) : null
+}

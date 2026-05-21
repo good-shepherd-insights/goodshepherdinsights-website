@@ -1,0 +1,47 @@
+---
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import Base from "@/layouts/Base.astro";
+import config from ".astro/config.generated.json";
+import handleDraftPage from "@/lib/utils/handleDraftPage";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
+import BlogLayout from "@/components/BlogLayout.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+const blogFolder = config.settings.blogFolder as "blog";
+
+const postIndex = await getEntryCTM(
+  blogFolder as "blog",
+  "-index",
+  Astro.currentLocale,
+);
+
+// Remove drafts pages in production
+const response = handleDraftPage(postIndex?.data);
+if (response) return response;
+---
+
+<Base {...postIndex?.data}>
+  <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
+  <BlogsHeroSection />
+  <BlogLayout
+    pageType="list"
+    hasLightBackground={true}
+    sidebar={{
+      enable: false,
+      sticky: true,
+    }}
+    contentList={{
+      options: postIndex?.data.options,
+      pagination: { enable: true, currentPage: 1 },
+    }}
+    content={{ ...postIndex, ...postIndex?.data }}
+  />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

@@ -1,0 +1,138 @@
+---
+import type { Section } from "@/types";
+import { markdownify } from "@/lib/utils/textConverter";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import SectionBadge from "../global/SectionBadge.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+// Type for this section data
+type AboutTwo = Section & {
+  subTitle?: string;
+  arrowShapeImage?: string;
+  arrowShapeImageAlt?: string;
+  scribbleImage?: string;
+  scribbleImageAlt?: string;
+};
+
+type Props = {
+  content?: AboutTwo;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "about-hero-section", Astro.currentLocale)
+)?.data as AboutTwo;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as AboutTwo;
+
+// Extracting required values from 'content' object
+let {
+  enable = true,
+  badge,
+  title,
+  subTitle,
+  description,
+  arrowShapeImage,
+  arrowShapeImageAlt,
+  scribbleImage,
+  scribbleImageAlt,
+  image,
+  imageAlt,
+} = actualContent as AboutTwo;
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="relative">
+  <div
+    class="bg-light absolute bottom-0 left-0 z-[-1] h-18 w-full sm:h-30 md:h-40 lg:h-52 xl:h-68">
+  </div>
+
+  <div class="container flex flex-col gap-6 overflow-hidden lg:gap-12">
+    <div class="flex items-center justify-between gap-4 md:gap-20">
+      <div class="max-w-5xl lg:pr-10">
+        {badge && <SectionBadge title={badge} variant="secondary" />}
+        {
+          title && (
+            <h1
+              data-aos="reveal-anim-top"
+              data-aos-offset="0"
+              data-aos-duration="600"
+              class:list={["text-h1-sm md:text-h1"]}
+              set:html={markdownify(title)}
+            />
+          )
+        }
+      </div>
+      {
+        scribbleImage && (
+          <OptimizedImage
+            src={scribbleImage}
+            alt={scribbleImageAlt}
+            width={180}
+            height={180}
+            class="h-20 w-20 max-lg:hidden lg:h-auto lg:w-auto"
+          />
+        )
+      }
+    </div>
+    <div class="grid grid-cols-12 items-center gap-4">
+      <div class="order-2 col-span-12 lg:order-1 lg:col-span-3 xl:col-span-6">
+        {
+          arrowShapeImage && (
+            <OptimizedImage
+              src={arrowShapeImage}
+              alt={arrowShapeImageAlt}
+              width={168}
+              height={160}
+              widths={[64, 120, 168]}
+              sizes="(min-width: 1024px) 168px, 64px"
+              class="h-24 w-24 lg:h-auto lg:w-auto"
+            />
+          )
+        }
+      </div>
+      <div
+        class="order-1 col-span-12 flex flex-col gap-4 max-sm:mt-4 lg:order-2 lg:col-span-9 lg:gap-6 lg:pl-16 xl:col-span-6">
+        {
+          subTitle && (
+            <h2
+              class="text-primary text-h5-sm lg:text-h4-sm xl:text-h4"
+              set:html={markdownify(subTitle, true)}
+            />
+          )
+        }
+        {
+          description && (
+            <div
+              class="text-base lg:text-lg"
+              set:html={markdownify(description, true)}
+            />
+          )
+        }
+      </div>
+    </div>
+    {
+      image && (
+        <div class="pt-4 lg:mt-16">
+          <OptimizedImage
+            src={image}
+            alt={imageAlt}
+            width={1320}
+            height={550}
+            widths={[480, 640, 768, 1024, 1320]}
+            sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+            quality={70}
+          />
+        </div>
+      )
+    }
+  </div>
+</section>

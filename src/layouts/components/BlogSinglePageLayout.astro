@@ -1,0 +1,112 @@
+---
+import TOC from "./widgets/TableOfContents.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import OptimizedImage from "./utilities/OptimizedImage.astro";
+import PaginationForSingle from "./widgets/PaginationForSingle.astro";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import Social from "@/components/widgets/Social.astro";
+import SocialData from "@/config/social.json";
+import type { CollectionEntry } from "astro:content";
+import config from ".astro/config.generated.json";
+import { render } from "astro:content";
+import BlogCommentSection from "./sections/BlogCommentSection.astro";
+
+interface Props {
+  content: CollectionEntry<"blog">;
+  class?: string;
+}
+
+const { content, class: className } = Astro.props;
+const {
+  data: { title, image, tags, comments, commentList },
+} = content;
+
+const { tableOfContents } = config.settings.markup;
+const { Content, headings } = await render(content);
+const tocHeadings = headings?.filter((heading) => heading.depth > 1);
+
+// Check if table of contents is enable
+const tocEnabled =
+  tableOfContents?.enable && tocHeadings && tocHeadings.length > 0;
+
+const t = await useTranslations(Astro.currentLocale as string);
+---
+
+<div
+  class:list={[
+    "blog-details has-video-modal space-y-10 lg:col-span-8",
+    className,
+  ]}>
+  {
+    image && (
+      <OptimizedImage
+        width={896}
+        height={500}
+        alt={title}
+        src={image as string}
+        loading="eager"
+        fetchpriority="high"
+        decoding="sync"
+        widths={[480, 640, 768, 896]}
+        quality={60}
+        sizes="(min-width: 1024px) 896px, 100vw"
+        class:list={["h-125 w-full rounded-xl object-cover"]}
+      />
+    )
+  }
+
+  <div class="max-w-full space-y-6">
+    {tocEnabled && tocHeadings && <TOC toc={tocHeadings} marker={false} />}
+    {
+      Content && (
+        <div class="prose-styles content has-video-modal">
+          <Content />
+        </div>
+      )
+    }
+    <div
+      class="border-border-dark/20 mt-10 flex w-full flex-wrap justify-between gap-x-10 gap-y-5 border-y py-4 max-md:justify-center md:mt-14 lg:py-10">
+      <div class="flex items-center gap-2">
+        <span class="text-dark font-secondary mr-4 font-bold">
+          {t("widgets.tagsTitle")}:
+        </span>
+        <ul
+          class="text-dark flex flex-wrap items-center gap-3 text-sm tracking-wide">
+          {
+            tags?.map((tag) => (
+              <li
+                class="bg-light relative rounded-md px-4 py-1.5 capitalize"
+                set:html={markdownify(tag)}
+              />
+            ))
+          }
+        </ul>
+      </div>
+      <div class="flex items-center gap-5">
+        <Social
+          slug={getLocaleUrlCTM(Astro.url.pathname, Astro.currentLocale)}
+          list={SocialData.main.slice(0, 4)}
+          linkType="share"
+          layout="classic"
+          currentPage={content}
+          class="flex items-center gap-2"
+        />
+      </div>
+    </div>
+    {
+      content && content.collection && (
+        <div class="mt-6 lg:mt-12">
+          <PaginationForSingle
+            prevBtnText={t("blog.paginationPrevious")}
+            nextBtnText={t("blog.paginationNext")}
+            collection={content.collection}
+            currentPage={content}
+          />
+        </div>
+      )
+    }
+    <!-- <div class="mt-8 lg:mt-16">
+      <BlogCommentSection comments={comments} commentList={commentList} />
+    </div> -->
+  </div>
+</div>

@@ -1,0 +1,43 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+
+const {
+  title,
+  mode = "light",
+  variant = "default", // default | secondary
+  className = "",
+  dataAos = "reveal-anim-left",
+  textColor = "",
+} = Astro.props;
+
+const baseAos = {
+  "data-aos": dataAos,
+  "data-aos-offset": "0",
+  "data-aos-duration": "600",
+};
+
+const isDefault = variant === "default";
+
+const wrapperClasses = [
+  "mb-4 font-medium uppercase ",
+  isDefault
+    ? "inline-block rounded-full border px-6 pt-1"
+    : "flex items-center gap-6 italic",
+  mode === "dark" && isDefault && "text-accent border-accent",
+  mode !== "dark" && isDefault && "text-primary border-primary",
+  !textColor && !isDefault && "text-primary",
+  textColor && `text-${textColor}`,
+  className,
+];
+
+const lineClasses = [
+  "h-0.5 w-14",
+  !textColor && "bg-primary",
+  textColor && `bg-${textColor}`,
+];
+---
+
+<div {...baseAos} class:list={wrapperClasses}>
+  {!isDefault && <div class:list={lineClasses} />}
+  <div set:html={markdownify(title)} />
+</div>

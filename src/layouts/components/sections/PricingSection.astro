@@ -1,0 +1,78 @@
+---
+import type { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { pricingSectionSchema } from "@/sections.schema";
+import PricingCard from "@/layouts/components/cards/PricingCard.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import OptimizedImage from "../utilities/OptimizedImage.astro";
+
+// Type for this section data
+type pricingSectionSchema = NonNullable<z.infer<typeof pricingSectionSchema>>;
+
+type Props = {
+  content?: pricingSectionSchema;
+};
+
+// Fetching the default content for the this section
+let defaultContent = (
+  await getEntryCTM("sections", "pricing-section", Astro.currentLocale)
+)?.data as pricingSectionSchema;
+
+// Default content fetch from sections collection
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as pricingSectionSchema;
+
+// Extracting required values from 'content' object
+let {
+  enable = true,
+  badge,
+  title,
+  decorativeImage,
+  decorativeImageAlt,
+  list,
+} = actualContent || {};
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="relative">
+  {
+    decorativeImage && (
+      <OptimizedImage
+        src={decorativeImage}
+        alt={decorativeImageAlt}
+        width={1920}
+        height={794}
+        widths={[480, 640, 768, 1024, 1280, 1920]}
+        sizes="(min-width: 1536px) 1920px, (min-width: 1280px) 1280px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+        quality={60}
+        class="pointer-events-none absolute top-10 right-0 z-[-1]"
+      />
+    )
+  }
+  <div class="container space-y-14">
+    <div
+      class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-2 text-center xl:px-4">
+      {
+        badge && (
+          <SectionBadge
+            title={badge}
+            dataAos="reveal-anim-left"
+            variant="secondary"
+          />
+        )
+      }
+      {title && <SectionTitle title={title} dataAos="reveal-anim-left" />}
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {list.map((item) => <PricingCard content={item} />)}
+    </div>
+  </div>
+</section>

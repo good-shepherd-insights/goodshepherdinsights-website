@@ -1,0 +1,606 @@
+---
+title: "Elements"
+date: 2022-06-06
+draft: false
+---
+
+## Text Formatting [.h5]
+
+---
+
+### Bold Text [.h6]
+
+To make text bold, use `**` or `__` around the word or phrase:  
+**Example**: **This text is bold** or **This text is bold**
+
+### Italic Text [.h6]
+
+To italicize text, use `*` or `_` around the word or phrase:  
+**Example**: _This text is italic_ or _This text is italic_
+
+### Underline Text [.h6]
+
+To underline text, use HTML `<u>` tags:
+
+**Example**:
+
+`<u>This text is underlined</u>`
+
+**Result**:
+
+<u>This text is underlined</u>
+
+### Strikethrough [.h6]
+
+To strike through text, use `~~` around the word or phrase:  
+**Example**: ~~This text is struck through~~
+
+## Button [.h5]
+
+---
+
+```jsx
+This button has creative-fill hover animation
+
+<Button
+  hoverEffect="creative-fill"
+  class="effect-color-accent w-fit"
+  label="Creative Fill"
+  url="/"
+/>
+
+This button has magnetic hover animation
+
+<Button hoverEffect="magnetic" label="Magnetic" url="/" class="w-fit" />
+
+This button has text-flip hover animation
+
+<Button hoverEffect="text-flip" label="Text Flip" url="/" class="w-fit" />
+
+This button has magnetic and text-flip together hover animation
+
+<Button
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+<Button
+  variant="circle"
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+
+```
+
+This button has creative-fill hover animation
+
+<Button
+  hoverEffect="creative-fill"
+  class="effect-color-accent w-fit"
+  label="Creative Fill"
+  url="/"
+/>
+
+This button has magnetic hover animation
+
+<Button hoverEffect="magnetic" label="Magnetic" url="/" class="w-fit" />
+
+This button has text-flip hover animation
+
+<Button hoverEffect="text-flip" label="Text Flip" url="/" class="w-fit" />
+
+This button has magnetic and text-flip together hover animation
+
+<Button
+  hoverEffect="magnetic-text-flip"
+  label="Magnetic With Text Flip"
+  url="/"
+  class="w-fit"
+/>
+
+---
+
+### Buttons Variants [.h6]
+
+Each button color can be customize by adding **class="btn-accent"** or **class="btn-light"**
+
+```jsx
+<Button variant="circle" label="Example Button" url="/" />
+<Button label="Example Button" url="/" />
+<Button class="btn-accent" label="Example Button" url="/" />
+<Button
+  variant="outline"
+  label="With External Link"
+  url="https://astro.build"
+/>
+<Button variant="text" label="Example Button" url="/" />
+```
+
+<Button variant="circle" label="Example Button" url="/" />
+<Button label="Example Button" url="/" class="w-fit" />
+<Button class="btn-accent w-fit" label="Example Button" url="/" />
+<Button
+  variant="outline"
+  label="With External Link"
+  url="https://astro.build"
+  class="w-fit"
+/>
+<Button variant="text" label="Example Button" url="/" class="w-fit" />
+
+## Accordion [.h5]
+
+---
+
+```jsx
+<Accordion label="Example Accordion Label 01" group="accordion-01" expanded="true">
+
+We offer a wide range of services including web development, branding, and digital marketing to help businesses grow and succeed.
+
+- **Essentials**: Focused workshop to identify core values and USP.
+- **Growth**: In-depth workshop to establish a clear and differentiated brand identity.
+- **Enterprise**: Comprehensive brand positioning strategy encompassing all aspects of your brand.
+
+</Accordion>
+
+<Accordion label="Example Accordion Label 02" group="accordion-01" expanded="false">
+
+We offer a wide range of services including web development, branding, and digital marketing to help businesses grow and succeed.
+
+- **Essentials**: Focused workshop to identify core values and USP.
+- **Growth**: In-depth workshop to establish a clear and differentiated brand identity.
+- **Enterprise**: Comprehensive brand positioning strategy encompassing all aspects of your brand.
+
+</Accordion>
+
+---
+
+<Accordion label="Example Accordion Label 03" group="accordion-01" expanded="false">
+
+We offer a wide range of services including web development, branding, and digital marketing to help businesses grow and succeed.
+
+- **Essentials**: Focused workshop to identify core values and USP.
+- **Growth**: In-depth workshop to establish a clear and differentiated brand identity.
+- **Enterprise**: Comprehensive brand positioning strategy encompassing all aspects of your brand.
+
+</Accordion>
+```
+
+<Accordion label="Example Accordion Label 01" group="accordion-01" expanded="true">
+
+We offer a wide range of services including web development, branding, and digital marketing to help businesses grow and succeed.
+
+- **Essentials**: Focused workshop to identify core values and USP.
+- **Growth**: In-depth workshop to establish a clear and differentiated brand identity.
+- **Enterprise**: Comprehensive brand positioning strategy encompassing all aspects of your brand.
+
+</Accordion>
+
+<Accordion label="Example Accordion Label 02" group="accordion-01" expanded="false">
+
+We offer a wide range of services including web development, branding, and digital marketing to help businesses grow and succeed.
+
+- **Essentials**: Focused workshop to identify core values and USP.
+- **Growth**: In-depth workshop to establish a clear and differentiated brand identity.
+- **Enterprise**: Comprehensive brand positioning strategy encompassing all aspects of your brand.
+
+</Accordion>
+
+---
+
+## Tab [.h5]
+
+---
+
+```jsx
+<Tabs>
+  <Tab name="Overview">
+    **How Can We Assist You?** We offer personalized consultations to help you
+    achieve your personal and professional goals. Choose a tab below to explore
+    our services. - Personal Coaching - Career Counseling - Conflict Resolution
+    - Life Advice
+  </Tab>
+
+  <Tab name="Coaching">
+    **Personal Coaching: Unlock Your Potential** Get personalized coaching to
+    overcome challenges and set meaningful goals. We focus on: - Confidence
+    Building - Emotional Intelligence - Overcoming Procrastination
+  </Tab>
+</Tabs>
+```
+
+<Tabs>
+  <Tab name="Overview">
+    **How Can We Assist You?**
+
+    We offer personalized consultations to help you achieve your personal and professional goals. Choose a tab below to explore our services.
+
+    - Personal Coaching
+    - Career Counseling
+    - Conflict Resolution
+    - Life Advice
+
+  </Tab>
+
+  <Tab name="Coaching">
+    **Personal Coaching: Unlock Your Potential**
+
+    Get personalized coaching to overcome challenges and set meaningful goals. We focus on:
+    - Confidence Building
+    - Emotional Intelligence
+    - Overcoming Procrastination
+
+  </Tab>
+
+  <Tab name="Counseling">
+    **Career Counseling: Find Your Path**
+
+    Need help with your career? We provide:
+    - Career Path Guidance
+    - Resume & Interview Prep
+    - Job Market Insights
+
+  </Tab>
+
+  <Tab name="Resolution">
+    **Conflict Resolution: Build Stronger Relationships**
+
+    Resolve disputes effectively with:
+    - Mediation Services
+    - Communication Strategies
+    - Anger Management Techniques
+
+  </Tab>
+</Tabs>
+
+## Youtube Video [.h5]
+
+---
+
+```jsx
+<VideoInline src="" provider="youtube" />
+```
+
+<VideoInline src="rFVpSwgCkCo" provider="youtube" />
+
+## Custom Video [.h5]
+
+---
+
+```jsx
+<VideoInline
+  src="/videos/test-video.mp4"
+  provider="html5"
+  poster="/images/banner/banner-common.png"
+/>
+```
+
+<VideoInline
+  src="/videos/test-video.mp4"
+  provider="html5"
+  poster="/images/banner/banner-common.png"
+/>
+
+## Notice [.h5]
+
+---
+
+```jsx
+<Notice type="info" title="Information">
+  This is an informational message.
+</Notice>
+
+<Notice type="warning">This is a warning message without a title.</Notice>
+
+<Notice type="success" title="Success!">
+  Your changes have been saved successfully.
+</Notice>
+
+<Notice type="error" title="Error!">
+  Something went wrong. Please try again.
+</Notice>
+```
+
+<Notice type="info" title="Information">
+  This is an informational message.
+</Notice>
+
+<Notice type="warning">This is a warning message without a title.</Notice>
+
+<Notice type="success" title="Success!">
+  Your changes have been saved successfully.
+</Notice>
+
+<Notice type="error" title="Error!">
+  Something went wrong. Please try again.
+</Notice>
+
+## Blockquote [.h5]
+
+---
+
+To create a blockquote, start the line with a `>`:  
+**Example**:
+
+> This is a blockquote.  
+> It spans multiple lines.
+>
+> _Author_
+
+## Code [.h5]
+
+---
+
+To format inline code, use backticks (\`):  
+**Example**: `This is inline code`
+
+For multi-line code blocks, use triple backticks (\`\`\`):  
+**Example**:
+This example uses the Taxo theme's section component pattern with `AboutSection.astro` and theme helpers.
+
+```astro
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import FaqSection from "@/components/sections/FaqSection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+import TeamSection from "@/components/sections/TeamSection.astro";
+import BlogSection from "@/components/sections/BlogSection.astro";
+import HeroSection from "@/components/sections/HeroSection.astro";
+import FeaturesGrid from "@/components/sections/FeaturesGrid.astro";
+import StatsSection from "@/components/sections/StatsSection.astro";
+import AboutSection from "@/components/sections/AboutSection.astro";
+import ServicesSection from "@/components/sections/ServicesSection.astro";
+import CTAVideoSection from "@/components/sections/CTAVideoSection.astro";
+import TestimonialSection from "@/components/sections/TestimonialSection.astro";
+import CaseStudiesSection from "@/components/sections/CaseStudiesSection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const page = await getEntryCTM("homepage", "-index", Astro.currentLocale);
+---
+
+<Base {...page?.data} headerLayout="header-1">
+  <HeroSection />
+  <FeaturesGrid />
+  <ServicesSection />
+  <StatsSection />
+  <AboutSection />
+  <CTAVideoSection hasLightBackground={true} />
+  <TestimonialSection />
+  <CaseStudiesSection hasSectionSpacingBottom={true} />
+  <FaqSection
+    mode="dark"
+    badgeVariant="default"
+    hasSectionSpacingBottom={true}
+  />
+  <TeamSection hasSectionSpacingBottom={true} />
+  <BlogSection />
+  <CTASection />
+</Base>
+```
+
+## Horizontal Rule [.h5]
+
+---
+
+To create a horizontal rule, use three or more dashes (`---`), asterisks (`***`), or underscores (`___`) on a new line:  
+**Example**:
+
+---
+
+## Headings [.h5]
+
+---
+
+Create headings by adding `#` symbols before your text. Add custom class by bracket `[.class-name]`.  
+**Example**:
+
+```txt
+# Heading 1 [.custom-class .mt-0! .another-class]
+## Heading 2 [.custom-class .mt-0! .another-class4]
+### Heading 3 [.custom-class .mt-0! .another-class]
+#### Heading 4 [.custom-class .mt-0! .another-class]
+##### Heading 5 [.custom-class .mt-0! .another-class]
+###### Heading 6 [.custom-class .mt-0! .another-class]
+```
+
+## Table [.h5]
+
+---
+
+Create tables using pipes (`|`) and dashes (`-`):
+
+**Example**:  
+| Column 1 | Column 2 | Column 3 |  
+|----------|----------|----------|  
+| Data 1 | Data 2 | Data 3 |  
+| Data 4 | Data 5 | Data 6 |
+
+## Images [.h5]
+
+---
+
+Local Image ![alt text](src/assets/images/logo.png)
+
+## Components [.h5]
+
+### Styled List [.h6]
+
+---
+
+```md
+<ListCheck>
+
+- **Inconsistent Customer Interactions**: Customers experienced varying levels of service quality across different channels.
+- **Lack of Personalization**: Limited data integration led to generic, one-size-fits-all communication.
+- **Customer Retention**: Difficulty in retaining customers due to inadequate follow-up and engagement.
+
+</ListCheck>
+```
+
+<ListCheck>
+
+- **Inconsistent Customer Interactions**: Customers experienced varying levels of service quality across different channels.
+- **Lack of Personalization**: Limited data integration led to generic, one-size-fits-all communication.
+- **Customer Retention**: Difficulty in retaining customers due to inadequate follow-up and engagement.
+
+</ListCheck>
+
+### Information Block Card [.h6]
+
+---
+
+```jsx
+<CardWrapper>
+  <Card
+    title="Custom Solution"
+    description="We care success relationships fuel success we love building"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contact Us"
+    buttonUrl="/contact/"
+  />
+  <Card
+    title="In-time Result"
+    description="We care success relationships fuel success we love building"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contact Us"
+    buttonUrl="/contact/"
+  />
+</CardWrapper>
+```
+
+<CardWrapper>
+  <Card
+    title="Custom Solution"
+    description="We care success relationships fuel success we love building"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contact Us"
+    buttonUrl="/contact/"
+  />
+  <Card
+    title="In-time Result"
+    description="We care success relationships fuel success we love building"
+    icon="/images/icons/svg/location.svg"
+    buttonLabel="Contact Us"
+    buttonUrl="/contact/"
+  />
+</CardWrapper>
+
+## Image List With Video [.h5]
+
+---
+
+```jsx
+<ImageList>
+  <ImageItem
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+    videoSrc="rFVpSwgCkCo"
+  />
+  <ImageItem
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+    videoSrc="/videos/test-video.mp4"
+    videoProvider="html5"
+  />
+  <ImageItem
+    width="1/2"
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+  />
+  <ImageItem
+    width="1/2"
+    imageSrc="/images/banner/banner-common.png"
+    imageAlt="example alt text"
+  />
+</ImageList>
+```
+
+<ImageList>
+
+<ImageItem
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="example alt text"
+  videoSrc="rFVpSwgCkCo"
+/>
+<ImageItem
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="example alt text"
+  videoSrc="/videos/test-video.mp4"
+  videoProvider="html5"
+/>
+<ImageItem
+  width="1/2"
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="example alt text"
+/>
+<ImageItem
+  width="1/2"
+  imageSrc="/images/banner/banner-common.png"
+  imageAlt="example alt text"
+/>
+
+</ImageList>
+
+## Testimonial [.h5]
+
+---
+
+The following code generates the testimonial shown below.
+
+```jsx
+<Testimonial
+  customerImage="/images/customers/avatar/customer-1.png"
+  customerName="Sarah Jones"
+  customerRole="CEO, Founder"
+  rating={3.5}
+>
+  Our partnership with Taxo demonstrates the power of a well-executed customer
+  engagement strategy. By integrating advanced technologies and data-driven
+  insights, we helped them achieve a more personalized, consistent, and
+  rewarding customer experience. At Taxo, we are committed to helping businesses
+  like Oloyon revolutionize their customer engagement and drive long-term
+  success.
+</Testimonial>
+```
+
+<Testimonial
+  customerImage="/images/customers/avatar/customer-1.png"
+  customerName="Sarah Jones"
+  customerRole="CEO, Founder"
+  rating={3.5}>
+
+Our partnership with Taxo demonstrates the power of a well-executed customer
+engagement strategy. By integrating advanced technologies and data-driven
+insights, we helped them achieve a more personalized, consistent, and
+rewarding customer experience. At Taxo, we are committed to helping
+businesses like Oloyon revolutionize their customer engagement and drive
+long-term success.
+
+</Testimonial>
+
+## Block Quote Card [.h5]
+
+---
+
+```jsx
+<BlockQuoteCard
+  content="Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur dolores voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,"
+  name="Jhone Marko"
+  position="CEO"
+  location="California"
+/>
+```
+
+<BlockQuoteCard
+  content="Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur dolores voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,"
+  name="Jhone Marko"
+  position="CEO"
+  location="California"
+/>

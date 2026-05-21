@@ -1,0 +1,163 @@
+---
+import { markdownify, toSentenceCase } from "@/lib/utils/textConverter";
+import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import Button from "@/components/Button.astro";
+import type { CollectionEntry } from "astro:content";
+import Icons from "@/helpers/Icons.astro";
+
+type Props = {
+  index?: number;
+  class?: string;
+  content: CollectionEntry<"case-studies">;
+  options: CollectionEntry<"case-studies">["data"]["options"];
+  [key: string]: any;
+};
+
+let {
+  index = 0,
+  rest,
+  content,
+  options: { layout = "grid" } = {},
+  class: className,
+} = Astro.props;
+
+let {
+  collection,
+  data: { title, categories, image, description, information },
+} = content;
+
+const t = await useTranslations(Astro.currentLocale as string);
+let slug =
+  content.id && collection
+    ? getEntrySlugCTM(content, Astro.currentLocale)
+    : "#";
+---
+
+{
+  layout === "grid" || layout === "card" ? (
+    // For Masonry and Grid Layouts
+    <div
+      class="group flex flex-col"
+      data-aos="fade-up-sm"
+      data-aos-duration="700"
+      data-aos-delay={index * 100}>
+      <a
+        href={slug}
+        class:list={[
+          "relative mb-3 overflow-hidden xl:mb-6",
+          layout === "card" ? "grow" : "",
+        ]}
+        aria-label={`${t("common.viewProject")} ${title}`}>
+        {image && (
+          <OptimizedImage
+            src={image}
+            alt={title}
+            width={424}
+            height={480}
+            class:list={[
+              "h-auto w-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105",
+              layout === "card" ? "h-full" : "",
+            ]}
+          />
+        )}
+
+        <div class="text-text-dark bg-light absolute right-0 bottom-0 flex items-center overflow-hidden p-4.5 transition-all duration-600 ease-out select-none">
+          <Icons
+            icon="ArrowUpRight"
+            class="group-hover:text-primary size-7 transition-transform duration-600"
+          />
+        </div>
+      </a>
+
+      <div class="flex flex-col gap-2">
+        <div class="text-text-dark flex items-center gap-4 opacity-80">
+          <div class="bg-dark/50 flex h-0.5 w-10" />
+          {categories && categories.length > 0 && categories[0]}
+        </div>
+        <h3 class="flex">
+          <Button
+            tag="a"
+            variant="text"
+            url={slug}
+            label={title}
+            aria-label={`${t("common.viewProject")} ${title}`}
+            class="text-text-dark group-hover:text-primary text-h5-sm lg:text-h6 xl:text-h5 group-hover:border-b-primary! min-w-0 border-transparent whitespace-normal"
+          />
+        </h3>
+      </div>
+    </div>
+  ) : layout === "slider" ? (
+    // For Slider Layout
+    <div
+      class:list={[
+        "group bg-light relative flex h-120 w-full overflow-hidden transition-all duration-700 md:h-125",
+        className,
+      ]}
+      {...rest}>
+      <div
+        class:list={[
+          "bg-light/80 sm:bg-light absolute bottom-0 left-0 z-20 flex translate-y-10 flex-col justify-end opacity-0 transition-all delay-100 duration-700 ease-in-out",
+          "w-full sm:w-[60%] md:w-[55%] xl:w-[45%]",
+          "px-4 pt-4 lg:px-8 lg:pt-6",
+          "in-[.swiper-slide-active]:translate-y-0 in-[.swiper-slide-active]:opacity-100",
+        ]}>
+        <div class="flex h-full flex-col gap-3 sm:gap-6">
+          <div class="flex h-full flex-col gap-2 sm:gap-4">
+            {title && (
+              <h3
+                class="text-h4-sm md:text-h4 text-text-dark leading-tight"
+                set:html={markdownify(title)}
+              />
+            )}
+
+            {description && (
+              <div
+                class="text-text-dark/80 max-w-sm max-sm:leading-5"
+                set:html={markdownify(description)}
+              />
+            )}
+
+            <div class="text-text-dark flex flex-col gap-1 sm:gap-2">
+              {information?.map((info: any) => (
+                <div class="flex items-center gap-1">
+                  <div class="font-bold" set:html={markdownify(info.label)} />
+                  <span
+                    class="text-text-dark/80"
+                    set:html={markdownify(info.value)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="flex">
+            <Button
+              url={slug}
+              label={t("common.discoverMore")}
+              variant="fill"
+              hoverEffect="creative-fill"
+              class="btn-accent effect-color-dark lg:py-3"
+              aria-label={t("common.discoverMore") + " " + title}
+              srOnly={t("common.discoverMore") + " " + title}
+            />
+          </div>
+        </div>
+      </div>
+
+      {image && (
+        <a
+          href={slug}
+          title={toSentenceCase(t("common.learnMoreAbout") + " " + title)}
+          aria-label={t("common.learnMoreAbout") + " " + title}
+          class="absolute inset-0 z-10 block h-full w-full">
+          <OptimizedImage
+            class="h-full w-full object-cover transition-opacity duration-700 group-hover:opacity-95"
+            src={image}
+            alt={title}
+          />
+        </a>
+      )}
+    </div>
+  ) : null
+}

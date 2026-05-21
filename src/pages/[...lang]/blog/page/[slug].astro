@@ -1,0 +1,94 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import LayoutWrapper from "@/components/BlogLayout.astro";
+import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const blogFolder = config.settings.blogFolder as "blog";
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      const postIndex = await getEntryCTM(
+        blogFolder as "blog",
+        "-index",
+        lang.languageCode,
+      );
+
+      const posts = await getCollectionCTM(
+        blogFolder as "blog",
+        lang.languageCode,
+      );
+      const totalPages = Math.ceil(posts.length / config.settings.pagination);
+      const paths = [];
+
+      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
+      if (postIndex?.data.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      // Disable page generation if config.settings.pagination is 0 or false
+      if (config.settings.pagination === 0 || !config.settings.pagination) {
+        return [];
+      }
+
+      for (let i = 1; i < totalPages; i++) {
+        paths.push({
+          params: {
+            slug: (i + 1).toString(),
+          },
+        });
+      }
+
+      return paths.map((path) => ({
+        params: {
+          slug: path.params.slug,
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+        },
+        props: {
+          postIndex,
+          pagination: config.settings.pagination,
+          blogCollection: posts,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { slug } = Astro.params;
+const currentPage = slug && !isNaN(Number(slug)) ? Number(slug) : 1;
+let { postIndex } = Astro.props;
+---
+
+<Base {...postIndex?.data}>
+  <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
+  <BlogsHeroSection />
+  <LayoutWrapper
+    pageType="list"
+    hasLightBackground={true}
+    sidebar={{
+      enable: false,
+      sticky: true,
+    }}
+    contentList={{
+      options: { ...postIndex?.data.options },
+      pagination: { enable: true, currentPage },
+    }}
+    content={{ ...postIndex, ...postIndex?.data }}
+  />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

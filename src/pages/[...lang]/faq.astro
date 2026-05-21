@@ -1,0 +1,31 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import handleDraftPage from "@/lib/utils/handleDraftPage";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import FaqSection from "@/components/sections/FaqSection.astro";
+import { generatePaths } from "@/lib/utils/i18nUtils.ts";
+import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
+import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+
+export function getStaticPaths() {
+  return generatePaths();
+}
+
+const entry = await getEntryCTM("faq", "-index", Astro.currentLocale);
+
+// Remove drafts pages in production
+const response = handleDraftPage(entry?.data);
+if (response) return response;
+---
+
+<Base {...entry?.data}>
+  <PageHeader content={entry.data} />
+  <FaqSection content={entry?.data.faqSection} mode="light" />
+  <StatsMarqueeSection hasLightBackground={true} />
+  <FaqSectionTwo mode="shadow" />
+  <CTAGallerySection />
+  <CTASection />
+</Base>

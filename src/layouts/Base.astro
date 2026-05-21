@@ -1,0 +1,101 @@
+---
+import "aos/dist/aos.css";
+import "@/styles/global.css";
+import Head from "@/components/global/Head.astro";
+import Footer from "@/components/global/Footer.astro";
+import removeEmptyKeys from "@/lib/utils/removeEmptyKeys";
+import FooterTwo from "@/components/global/FooterTwo.astro";
+import Header from "@/components/global/header/Header.astro";
+import type { JSONLDProps } from "@/lib/utils/JsonLdGenerator";
+import GlobalScripts from "./components/widgets/GlobalScripts.astro";
+import BackToTop from "./components/widgets/BackToTop.astro";
+import HeaderTwo from "./components/global/header/HeaderTwo.astro";
+
+import BreakpointIndicator from "./components/widgets/BreakpointIndicator.astro";
+import KeepAstroSourceLoc from "./components/widgets/KeepAstroSourceLoc.astro";
+
+interface Props extends JSONLDProps {
+  className?: string;
+  fitToScreen?: boolean;
+  footerSpaceTop?: boolean;
+  headerPosition?: "fixed" | "static" | "sticky";
+  hasBodyDarkBackground?: boolean;
+  hideOffcanvas?: boolean;
+  draft?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  robots?: string;
+  excludeFromSitemap?: boolean;
+  customSlug?: string;
+  canonical?: string;
+  keywords?: string[];
+  disableTagline?: boolean;
+  structuredData?: Props;
+  footerLayout?: "footer-1" | "footer-2";
+  headerLayout?: "header-1" | "header-2";
+}
+
+// destructure frontmatter
+let {
+  className,
+  structuredData,
+  headerPosition = "sticky",
+  hideOffcanvas = true,
+  hasBodyDarkBackground = false,
+  footerSpaceTop = true,
+  footerLayout,
+  headerLayout,
+  fitToScreen = true,
+} = Astro.props;
+
+// Exclude empty key value weather it may empty string, object or array from Astro.props
+let props = removeEmptyKeys(Astro.props);
+
+// Conditionally add min-h-[102vh] class to prevent FOUC (flash of unstyled content) while fast navigation
+className = fitToScreen
+  ? (className ? className + " " : "") + "fit-to-screen"
+  : className;
+
+const defaultHeader = "header-2";
+const defaultFooter = "footer-1";
+const resolveHeader = headerLayout || defaultHeader;
+const resolveFooter = footerLayout || defaultFooter;
+---
+
+<!doctype html>
+<html lang="en">
+  <Head {...props} structuredData={structuredData} />
+  <body class:list={[hasBodyDarkBackground && "bg-body-dark"]}>
+    {
+      resolveHeader === "header-2" ? (
+        <HeaderTwo
+          {...props}
+          position={headerPosition}
+          hideOffcanvas={hideOffcanvas}
+        />
+      ) : (
+        <Header
+          {...props}
+          position={headerPosition}
+          hideOffcanvas={hideOffcanvas}
+        />
+      )
+    }
+
+    <main {...className ? { class: className } : {}}>
+      <slot />
+    </main>
+    {
+      resolveFooter === "footer-2" ? (
+        <FooterTwo footerSpaceTop={footerSpaceTop} />
+      ) : (
+        <Footer footerSpaceTop={footerSpaceTop} />
+      )
+    }
+
+    <GlobalScripts />
+    <BreakpointIndicator />
+    <BackToTop />
+    <KeepAstroSourceLoc />
+  </body>
+</html>

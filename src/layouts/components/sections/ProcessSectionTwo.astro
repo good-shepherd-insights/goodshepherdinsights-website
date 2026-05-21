@@ -1,0 +1,136 @@
+---
+import type { Section } from "@/types";
+import { z } from "astro/zod";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { processSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import SectionTitle from "../global/SectionTitle.astro";
+import SectionBadge from "../global/SectionBadge.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+// Type
+type SectionType = Section & NonNullable<z.infer<typeof processSectionSchema>>;
+type Props = {
+  content?: SectionType;
+  hasPaddingBottom?: boolean;
+};
+
+// Default content fetch from sections collection
+let defaultContent = (
+  await getEntryCTM("sections", "process-section-two", Astro.currentLocale)
+)?.data as SectionType;
+
+// Merge with prop overrides
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as SectionType;
+
+const {
+  enable = true,
+  badge,
+  title,
+  description,
+  services,
+  image,
+  imageAlt,
+} = actualContent ?? {};
+
+if (!enable) return;
+
+const { hasPaddingBottom = false } = Astro.props;
+---
+
+<section
+  class:list={[
+    `bg-light relative overflow-hidden`,
+    hasPaddingBottom && "section-spacing-bottom",
+  ]}>
+  <div
+    class="container grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20">
+    <!-- Left -->
+    <div
+      class="flex flex-col items-start gap-10 lg:text-right xl:gap-20"
+      data-aos="reveal-anim-right"
+      data-aos-duration="600">
+      {
+        image && (
+          <div class="relative w-full shrink-0 overflow-hidden">
+            <OptimizedImage
+              src={image}
+              alt={imageAlt}
+              width={620}
+              height={676}
+              widths={[480, 560, 620]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              class="h-full w-full object-cover"
+            />
+          </div>
+        )
+      }
+    </div>
+    <!-- Right -->
+    <div class="flex flex-col items-start gap-2 xl:gap-5">
+      <div>
+        {
+          badge && (
+            <SectionBadge
+              title={badge}
+              dataAos="reveal-anim-left"
+              variant="secondary"
+            />
+          )
+        }
+        {title && <SectionTitle title={title} dataAos="reveal-anim-left" />}
+      </div>
+      {
+        description && (
+          <p
+            class="text-text-dark/90 text-lg"
+            set:html={markdownify(description)}
+          />
+        )
+      }
+      {
+        services && services.length > 0 && (
+          <div class="grid w-full grid-cols-1 items-center gap-4 lg:mt-3 lg:items-end">
+            {services.map((service) => (
+              <div
+                class:list={[
+                  "group bg-primary hover:bg-accent hover:text-text-dark text-text-light flex items-center gap-2 py-2 transition-colors lg:gap-6 xl:py-5.5",
+                ]}>
+                {service.icon && (
+                  <div>
+                    <div class="bg-accent group-hover:bg-primary flex min-h-12 min-w-12 items-center justify-center transition-all duration-300 ease-in-out lg:min-h-18 lg:min-w-18 xl:min-h-22 xl:min-w-22">
+                      <OptimizedImage
+                        src={service.icon}
+                        alt={service.title}
+                        width={48}
+                        height={48}
+                        inlineSvg={true}
+                        class="fill-text-dark stroke-text-dark group-hover:fill-text-light group-hover:stroke-text-light size-7 lg:size-12"
+                      />
+                    </div>
+                  </div>
+                )}
+                <div class="flex flex-col gap-1 lg:gap-2 xl:gap-3">
+                  <h3
+                    class="text-h5-sm xl:text-h4-sm text-inherit"
+                    set:html={markdownify(service.title)}
+                  />
+                  {service.description && (
+                    <p
+                      class="lg:text-md w-full leading-normal opacity-90"
+                      set:html={markdownify(service.description)}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

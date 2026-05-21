@@ -1,0 +1,105 @@
+---
+import { z } from "astro/zod";
+import { getCollectionCTM, getEntryCTM } from "@/lib/contentParser.astro";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { caseStudiesSectionSchema } from "@/sections.schema";
+import SectionTitle from "../global/SectionTitle.astro";
+import config from ".astro/config.generated.json";
+import SectionBadge from "../global/SectionBadge.astro";
+import Button from "../Button.astro";
+import CaseStudyCard from "@/layouts/components/cards/CaseStudyCard.astro";
+
+// Type
+export type TestimonialSectionType = z.infer<typeof caseStudiesSectionSchema>;
+
+// Default content fetch
+let defaultContent = (
+  await getEntryCTM("sections", "case-studies-section", Astro.currentLocale)
+)?.data as TestimonialSectionType;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as TestimonialSectionType;
+
+let {
+  enable = true,
+  title,
+  badge,
+  scribbleShapeImage,
+  scribbleShapeImageAlt,
+  button,
+  limit,
+} = (actualContent as TestimonialSectionType) || {};
+if (!enable) return;
+
+let list = await getCollectionCTM(
+  config.settings.caseStudiesFolder as "case-studies",
+  Astro.currentLocale,
+);
+list.sort((a, b) => (a.data.weight || 0) - (b.data.weight || 0));
+list = list.slice(0, limit);
+const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
+---
+
+<section
+  class:list={[
+    "bg-light",
+    hasSectionSpacingBottom && "section-spacing-bottom",
+  ]}>
+  <div class="relative">
+    <div class="container">
+      <div
+        class="grid grid-cols-1 items-center gap-6 md:items-end lg:grid-cols-12 lg:gap-20"
+        data-aos="fade-right"
+        data-aos-duration="600">
+        <div class="col-span-1 max-w-3xl lg:col-span-9">
+          {badge && <SectionBadge title={badge} className="lg:mb-8" />}
+          {title && <SectionTitle title={title} />}
+        </div>
+        <div
+          class="col-span-1 flex items-center gap-4 max-md:justify-center md:mt-0 md:gap-8 lg:col-span-3 lg:justify-end">
+          {
+            button?.label && (
+              <div class="relative">
+                <div class="bg-accent absolute top-4 left-1/2 flex size-3 -translate-x-1/2 rounded-full" />
+                <Button
+                  {...button}
+                  class="border-border-dark text-text-dark btn-primary effect-color-accent border bg-transparent text-start"
+                />
+              </div>
+            )
+          }
+          {
+            scribbleShapeImage && (
+              <div class="pointer-events-none inset-0 z-0">
+                <OptimizedImage
+                  src={scribbleShapeImage}
+                  alt={scribbleShapeImageAlt}
+                  width={86}
+                  height={56}
+                  inlineSvg={true}
+                  class="text-text-dark h-21.5 w-14 object-cover object-center"
+                />
+              </div>
+            )
+          }
+        </div>
+      </div>
+
+      <div
+        class="mt-6 grid grid-cols-1 gap-6 md:mt-10 md:grid-cols-2 lg:grid-cols-3">
+        {
+          list?.map((item, index) => (
+            <CaseStudyCard
+              content={item}
+              options={{ layout: "grid" }}
+              index={index}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

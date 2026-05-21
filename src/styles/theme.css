@@ -1,0 +1,66 @@
+/* prettier-ignore */
+@theme inline {
+  /* Configure base font size, type scale, and font families in `src/config/fonts.json` */
+  --leading-body: 1.8;
+  --leading-inherit: inherit;
+
+  /* Colors */
+  /* === PRIMARY BRAND === */
+  --color-primary: #056251;        /* deep green (main brand) */
+  --color-secondary: #f4f1ea;      /* soft beige background */
+  --color-accent: #ffb966;         /* warm orange accent */
+  --color-accent-dark: #d88a3d;    /* darker hover orange */
+  /* === BACKGROUNDS === */
+  --color-body: #FCF3E7;           /* main page bg */
+  --color-body-dark: #092420;      /* dark green sections */
+  /* === TEXT === */
+  --color-text-dark: #2b2b2b;
+  --color-text-light: #FFFFFF;
+  /* === BORDERS === */
+  --color-border-light: #e6e2da;
+  --color-border-dark: #1f4d3b;
+  /* === UTILITY === */
+  --color-dark: #000000;
+  --color-light: #ffffff;
+
+  /* Screen */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 540px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1320px;
+
+  /* Typography */
+  --text-base: 1rem; /* 16px */
+  --text-base-scale: 1.23;
+  --text-base-sm: calc(var(--text-base) * 0.9); /* 14.4px */
+
+  /* === DISPLAY === */
+  --text-display-1: calc(var(--text-base) * pow(var(--text-base-scale), 8.8)); /* ≈114px */
+  --text-display-2: calc(var(--text-base) * pow(var(--text-base-scale), 8));   /* ≈95px */
+  --text-display-3: calc(var(--text-base) * pow(var(--text-base-scale), 7.25));/* ≈81px */
+  --text-display-4: calc(var(--text-base) * pow(var(--text-base-scale), 6.5)); /* ≈68px (NOT 65px) */
+  --text-display-5: calc(var(--text-base) * pow(var(--text-base-scale), 5.5)); /* ≈49px */
+  --text-display-6: calc(var(--text-base) * pow(var(--text-base-scale), 4.5)); /* ≈38px */
+
+  /* === HEADINGS === */
+  --text-h1: calc(var(--text-base) * pow(var(--text-base-scale), 6)); /* ≈61px */
+  --text-h2: calc(var(--text-base) * pow(var(--text-base-scale), 5)); /* ≈49px */
+  --text-h3: calc(var(--text-base) * pow(var(--text-base-scale), 4)); /* ≈39px */
+  --text-h4: calc(var(--text-base) * pow(var(--text-base-scale), 3)); /* ≈31px */
+  --text-h5: calc(var(--text-base) * pow(var(--text-base-scale), 2)); /* ≈25px */
+  --text-h6: calc(var(--text-base) * pow(var(--text-base-scale), 1)); /* ≈20px */
+
+  /* === SMALL HEADINGS === */
+  --text-h1-sm: calc(var(--text-h1) * 0.7);  /* ≈43px */
+  --text-h2-sm: calc(var(--text-h2) * 0.75); /* ≈37px */
+  --text-h3-sm: calc(var(--text-h3) * 0.85); /* ≈33px */
+  --text-h4-sm: calc(var(--text-h4) * 0.9);  /* ≈28px */
+  --text-h5-sm: calc(var(--text-h5) * 0.9);  /* ≈22px */
+  --text-h6-sm: calc(var(--text-h6) * 0.9);  /* ≈18px */
+
+  --shadow-primary: 2px 2px 0px 0px var(--color-primary);
+  --shadow-accent: 2px 2px 0px 0px var(--color-accent);
+  --shadow-contact: 8px 8px 0px 0px var(--color-dark);
+
+}

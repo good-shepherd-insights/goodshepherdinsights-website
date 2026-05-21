@@ -1,0 +1,369 @@
+{
+  "headerPrimary": [
+    {
+      "enable": true,
+      "name": "Accueil",
+      "weight": 0,
+      "url": "/"
+    },
+    {
+      "enable": true,
+      "name": "Menu principal",
+      "weight": 1,
+      "hasMegaMenu": true,
+      "menus": [
+        {
+          "enable": true,
+          "name": "Services principaux",
+          "description": "Des prestations concues pour lancer des sites, produits et refontes qui soutiennent vraiment la croissance.",
+          "weight": 0,
+          "children": [
+            {
+              "enable": true,
+              "name": "Plateformes web",
+              "description": "Sites marketing, sites corporate et CMS rapides, stables et faciles a faire evoluer.",
+              "icon": "Monitor",
+              "url": "/services/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Design produit",
+              "description": "Parcours, interfaces et systemes UI prets pour une vraie mise en production.",
+              "icon": "PenTool",
+              "url": "/services/",
+              "weight": 1
+            },
+            {
+              "enable": true,
+              "name": "Ingenierie frontend",
+              "description": "Implementation Astro et React avec un vrai travail sur la performance et la finition.",
+              "icon": "Code2",
+              "url": "/services/",
+              "weight": 2,
+              "badge": {
+                "enable": true,
+                "label": "Populaire",
+                "color": "accent",
+                "type": "text"
+              }
+            },
+            {
+              "enable": true,
+              "name": "SEO technique",
+              "description": "Structure, vitesse et fondations de contenu pour mieux performer sur la duree.",
+              "icon": "Search",
+              "url": "/services/",
+              "weight": 3
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Modes d'engagement",
+          "description": "Des formats de collaboration adaptes aux equipes qui ont besoin d'aller vite sans perdre en clarte.",
+          "weight": 1,
+          "children": [
+            {
+              "enable": true,
+              "name": "Sprint de lancement MVP",
+              "description": "Un cadre court pour mettre en ligne une nouvelle offre ou un nouveau produit sans inertie inutile.",
+              "icon": "Rocket",
+              "url": "/pricing/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Renfort d'equipe",
+              "description": "Ajoutez du design et du developpement a une equipe interne sans ralentir les livraisons.",
+              "icon": "Users",
+              "url": "/about/",
+              "weight": 1
+            },
+            {
+              "enable": true,
+              "name": "Refonte et migration",
+              "description": "Reprendre une base vieillissante sans casser les parcours, le contenu ni la conversion.",
+              "icon": "RefreshCcw",
+              "url": "/case-studies/",
+              "weight": 2
+            },
+            {
+              "enable": true,
+              "name": "Support continu",
+              "description": "Design, dev et iteration en continu pour les equipes qui livrent chaque mois.",
+              "icon": "Clock3",
+              "url": "/contact/",
+              "weight": 3
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Preuves et prochaines etapes",
+          "description": "Les pages qui comptent quand un prospect compare des partenaires avant de prendre contact.",
+          "weight": 2,
+          "children": [
+            {
+              "enable": true,
+              "name": "Etude de cas mise en avant",
+              "description": "Un projet de reference, du cadrage initial jusqu'aux resultats apres lancement.",
+              "icon": "ChartNoAxesCombined",
+              "url": "/case-studies/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Toutes les etudes de cas",
+              "description": "Parcourez les projets realises pour des produits, agences et entreprises de services.",
+              "icon": "FolderKanban",
+              "url": "/case-studies/",
+              "weight": 1
+            },
+            {
+              "enable": true,
+              "name": "Articles et insights",
+              "description": "Des retours terrain, methodes et idees activables sans filtrage marketing.",
+              "icon": "BookOpenText",
+              "url": "/blog/",
+              "weight": 2
+            },
+            {
+              "enable": true,
+              "name": "Planifier un appel",
+              "description": "Parlez scope, delais et priorites des le premier echange.",
+              "icon": "MessageSquareMore",
+              "url": "/contact/",
+              "weight": 3
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "enable": true,
+        "eyebrow": "Partenaire delivery",
+        "image": "/images/case-studies/case-study-1.png",
+        "title": "Besoin d'une equipe capable de cadrer, concevoir et livrer sans couche inutile ?",
+        "description": "Explorez les services, verifiez les references, puis passez a une discussion de scope quand le fit est evident.",
+        "items": [
+          "Strategie, design et engineering dans un meme flux",
+          "Pensé pour les agences, cabinets et equipes B2B",
+          "Des prochaines etapes claires via tarifs, cas clients et contact"
+        ],
+        "button": {
+          "enable": true,
+          "label": "Demarrer un projet",
+          "url": "/contact/",
+          "variant": "fill",
+          "tag": "a",
+          "hoverEffect": "creative-fill",
+          "icon": {
+            "enable": true,
+            "name": "ArrowUpRight",
+            "position": "right"
+          }
+        }
+      }
+    },
+    {
+      "name": "Pages",
+      "enable": true,
+      "weight": 2,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "Accueil",
+          "weight": 0,
+          "hasChildren": true,
+          "children": [
+            {
+              "enable": true,
+              "name": "Accueil 01",
+              "url": "/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Accueil 02",
+              "url": "/home-two/",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Cas",
+          "weight": 0,
+          "hasChildren": true,
+          "children": [
+            {
+              "enable": true,
+              "name": "Cas",
+              "url": "/case-studies/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Cas Single",
+              "url": "/case-studies/custom-slug-case-studies-1/",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Services",
+          "weight": 0,
+          "hasChildren": true,
+          "children": [
+            {
+              "enable": true,
+              "name": "Services",
+              "url": "/services/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Services Single",
+              "url": "/services/custom-slug-services-1/",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Blog",
+          "weight": 0,
+          "hasChildren": true,
+          "children": [
+            {
+              "enable": true,
+              "name": "Blog",
+              "url": "/blog/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Blog Single",
+              "url": "/blog/custom-slug-post-1/",
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "A propos",
+          "url": "/about/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "Équipe",
+          "url": "/team",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "Tarifs",
+          "url": "/pricing/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "FAQ",
+          "url": "/faq/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "404",
+          "url": "/404",
+          "weight": 0,
+          "badge": {
+            "enable": true,
+            "label": "Badge",
+            "color": "accent",
+            "_color_comment": "color expected value - accent, info, success, danger, dark",
+            "type": "text",
+            "_type_comment": "type expected value - text, dot"
+          }
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "Composants",
+      "weight": 3,
+      "url": "/components/",
+      "badge": {
+        "enable": true,
+        "label": "Nouveau",
+        "color": "accent",
+        "_color_comment": "color expected value - accent, info, success, danger, dark",
+        "type": "text",
+        "_type_comment": "type expected value - text, dot"
+      }
+    },
+    {
+      "enable": true,
+      "name": "Contact",
+      "weight": 4,
+      "url": "/contact/"
+    }
+  ],
+  "footerPrimary": [
+    {
+      "enable": true,
+      "name": "À propos",
+      "url": "/about/"
+    },
+    {
+      "enable": true,
+      "name": "Services",
+      "url": "/services/"
+    },
+    {
+      "enable": true,
+      "name": "Équipe",
+      "url": "/team/"
+    },
+    {
+      "enable": true,
+      "name": "Blog",
+      "url": "/blog/"
+    },
+    {
+      "enable": true,
+      "name": "Contact",
+      "url": "/contact/"
+    }
+  ],
+  "footerSecondary": [
+    {
+      "enable": true,
+      "name": "À propos",
+      "url": "/about/"
+    },
+    {
+      "enable": true,
+      "name": "Services",
+      "url": "/services/"
+    },
+    {
+      "enable": true,
+      "name": "Projets",
+      "url": "/case-studies/"
+    },
+    {
+      "enable": true,
+      "name": "Blog",
+      "url": "/blog/"
+    },
+    {
+      "enable": true,
+      "name": "Contact",
+      "url": "/contact/"
+    }
+  ]
+}

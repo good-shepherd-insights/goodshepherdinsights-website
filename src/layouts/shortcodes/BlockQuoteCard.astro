@@ -1,0 +1,45 @@
+---
+/**
+ * Example Usage
+
+  <ListCheck>
+
+  - **Inconsistent Customer Interactions**: Customers experienced varying levels of service quality across different channels.
+  - **Lack of Personalization**: Limited data integration led to generic, one-size-fits-all communication.
+  - **Customer Retention**: Difficulty in retaining customers due to inadequate follow-up and engagement.
+
+  </ListCheck>
+ 
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  content: string;
+  name?: string;
+  position?: string;
+  location?: string;
+  className?: string;
+}
+
+let { content, name, position, location, className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[
+    "bg-accent font-secondary mt-4 flex gap-4 rounded-xl p-4 font-bold lg:mt-8 lg:gap-8 lg:p-8",
+    className,
+  ]}
+  {...rest}>
+  <div class="font-secondary text-[150px] font-normal">
+    <span class="-mt-4 flex leading-tight lg:-mt-8">&ldquo;</span>
+  </div>
+  <div>
+    <p set:html={markdownify(content)} class="m-0 text-lg lg:text-xl" />
+    <div class="mt-4 flex items-center gap-1 lg:mt-8">
+      <div class="bg-dark mr-4 flex h-0.5 w-14"></div>
+      <div class="text-text-dark text-lg font-bold" title={name}>{name}</div>
+      <span class="text-text-dark font-normal">/{position}</span>
+      <span class="text-text-dark font-normal">, {location}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+---
+import TOC from "./widgets/TableOfContents.astro";
+import config from ".astro/config.generated.json";
+import { render } from "astro:content";
+
+const tocHeadings = Astro.props.content.rendered?.metadata.headings;
+const { Content } = await render(Astro.props.content);
+
+const tocEnabled =
+  config.settings.markup.tableOfContents?.enable && tocHeadings?.length > 0;
+---
+
+<section
+  class:list={[
+    "bg-light overflow-hidden pt-8 lg:pt-12",
+    Astro.props.hasPaddingBottom && "section-spacing-bottom",
+  ]}>
+  <div class="container">
+    <div class="w-full space-y-12 md:space-y-20">
+      <div class="space-y-8">
+        <!-- Table of Contents -->
+        {tocEnabled && tocHeadings && <TOC toc={tocHeadings} marker={false} />}
+
+        <!-- Main Content -->
+        {
+          Content && (
+            <div class="prose-styles content has-video-modal">
+              <Content />
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
