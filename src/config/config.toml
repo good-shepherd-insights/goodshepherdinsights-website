@@ -1,15 +1,15 @@
 # Site Configuration
 [site]
-  title            = "Taxo" # Shared title for SEO and OpenGraph
-  description      = "A modern Astro theme for tax advisors, accounting firms, and financial consulting businesses. Built with Tailwind CSS and Astro, it is easy to customize and optimized for professional service websites." # Shared description for SEO and OpenGraph
-  tagline          = "Tax Advisor & Financial Consulting Astro Theme"
+  title            = "Good Shepherd Insights" # Shared title for SEO and OpenGraph
+  description      = "Good Shepherd Insights — strategic advisory and research for faith-driven organizations, nonprofits, and mission-aligned enterprises." # Shared description for SEO and OpenGraph
+  tagline          = "Insight That Guides Your Mission"
   taglineSeparator = "" # default is " - " 
-  baseUrl          = "https://taxo-astro.pages.dev" # Base URL for the site and used in OpenGraph meta tags.
+  baseUrl          = "https://goodshepherdinsights.com" # Base URL for the site and used in OpenGraph meta tags.
   logo             = "/images/logo.png" # Path to the site's logo
   logoAlternate    = "/images/logo-light.svg" # Path to the site's logo
   logoText         = "" # Text displayed next to the logo
-  logoWidth        = "130px" # Width of the logo
-  logoHeight       = "30.5px" # Height of the logo
+  logoWidth        = "130px" # TODO: adjust to match actual GSI logo aspect ratio
+  logoHeight       = "30.5px" # TODO: adjust to match actual GSI logo aspect ratio
 
   # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)˝
   # Note: Manually restart your server when you change this value
@@ -25,16 +25,16 @@
 # Specific SEO configurations that complement the general site settings.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
-  author = "Getastrothemes"
+  author = "Good Shepherd Insights"
   keywords = [
-    "tax advisor astro theme",
-    "financial consulting astro theme",
-    "accounting firm website template",
-    "finance business astro theme",
-    "tax consultant website template",
-    "astro theme for accountants",
-    "tailwind css finance template",
-    "professional services astro theme",
+    "faith-based consulting",
+    "nonprofit advisory",
+    "mission-driven strategy",
+    "church consulting",
+    "faith-based research",
+    "ministry insights",
+    "Christian nonprofit strategy",
+    "strategic advisory for ministries",
   ]
   robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
 
@@ -66,7 +66,7 @@
 
   # docs - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
   # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "https://formsubmit.co/temp.gats@gmail.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
+  contactFormAction = "https://formsubmit.co/TODO-GSI-EMAIL" # OUT OF SCOPE: contact/service form will be addressed in a separate ticket; placeholder for now
   # formspree | formsubmit.co | netlify (default is formsubmit.co)
   contactFormProvider = "formsubmit.co"
 
@@ -80,10 +80,10 @@
 
   # Mailchimp Subscription Form located in footer
   [settings.subscription]
-    enable            = true # Enables or disable the subscription form
+    enable            = false # GSI has no newsletter platform configured; re-enable when ready
     title             = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the title in different languages or directly add value here if you are not using internationalization feature
     note              = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the note in different languages or directly add value here if you are not using internationalization feature
-    formAction        = "https://gmail.us11.list-manage.com/subscribe/post?u=d870b06d86c16269e4b1f9b39&amp;id=12cf0c6ac2&amp;f_id=007e61e1f0"
+    formAction        = "" # TODO: replace with GSI list endpoint when ready
     mailchimpTagValue = ""
 
   # Multilingual settings (check src/config/language.json for changing the languages)
@@ -91,17 +91,17 @@
   [settings.multilingual]
     # Set `enable` to `true` for enabling the multilingual feature or `false` for disabling it.
     # Run `npm run remove-multilingual` for removing multilingual content files after disabling the feature.
-    enable               = true
+    enable               = false # Out of scope per stakeholder decision
     defaultLanguage      = "en"
-    disableLanguages     = [""] # List of languages to disable (eg: ["fr", "es"])
+    disableLanguages     = ["fr"] # List of languages to disable (eg: ["fr", "es"])
     showDefaultLangInUrl = false # Show default language in URL (eg: https://getastrothemes.com/en/)
 
   # Global Contact Information
   [settings.contactInfo]
-    address = "75 Garuda., Maju, INA 789"
-    email   = "support@yourdomain.tld"
-    phone   = "+000(123)556989"
-    mapLink = "https://www.google.com/maps?q=Brooklyn,New York&output=embed"
+    address = "Lanham, MD 20706, US"
+    email   = "office@goodshepherdinsights.com"
+    phone   = "+1 (240) 441-5259"
+    mapLink = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d49658.64093630874!2d-76.8708!3d38.9687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89b7c1e7e7e7e7e7%3A0x1234567890abcdef!2sLanham%2C%20MD%2020706!5e0!3m2!1sen!2sus!4v1234567890"
 
   # Header Offcanvas Configuration
   # Update social links in `src/config/social.json`
@@ -142,7 +142,7 @@
   image       = "/images/og-image.jpg" # Image used in OpenGraph previews
   ogLocale    = "en_US" # Locale setting for OpenGraph
   ogType      = "website" # Type of content for OpenGraph protocol
-  twitter     = "" # Twitter handle for Twitter Card meta tags
+  twitter     = "@GoodShepherdIns" # PLACEHOLDER — not production; replace with verified GSI Twitter/X handle
   twitterCard = "summary_large_image" # Type of Twitter Card to use in social sharing
 
 # [head] (Add custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page)

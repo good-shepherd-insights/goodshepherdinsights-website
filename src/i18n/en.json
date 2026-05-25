@@ -12,8 +12,8 @@
     "paginationCaseStudiesNext": "Next CaseStudies",
     "workingHours": "Working Hours",
     "workHour": "Work Hour",
-    "workingHoursValue": "Sun-monday, 09am-5pm",
-    "workHourValue": "Monday To Friday: 9PM - 5PM Saturday Closed",
+    "workingHoursValue": "Monday–Friday, 9:00 AM – 5:00 PM",
+    "workHourValue": "Monday To Friday: 9 AM – 5 PM. Saturday: Closed.",
     "call": "Call:",
     "callUs": "Call Us",
     "play": "Play",
@@ -40,11 +40,11 @@
     "haveAnyQuestionsDescription": "There are many variations of passages of Lorem Ipsum available, but the alteration in some form,"
   },
   "header": {
-    "announcement": "Get Your Free Tax Advisor Today and Save 10% on Your First Session. [Get Started](/contact/)"
+    "announcement": "PLACEHOLDER — Discover how strategic insights can elevate your mission. [Learn More](/services/) — NOT PRODUCTION COPY, REPLACE BEFORE LAUNCH"
   },
   "headerOffcanvas": {
-    "description": "We are a digital agency that helps businesses create immersive experiences.",
-    "buttonLabel": "Let’s Talk With Us"
+    "description": "Good Shepherd Insights provides strategic advisory and research for faith-driven organizations, nonprofits, and mission-aligned enterprises.",
+    "buttonLabel": "Start a Conversation"
   },
   "blog": {
     "category": "Category",
@@ -62,10 +62,9 @@
   "footer": {
     "menuTitleLinks": "Links",
     "freeSupport": "Free Support",
-    "description": "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus id quod maxime placeat facere assumenda est omnis dolor repellendus.",
+    "description": "Good Shepherd Insights equips mission-driven organizations with the strategic clarity and research they need to lead with confidence.",
     "contact": "Contact",
-    "copyright": "Copyright © {{ year }}. [Taxo](https://taxo-dev.netlify.app/) All Rights Reserved.",
-    "_comment": "We kindly appreciate it if you retain the theme copyright. Thank you for supporting Taxo!",
-    "since": "since 1990"
+    "copyright": "Copyright © {{ year }}. Good Shepherd Insights. All Rights Reserved.",
+    "since": "since 2025"
   }
 }

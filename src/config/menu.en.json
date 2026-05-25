@@ -8,130 +8,130 @@
     },
     {
       "enable": true,
-      "name": "Mega Menu",
+      "name": "Services",
       "weight": 1,
       "hasMegaMenu": true,
       "menus": [
         {
           "enable": true,
-          "name": "Core Services",
-          "description": "Delivery work for companies shipping websites, products, and conversion-focused redesigns.",
+          "name": "Strategic Advisory",
+          "description": "Research-backed guidance for mission-driven organizations navigating complex decisions.",
           "weight": 0,
           "children": [
             {
               "enable": true,
-              "name": "Web Platforms",
-              "description": "Marketing sites, corporate websites, and CMS builds that stay fast under load.",
-              "icon": "Monitor",
-              "url": "/services/",
+              "name": "Strategic Planning",
+              "description": "Facilitated planning processes that align your mission, vision, and resources.",
+              "icon": "Compass",
+              "url": "/services/strategic-planning/",
               "weight": 0
             },
             {
               "enable": true,
-              "name": "Product Design",
-              "description": "User flows, interface systems, and handoff-ready screens for real product teams.",
-              "icon": "PenTool",
-              "url": "/services/custom-slug-services-1/",
+              "name": "Organizational Assessment",
+              "description": "Data-driven evaluation of your organization's health, capacity, and impact readiness.",
+              "icon": "BarChart3",
+              "url": "/services/organizational-assessment/",
               "weight": 1
             },
             {
               "enable": true,
-              "name": "Frontend Engineering",
-              "description": "Astro, React, and performance-led implementation for modern web stacks.",
-              "icon": "Code2",
-              "url": "/services/",
-              "weight": 2,
-              "badge": {
-                "enable": true,
-                "label": "Popular",
-                "color": "accent",
-                "type": "text"
-              }
-            },
-            {
-              "enable": true,
-              "name": "Technical SEO",
-              "description": "Site structure, content architecture, and speed work that improves discoverability.",
-              "icon": "Search",
-              "url": "/services/",
-              "weight": 3
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Engagement Models",
-          "description": "Ways clients usually bring Lumio in, from a focused sprint to ongoing product support.",
-          "weight": 1,
-          "children": [
-            {
-              "enable": true,
-              "name": "MVP Launch Sprint",
-              "description": "A compact scope to get a new product or offer live without dragging the timeline.",
-              "icon": "Rocket",
-              "url": "/pricing/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Team Augmentation",
-              "description": "Plug design and development capacity into an in-house team with less hiring friction.",
+              "name": "Leadership Coaching",
+              "description": "One-on-one and cohort-based coaching for executive and board leaders.",
               "icon": "Users",
-              "url": "/about/",
-              "weight": 1
-            },
-            {
-              "enable": true,
-              "name": "Rebuild & Replatform",
-              "description": "Move away from slow, hard-to-manage setups without sacrificing conversion paths.",
-              "icon": "RefreshCcw",
-              "url": "/case-studies/",
+              "url": "/services/leadership-coaching/",
               "weight": 2
             },
             {
               "enable": true,
-              "name": "Retainer Support",
-              "description": "Continuous design, development, and iteration for teams that ship every month.",
-              "icon": "Clock3",
-              "url": "/contact/",
+              "name": "Research & Insights",
+              "description": "Custom research and landscape analysis to ground your strategy in evidence.",
+              "icon": "Search",
+              "url": "/services/research-insights/",
+              "weight": 3,
+              "badge": {
+                "enable": true,
+                "label": "New",
+                "color": "accent",
+                "type": "text"
+              }
+            }
+          ]
+        },
+        {
+          "enable": true,
+          "name": "Capacity Building",
+          "description": "Programs and partnerships that strengthen your team and extend your reach.",
+          "weight": 1,
+          "children": [
+            {
+              "enable": true,
+              "name": "Board Development",
+              "description": "Governance training and board recruitment support for faith-based organizations.",
+              "icon": "Shield",
+              "url": "/services/board-development/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Fundraising Strategy",
+              "description": "Donor engagement and capital campaign planning rooted in your mission story.",
+              "icon": "HeartHandshake",
+              "url": "/services/fundraising-strategy/",
+              "weight": 1
+            },
+            {
+              "enable": true,
+              "name": "Ministry Consulting",
+              "description": "Practical support for program design, volunteer systems, and community engagement.",
+              "icon": "Church",
+              "url": "/services/ministry-consulting/",
+              "weight": 2
+            },
+            {
+              "enable": true,
+              "name": "Workshops & Training",
+              "description": "Facilitated sessions for teams navigating transition, growth, or strategic pivots.",
+              "icon": "Presentation",
+              "url": "/services/workshops-training/",
               "weight": 3
             }
           ]
         },
         {
           "enable": true,
-          "name": "Proof & Next Steps",
-          "description": "Pages buyers usually want before they book a call or shortlist a partner.",
+          "name": "Get Started",
+          "description": "Pages visitors need before they reach out.",
           "weight": 2,
           "children": [
             {
               "enable": true,
-              "name": "Featured Case Study",
-              "description": "A closer look at one project from problem framing through measurable launch results.",
+              "name": "Case Studies",
+              "description": "See how we have helped organizations like yours clarify direction and grow impact.",
               "icon": "ChartNoAxesCombined",
-              "url": "/case-studies/custom-slug-case-studies-1/",
+              "url": "/case-studies/",
               "weight": 0
             },
             {
               "enable": true,
-              "name": "All Case Studies",
-              "description": "Review recent delivery work across product, service, and growth-focused projects.",
-              "icon": "FolderKanban",
-              "url": "/case-studies/",
+              "name": "Our Team",
+              "description": "Meet the advisors and researchers behind Good Shepherd Insights.",
+              "icon": "Users",
+              "url": "/team/",
               "weight": 1
             },
             {
               "enable": true,
               "name": "Insights & Articles",
-              "description": "Process notes, launch lessons, and practical ideas teams can apply right away.",
+              "description": "Practical thinking on leadership, strategy, and mission-driven impact.",
               "icon": "BookOpenText",
               "url": "/blog/",
               "weight": 2
             },
             {
               "enable": true,
-              "name": "Book Discovery Call",
-              "description": "Start with scope, timeline, and budget instead of a vague introductory back-and-forth.",
+              "name": "Schedule a Conversation",
+              "description": "Start with a no-pressure call about your goals and challenges.",
               "icon": "MessageSquareMore",
               "url": "/contact/",
               "weight": 3
@@ -141,18 +141,18 @@
       ],
       "cta": {
         "enable": true,
-        "eyebrow": "Delivery Partner",
+        "eyebrow": "Good Shepherd Insights",
         "image": "/images/case-studies/case-study-1.png",
-        "title": "Need a team that can design, build, and launch without extra layers?",
-        "description": "Use the menu to explore service lines, then move to a real scope conversation when the fit is clear.",
+        "title": "Strategic clarity for organizations that lead with purpose.",
+        "description": "Explore our services, see our track record, then reach out when you are ready.",
         "items": [
-          "Strategy, design, and engineering in one workflow",
-          "Suited to agencies, B2B firms, and consulting-led brands",
-          "Clear next steps through pricing, case studies, and contact"
+          "Research-backed strategy and hands-on coaching",
+          "Built for churches, nonprofits, and mission-driven teams",
+          "Clear next steps through case studies, articles, and a direct conversation"
         ],
         "button": {
           "enable": true,
-          "label": "Start a Project",
+          "label": "Start a Conversation",
           "url": "/contact/",
           "variant": "fill",
           "tag": "a",
@@ -166,204 +166,58 @@
       }
     },
     {
-      "name": "Pages",
+      "name": "About",
       "enable": true,
       "weight": 2,
-      "hasChildren": true,
-      "children": [
-        {
-          "enable": true,
-          "name": "Home",
-          "weight": 0,
-          "hasChildren": true,
-          "children": [
-            {
-              "enable": true,
-              "name": "Home 01",
-              "url": "/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Home 02",
-              "url": "/home-two/",
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Case Studies",
-          "weight": 0,
-          "hasChildren": true,
-          "children": [
-            {
-              "enable": true,
-              "name": "Case Studies",
-              "url": "/case-studies/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Case Study Single",
-              "url": "/case-studies/custom-slug-case-studies-1/",
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Blog",
-          "weight": 0,
-          "hasChildren": true,
-          "children": [
-            {
-              "enable": true,
-              "name": "Blog",
-              "url": "/blog/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Blog Single",
-              "url": "/blog/custom-slug-post-1/",
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Services",
-          "weight": 0,
-          "hasChildren": true,
-          "children": [
-            {
-              "enable": true,
-              "name": "Services",
-              "url": "/services/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Services Single",
-              "url": "/services/custom-slug-services-1/",
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "About Us",
-          "url": "/about/",
-          "weight": 0
-        },
-        {
-          "enable": true,
-          "name": "Team",
-          "url": "/team",
-          "weight": 0
-        },
-        {
-          "enable": true,
-          "name": "Pricing",
-          "url": "/pricing/",
-          "weight": 0
-        },
-        {
-          "enable": true,
-          "name": "FAQ",
-          "url": "/faq/",
-          "weight": 0
-        },
-        {
-          "enable": true,
-          "name": "404",
-          "url": "/404/",
-          "weight": 0,
-          "badge": {
-            "enable": true,
-            "label": "Badge",
-            "color": "accent",
-            "_color_comment": "color expected value - accent, info, success, danger, dark",
-            "type": "text",
-            "_type_comment": "type expected value - text, dot"
-          }
-        }
-      ]
+      "url": "/about/"
     },
     {
+      "name": "Case Studies",
       "enable": true,
-      "name": "Components",
       "weight": 3,
-      "url": "/components/",
-      "badge": {
-        "enable": true,
-        "label": "New",
-        "color": "accent",
-        "_color_comment": "color expected value - accent, info, success, danger, dark",
-        "type": "text",
-        "_type_comment": "type expected value - text, dot"
-      }
+      "url": "/case-studies/"
     },
     {
+      "name": "Blog",
       "enable": true,
-      "name": "Contact",
       "weight": 4,
+      "url": "/blog/"
+    },
+    {
+      "name": "Contact",
+      "enable": true,
+      "weight": 5,
       "url": "/contact/"
     }
   ],
   "footerPrimary": [
-    {
-      "enable": true,
-      "name": "About Us",
-      "url": "/about/"
-    },
-    {
-      "enable": true,
-      "name": "Service",
-      "url": "/services/"
-    },
-    {
-      "enable": true,
-      "name": "Team",
-      "url": "/team/"
-    },
-    {
-      "enable": true,
-      "name": "Blog",
-      "url": "/blog/"
-    },
-    {
-      "enable": true,
-      "name": "Contact Us",
-      "url": "/contact/"
-    }
+    { "enable": true, "name": "About", "url": "/about/" },
+    { "enable": true, "name": "Services", "url": "/services/" },
+    { "enable": true, "name": "Case Studies", "url": "/case-studies/" },
+    { "enable": true, "name": "Blog", "url": "/blog/" },
+    { "enable": true, "name": "Contact", "url": "/contact/" }
   ],
   "footerSecondary": [
     {
       "enable": true,
-      "name": "About",
-      "url": "/about/"
+      "name": "Strategic Planning",
+      "url": "/services/strategic-planning/"
     },
     {
       "enable": true,
-      "name": "Services",
-      "url": "/services/"
+      "name": "Organizational Assessment",
+      "url": "/services/organizational-assessment/"
     },
     {
       "enable": true,
-      "name": "Projects",
-      "url": "/case-studies/"
+      "name": "Leadership Coaching",
+      "url": "/services/leadership-coaching/"
     },
     {
       "enable": true,
-      "name": "Blog",
-      "url": "/blog/"
+      "name": "Research & Insights",
+      "url": "/services/research-insights/"
     },
-    {
-      "enable": true,
-      "name": "Contact",
-      "url": "/contact/"
-    }
+    { "enable": true, "name": "Contact", "url": "/contact/" }
   ]
 }

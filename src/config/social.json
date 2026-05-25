@@ -1,39 +1,39 @@
 {
   "main": [
     {
-      "enable": true,
+      "enable": false,
       "label": "Facebook",
-      "url": "https://www.facebook.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "Twitter",
-      "url": "https://twitter.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "Linkedin",
-      "url": "https://www.linkedin.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "Dribbble",
-      "url": "https://www.dribbble.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "Instagram",
-      "url": "https://www.instagram.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "Youtube",
-      "url": "https://www.youtube.com/looka"
+      "url": ""
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "WhatsApp",
-      "url": "https://wa.me/1234567890"
+      "url": ""
     }
   ]
 }
