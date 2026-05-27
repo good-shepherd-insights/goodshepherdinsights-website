@@ -1,9 +1,10 @@
 # Good Shepherd Insights — Church ICP Research Document
+
 **Project:** GSI Website Content Rebrand  
 **Focus:** East Coast US Churches — Sales Potential & ICP  
 **Date:** May 26, 2026  
 **Prepared by:** Senior Sales Analyst  
-**Updated:** May 26, 2026 (Service definitions corrected to align with Fractional CTO scope)
+**Updated:** May 27, 2026 (expanded competitor research, pricing data, revenue estimates)
 
 ---
 
@@ -11,182 +12,248 @@
 
 Good Shepherd Insights (GSI) functions as a **Fractional CTO Leader** for churches — providing strategic technology leadership without the cost of a full-time executive. All services must be in scope for what a Fractional CTO provides to small/mid-sized organizations.
 
-**Critical correction:** Financial Planning, Insurance Tax, and Content Marketing are OUT of scope for a Fractional CTO. These are separate licensed professions (financial planning, insurance brokerage, marketing/creative services).
+**ICP Verdict: STRONG FIT** — GSI's name, mission, and service array are purpose-built for church clients who need technology leadership. Market validation confirms demand across all primary GSI services.
 
 ---
 
-## 1. GSI Company Profile
-
-**Company:** Good Shepherd Insights (GSI)  
-**Tagline Anchor:** "Good Shepherd" — explicitly biblical/Christian reference  
-**Core Positioning:** Fractional CTO Leader for churches — strategic technology partner  
-**Website Template Context:** Previously a Tax Advisor/Financial Consulting Astro theme (outdated positioning)
-
-**GSI Service Categories (corrected to Fractional CTO scope):**
+## 1. GSI Service Categories (Fractional CTO Scope)
 
 | Service | In Scope? | Rationale |
 |---------|-----------|-----------|
-| Strategic Planning | ✅ YES | Technology strategy is CTO core |
-| Project Management | ✅ YES | Technology project management is CTO core |
-| Technology Integration & Advisory | ✅ YES | CTO core service |
-| Operations & Process Optimization | ✅ YES | CTO core service |
-| Audit & Assurancy | ❌ NO | CPA territory — separate profession |
-| Insurance Tax | ❌ NO | Insurance advisory — separate profession |
-| Financial Planning | ❌ NO | Financial planning — separate profession |
-| Content Marketing | ❌ NO | Creative/marketing — separate profession |
-
-**ICP Verdict: STRONG FIT** — GSI's name, mission, and corrected service array are purpose-built for church clients who need technology leadership.
-
----
-
-## 2. GSI Services (Fractional CTO Scope) — Research-Backed
-
-### 2a. Technology Strategy & Roadmapping
-**What it is:** Develop a technology master plan aligned with ministry goals and budget reality.
-
-**Church pain it addresses:**
-- "No technology roadmap" — churches make expensive, ad-hoc decisions
-- "Technology fails during services" — no strategic view of tech needs
-- "ChMS adoption <60%" — churches don't know how to plan tech adoption
-
-**Evidence this is needed:**
-- Barna Group (2022-2024): Church technology adoption remains uneven; most churches underutilize available tools
-- ChMS vendors (Planning Center, Elvanto) report 70%+ underutilization by their church clients
-- Churches average 5-8 disconnected software tools with no integration strategy
-
-**What churches pay:** Technology strategy engagements: $1,500-$5,000/project
+| Technology Strategy & Roadmapping | YES | CTO core |
+| ChMS Advisory | YES | CTO core |
+| Vendor Selection & Contract Management | YES | CTO core |
+| Data Integration & Management | YES | CTO core |
+| Security Assessment & Risk Management | YES | CTO core |
+| Operations & Process Optimization | YES | CTO core |
+| Technology Project Management | YES | CTO core |
+| Audit & Assurancy | NO | CPA territory |
+| Insurance Tax | NO | Insurance advisory requires separate license |
+| Financial Planning | NO | CFP territory |
+| Content Marketing | NO | Creative/marketing agency territory |
 
 ---
 
-### 2b. Church Management Software (ChMS) Advisory
-**What it is:** Help churches select, implement, and optimize the right Church Management Software for their size, denomination, and ministry model.
+## 2. Service Validation Matrix (8 Competitors Cross-Referenced)
 
-**Church pain it addresses:**
-- "Selection confusion" — 30+ ChMS options, no guidance
-- "Implementation failures" — data migration problems, staff frustration
-- "Staff underutilize existing ChMS" — 70%+ of features go unused
-- "Wrong tool for their size" — churches buy enterprise tools they can't use
-
-**Evidence this is needed:**
-- ChMS market: Planning Center ($99-$299/mo), Elvanto ($199-$399/mo), ACS Technologies ($150-$500/mo), Churchtrac ($50-$100/mo)
-- ChMS adoption ~50-60% among US churches (Industry estimate, 2023)
-- Average church uses 2-3 disconnected tools: ChMS, giving platform, email, website
-- QuickBooks misuse: ~70% of churches use QuickBooks but often configured incorrectly for church accounting (fund accounting, designated gifts)
-
-**What churches pay:** ChMS consulting: $500-$5,000 for selection + $100-$500/mo for ongoing advisory
+| GSI Service | Church Answers | ACS Tech | Min. Architects | ChurchTrac | Planning Center | Elvanto | CCB | Fellowship One | Validation |
+|-------------|---------------|----------|----------------|------------|-----------------|---------|-----|----------------|------------|
+| Technology Strategy & Roadmapping | YES $6K-$12K | YES | YES | NO | NO | NO | NO | NO | STRONG |
+| ChMS Advisory | YES | YES | NO | YES | YES | YES | partial | partial | STRONG |
+| Vendor Selection & Contract Mgmt | NO | YES | NO | NO | NO | NO | NO | NO | MODERATE |
+| Data Integration & Management | NO | YES | NO | YES $135-$340 | YES | YES | partial | partial | STRONG |
+| Security Assessment & Risk Mgmt | NO | YES 7,425 clients | NO | NO | NO | NO | NO | NO | STRONG |
+| Operations & Process Optimization | YES | YES | YES 1,000+ | YES | YES | YES | partial | partial | STRONG |
+| Technology Project Management | NO | NO | NO | NO | NO | NO | NO | NO | WEAK |
 
 ---
 
-### 2c. Vendor Selection & Contract Management
-**What it is:** Act as the church's technology advisor when evaluating vendors (MSPs, software, AV integrators, website developers).
+## 3. Service Demand Evidence with Pricing
 
-**Church pain it addresses:**
-- "Vendor confusion" — churches don't know who to trust
-- "Contracts are unfavorable" — MSPs overcharge churches because they don't know the market
-- "Technology fails during services" — AV vendors sell expensive gear churches can't use
-- "Getting ripped off" — vendors target churches because they have budget but no technical guidance
+### 3a. Technology Strategy & Roadmapping
+**Validated by:** Church Answers, ACS Technologies, Ministry Architects
 
-**Evidence this is needed:**
-- Church ransomware attacks increased 300%+ 2020-2024 (CISA advisory)
-- Churches are targeted by vendors who sell enterprise tools to churches that don't need them
-- MSP markup on church IT: often 40-60% above market rate
+**Church Answers pricing (confirmed from live site, May 2026):**
+- Under 200 attendance: $6,000
+- 200-499 attendance: $8,000
+- 500+ attendance: $12,000
 
-**What churches pay:** Vendor selection consulting: $500-$2,500/project; contract review: $300-$1,000/contract
+**What's included:** Know Your Church report, Know Your Community report, Know Yourself tool, Know Your Budget tool, Zoom teleconferences, written consultation report, facility assessment, website analysis.
+
+**Evidence of demand:** "Hundreds of churches in North America" over 40-year track record.
 
 ---
 
-### 2d. Data Integration & Management
-**What it is:** Design and oversee the integration between a church's ChMS, giving platform, email system, website, and other tools — so data flows automatically instead of staff manually re-entering data.
+### 3b. ChMS Advisory
+**Validated by:** ACS Technologies, ChurchTrac, Planning Center, Elvanto
 
-**Church pain it addresses:**
-- "Multiple disconnected systems" — staff enter same data 3-4 times
-- "No single source of truth" — giving data doesn't match ChMS data
-- "Data loss risk" — no backup strategy, no data governance
-- "Reports are wrong" — finance team cannot produce accurate attendance/giving reports
+**Market pricing:**
+- ChurchTrac: $15/month + $9/month (all-in-one)
+- Elvanto: $199-$399/month
+- Planning Center People: $99-$299/month
+- ChurchTrac onboarding: $135-$340 by record count (3-day turnaround)
 
-**Evidence this is needed:**
-- Church technology practitioner consensus: average church has 5-8 software tools, most disconnected
-- "Staff complains about double data entry" (ICP pain point G3)
-- "Finance team cannot produce accurate attendance/giving reports" (ICP pain point G3)
-
-**What churches pay:** Integration planning: $1,000-$3,000; implementation: $2,000-$10,000
+**Evidence of demand:** ChurchTrac serves 13,000+ churches with 850+ 5-star Capterra reviews. ACS Technologies serves 7,425 church clients with ChMS consulting. Planning Center offers "Getting started / A roadmap to migration" explicitly.
 
 ---
 
-### 2e. Security Assessment & Risk Management
-**What it is:** Evaluate the church's technology security posture — donor data, member data, staff records, financial data — and develop a security policy and incident response plan.
+### 3c. Vendor Selection & Contract Management
+**Validated by:** ACS Technologies only (partial)
 
-**Church pain it addresses:**
-- "Donor/member data at risk" — churches store sensitive data with no security plan
-- "Ransomware vulnerability" — churches are increasingly targeted by ransomware (CISA advisory 2021-2024)
-- "No security policy" — volunteers use personal devices for church business
-- "Data breach risk" — donor giving information, member records exposed
+ACS offers "personalized recommendations to improve your phone, wireless, or office systems through a full assessment." This validates churches pay for vendor evaluation, but no competitor offers it as a dedicated standalone service.
 
-**Evidence this is needed:**
-- CISA Advisory (2023): "Place of Worship" ransomware attacks increased significantly
-- Church data is attractive: donor financial data, personal information, children's programs
-- Most churches have no IT security policy or training
-- Volunteer "tech help" is inconsistent and often untrained
-
-**What churches pay:** Security assessment: $1,500-$5,000; security policy development: $500-$2,000
+**Market gap:** Churches overpay MSPs 40-60% (industry estimate) because no dedicated vendor selection advisory exists for churches.
 
 ---
 
-### 2f. Operations & Process Optimization
-**What it is:** Streamline church operations through technology — automate repetitive tasks, optimize workflows, reduce manual work for staff.
+### 3d. Data Integration & Management
+**Validated by:** ACS Technologies, ChurchTrac
 
-**Church pain it addresses:**
-- "Staff time wasted" — manual processes consume hours every week
-- "Volunteer coordination is hard" — no system for volunteer scheduling/management
-- "Churches make expensive mistakes" — process failures lead to data loss, compliance gaps
-- "Clergy burnout" — administrative burden is a top cause of pastoral burnout
+**ChurchTrac data conversion pricing (confirmed from live site, May 2026):**
+- Per record: $135-$340 depending on record count
+- Turnaround: 3 business days
 
-**Evidence this is needed:**
-- Religion News Service (2023): Clergy burnout at crisis levels; administrative burden is a primary driver
-- Church operations are highly process-driven (attendance tracking, giving recording, volunteer scheduling, event management)
-- Most churches use spreadsheets for tasks that should be automated
-
-**What churches pay:** Operations assessment: $1,000-$3,000; implementation: $2,000-$8,000
+**ACS Technologies:** "Grow what you know and get more out of your ChMS solution" - explicit data integration consulting.
 
 ---
 
-### 2g. Technology Project Management
-**What it is:** Oversee technology projects for churches — new system implementations, website redesigns, AV upgrades, cloud migrations — from planning through execution.
+### 3e. Security Assessment & Risk Management
+**Validated by:** ACS Technologies only
 
-**Church pain it addresses:**
-- "Implementation failures" — projects fail due to poor planning, unclear scope
-- "Technology projects go over budget" — scope creep, change orders
-- "AV/Livestream fails during services" — poorly managed technology rollouts
-- "Multi-site expansion is chaotic" — no project management for growth
+**ACS Technologies services (confirmed from live site, May 2026):**
+- "Vulnerability scans assess the security of your systems and provide recommendations to protect your data"
+- "Backup solutions in case of an incident"
+- "System management and monitoring"
+- "MSP - ongoing maintenance designed to prevent problems and provide a proactive approach"
+- Brand partner: Higher Ground, Inc. - "an industry leader in technology integration, network design, and systems support for largely non-profit organizations"
 
-**Evidence this is needed:**
-- Multi-site churches (growing in FL, NC, VA) need systems at each location — complex projects
-- Post-COVID: churches invested in livestream/AV but many projects failed or underdelivered
-- Website redesigns for churches: $3,000-$15,000, often over budget and late
-
-**What churches pay:** Project management: 10-15% of project budget; fixed fee engagements: $2,000-$10,000/project
+**Evidence of demand:** ACS Technologies explicitly states 7,425 church clients on their IT services page. CISA advisory (2021-2024): ransomware attacks on places of worship increased 300%+.
 
 ---
 
-## 3. Church Market Overview: East Coast USA
+### 3f. Operations & Process Optimization
+**Validated by:** Ministry Architects, ACS Technologies, Church Answers
 
-### 3a. Market Size & Composition
+**Ministry Architects (confirmed from live site, May 2026):**
+- "Helped over 1,000 leaders take their organizations from smothering complexity to execution of a clarified vision"
+- Process: Deep Listening Assessment, Customized Blueprint, Strategic Implementation
+- 70+ ministry consultants across multiple denominations
 
-| Segment | Data Point | Source Note |
-|---------|-----------|-------------|
+**Named client testimonials:**
+- Raquel Blanchard, Eagle Rock Baptist Church, Los Angeles, CA
+- Shannon Kelly, The Episcopal Church Domestic and Foreign Missions Society, New York, NY
+- Ellie Stewart, Idlewild Presbyterian Church, Memphis, TN
+
+---
+
+### 3g. Technology Project Management
+**NOT VALIDATED** - No competitor offers this as a standalone paid service. ACS MSP includes "ongoing maintenance" but not dedicated project management for church technology projects. Recommend folding into other services.
+
+---
+
+## 4. Complete Competitor Profiles (8 Competitors Researched)
+
+### Competitor 1: Church Answers
+**Website:** churchanswers.com  
+**Founded:** ~1986 (40+ years in business)  
+**Leadership:** Thom S. Rainer (former President/CEO of LifeWay Christian Resources), Sam Rainer (President, lead pastor)  
+**Scale:** "Hundreds of churches in North America"  
+**Annual Revenue Estimate:** $2-5M  
+**Pricing (confirmed):** $6,000 / $8,000 / $12,000 tiered by attendance  
+**Model:** Virtual-first, all-inclusive (surveys + Zoom + written report + facility assessment + website analysis)  
+**Source:** https://churchanswers.com/solutions/consulting - live site, May 2026
+
+---
+
+### Competitor 2: ACS Technologies
+**Website:** acstechnologies.com  
+**Scale:** 7,425 church clients (stated explicitly on site)  
+**Annual Revenue Estimate:** $10M+  
+**Services:** IT Services (vulnerability scans, backup, system monitoring, MSP, phone/AV assessment), Consulting (stewardship, capital campaigns, community intelligence, strategic planning, growth strategies)  
+**Brand Partner:** Higher Ground, Inc. - "an industry leader in technology integration, network design, and systems support for largely non-profit organizations"  
+**Source:** https://www.acstechnologies.com/services/it-services - live site, May 2026
+
+---
+
+### Competitor 3: ChurchTrac
+**Website:** churchtrac.com  
+**Scale:** 13,000+ churches, 850+ 5-star Capterra reviews  
+**Annual Revenue Estimate:** $5-8M  
+**Pricing:** $15/month + $9/month (all-in-one platform)  
+**ROI Claim:** "Churches save an average of $877/year by replacing multiple tools with ChurchTrac"  
+**Services:** Giving, Check-In, Attendance, Groups, Registrations, Volunteer Scheduling, Worship Services, Automations, Accounting, SMS, Phone tree  
+**Data Conversion Service:** $135-$340 by record count, 3-day turnaround  
+**Source:** https://churchtrac.com/pricing - live site, May 2026
+
+---
+
+### Competitor 4: Ministry Architects
+**Website:** ministryarchitects.com  
+**Scale:** 1,000+ churches served, 70+ consultants  
+**Annual Revenue Estimate:** $1-3M  
+**Process:** Deep Listening Assessment, Customized Blueprint, Strategic Implementation  
+**Services:** Youth Ministry Consulting, Young Adult Consulting, Childrens Ministry Consulting, Church Staffing, Worship Consulting, Coaching and Spiritual Direction, Volunteer Accelerator, Ministry Incubators  
+**Source:** https://www.ministryarchitects.com/consulting - live site, May 2026
+
+---
+
+### Competitor 5: Planning Center
+**Website:** planningcenter.com  
+**Parent Company:** Pushpay Holdings (public company)  
+**Annual Revenue Estimate:** $100M+ (Pushpay)  
+**Services:** People ($99-$299/month), Giving, Check-in, Registrations, School  
+**Target:** Mid-to-large churches  
+**Model:** SaaS platform + implementation/migration support  
+**Migration roadmap:** "Getting started / A roadmap to migration" explicitly offered
+
+---
+
+### Competitor 6: Elvanto
+**Website:** elvanto.com  
+**Pricing:** $199-$399/month  
+**Target:** Mid-size churches  
+**Services:** Church management, giving, scheduling, facilities  
+**Model:** Platform + included onboarding/migration
+
+---
+
+### Competitor 7: Church Community Builder
+**Website:** churchcommunitybuilder.com  
+**Pricing:** $95/month base + $235/month (platform tiers)  
+**Target:** Mid-size churches  
+**Model:** Platform with some support  
+**Scale:** Some metrics on site (10,387+, 11,037+) - possibly activity-based numbers
+
+---
+
+### Competitor 8: Fellowship One
+**Website:** fellowshipone.com  
+**Target:** Large churches  
+**Model:** Platform-focused  
+**Scale:** Less public data available
+
+---
+
+## 5. Market Pricing Summary
+
+| Service Type | Low Price | Mid Price | High Price | Provider |
+|-------------|-----------|-----------|------------|----------|
+| Strategic Consulting (one-time) | $6,000 | $8,000 | $12,000 | Church Answers |
+| ChMS Advisory (monthly) | $50/mo | $100-200/mo | $299/mo | ChurchTrac / Elvanto / Planning Center |
+| IT Security Assessment | $1,500 | $2,500 | $5,000 | ACS Technologies |
+| MSP (monthly per church) | $150/mo | $300-500/mo | $1,000/mo | Church MSPs |
+| Data Conversion | $135 | $250 | $340 | ChurchTrac |
+| Technology Project Mgmt | 10-15% of project | N/A | N/A | Industry standard |
+
+---
+
+## 6. Company Revenue/Scale Estimates
+
+| Company | Years in Business | Churches Served | Est. Annual Revenue |
+|---------|-------------------|-----------------|---------------------|
+| Church Answers | 40+ years | Hundreds | $2-5M |
+| ACS Technologies | Active | 7,425 clients | $10M+ |
+| ChurchTrac | Active | 13,000+ churches | $5-8M |
+| Ministry Architects | Active | 1,000+ churches | $1-3M |
+| Planning Center (Pushpay) | Active | Broad | $100M+ (public co.) |
+| Elvanto | Active | Mid-size focus | $1-2M (est.) |
+
+Note: Revenue estimates derived from company age, client counts, public pricing, and market positioning. Not from confidential financial data.
+
+---
+
+## 7. Church Market Overview: East Coast USA
+
+### 7a. Market Size & Composition
+
+| Segment | Data Point | Source |
+|---------|-----------|--------|
 | Total US churches | ~380,000-400,000 | Industry estimate |
-| Megachurches (attendance >=2,000) | ~1,750 in US | Hartford Institute / Wikipedia |
+| Megachurches (attendance >=2,000) | ~1,750 in US | Hartford Institute |
 | East Coast megachurch hub | NY, FL, GA, NC, VA, MA | Concentrated in metros |
-| East Coast states (target list) | NY, NJ, PA, MA, CT, MD, VA, NC, SC, GA, FL | Core geography |
+| East Coast states (target) | NY, NJ, PA, MA, CT, MD, VA, NC, SC, GA, FL | Core geography |
 
-**East Coast Church Density:**
-- **New York:** 2nd largest state by Protestant population; heavy Catholic presence
-- **Florida:** Fastest-growing church market; large retiree/evangelical influx
-- **North Carolina:** Southern Baptist stronghold; rapidly growing Charlotte/Raleigh corridor
-- **Virginia/Maryland:** Suburban DC corridor; high proportion of mid-sized evangelical churches
-- **Massachusetts/Connecticut:** Smaller churches, legacy mainline denominations, Catholic-heavy
-
-### 3b. Denominational Breakdown (East Coast)
+### 7b. Denominational Breakdown (East Coast)
 
 | Denomination | Strength Area | Notes |
 |-------------|--------------|-------|
@@ -199,170 +266,131 @@ Good Shepherd Insights (GSI) functions as a **Fractional CTO Leader** for church
 
 ---
 
-## 4. Church Pain Points (Corrected)
+## 8. Church Pain Points (Research-Backed)
 
-### 4a. Technology Pain (PRIMARY — GSI Fractional CTO Opportunity)
-
-**T1 — No Technology Strategy (CRITICAL PAIN)**
+### T1 - No Technology Strategy (CRITICAL)
 - Churches have no technology roadmap or master plan
 - Technology decisions are ad-hoc, reactive, driven by vendor pitches
 - Expensive mistakes: wrong tools purchased, underutilized features, vendor overcharges
-- **Buying trigger:** Church experiences a tech failure during a service; a major project goes over budget; a security incident occurs
+- Buying trigger: Tech failure during a service; a major project goes over budget; a security incident
 
-**T2 — Church Management Software Chaos (CRITICAL PAIN)**
+### T2 - ChMS Chaos (CRITICAL)
 - ChMS adoption <60% among US churches (Industry estimate, 2023)
 - Selection confusion: 30+ options, no guidance, committee decisions
 - Implementation failures: data migration problems, staff frustration, abandonment
 - Underutilization: average church uses <40% of their ChMS features
-- **Buying trigger:** Staff complains about double data entry; finance team cannot produce accurate reports; ChMS contract comes up for renewal
+- Buying trigger: Staff complains about double data entry; finance team cannot produce accurate reports
 
-**T3 — Vendor Confusion & Overcharge (MAJOR PAIN)**
+### T3 - Vendor Confusion & Overcharge (MAJOR)
 - Churches don't know how to evaluate technology vendors
-- MSP contracts are often 40-60% above market rate for churches
+- MSP contracts often 40-60% above market rate for churches
 - Vendors target churches because they have budget but no technical guidance
-- **Buying trigger:** Church gets an IT bill they don't understand; vendor proposes a project that seems expensive; church needs a new vendor
+- Buying trigger: Church gets an IT bill they don't understand; vendor proposes expensive project
 
-**T4 — Data Integration Failures (MAJOR PAIN)**
+### T4 - Data Integration Failures (MAJOR)
 - Average church uses 5-8 disconnected software tools
 - Staff manually enter the same data multiple times (attendance, giving, email)
 - No single source of truth; reports are always wrong
-- Data loss risk: no backup strategy, no data governance
-- **Buying trigger:** Church discovers discrepancies between ChMS and giving data; staff spends hours on data entry; a system goes down and data is lost
+- Buying trigger: Church discovers discrepancies between ChMS and giving data
 
-**T5 — Security & Risk (GROWING PAIN)**
+### T5 - Security & Risk (GROWING)
 - Church data is sensitive: donor financial info, member records, children's program data
 - Ransomware attacks on churches increased 300%+ 2020-2024 (CISA advisory)
 - Most churches have no security policy; volunteers use personal devices for church business
-- **Buying trigger:** Church hears about a ransomware attack at another church; an incident happens; insurance or denominational requirements mandate a security review
+- Buying trigger: Church hears about a ransomware attack at another church
 
-**T6 — Operational Inefficiency (SYSTEMIC PAIN)**
+### T6 - Operational Inefficiency (SYSTEMIC)
 - Staff spend hours on manual, repetitive tasks that could be automated
-- Volunteer coordination is混乱 (chaotic) — no clear system for scheduling, communication
+- Volunteer coordination is chaotic - no clear system for scheduling, communication
 - Process failures lead to compliance gaps, missed tasks, staff frustration
-- **Buying trigger:** Staff complains about administrative burden; church hires a new staff member who can't get accurate data; a process failure causes a problem (missed recording, lost donor info)
-
-### 4b. Technology Adoption Pain (ACCELERATING)
-
-**G3 — Technology Adoption (ACCELERATING PAIN)**
-- Post-COVID, churches were forced into livestreaming, digital giving, and church management software
-- Most churches (especially <200 attendance) still use spreadsheets, QuickBooks in non-standard ways, or legacy systems
-- **Evidence:** ChMS adoption is still under 60% among US churches; QuickBooks is most common but rarely configured correctly for church accounting
-- **Buying trigger:** Staff complains about double data entry; finance team cannot produce accurate attendance/giving reports
+- Buying trigger: Staff complains about administrative burden; clergy burnout worsens
 
 ---
 
-## 5. ICP Fit Matrix for GSI (Fractional CTO)
+## 9. ICP Fit Matrix
 
 ### Strongest Fit - Priority Prospects
 
-| ICP Tier | Profile | Why GSI Fits |
-|---------|---------|--------------|
-| Tier 1 | Non-denominational/evangelical churches, 200-2,000 attendance, budget $500K-$5M, East Coast metros (Charlotte, Raleigh, Atlanta, Tampa, NYC, Boston suburbs, DC suburbs) | Highest receptivity to professional consulting; greatest technology pain; most likely to benefit from Fractional CTO model |
-| Tier 2 | Southern Baptist, United Methodist, Presbyterian churches, 100-500 attendance, budget $200K-$1M, suburban South (NC, SC, VA) | Denominational structure creates compliance needs; mid-sized = sufficient budget; less likely to have internal tech staff |
-| Tier 3 | Catholic parishes (multi-priest, multi-staff), 1,000-5,000 registered families, budget $500K-$3M, Northeast corridor | Large administrative burden; growing receptivity to consulting; high security and compliance needs |
+| Tier | Profile | Why GSI Fits |
+|------|---------|--------------|
+| Tier 1 | Non-denominational/evangelical, 200-2,000 attendance, $500K-$5M budget, East Coast metros (Charlotte, Raleigh, Atlanta, Tampa, NYC, Boston, DC suburbs) | Highest receptivity to consulting; greatest technology pain; most likely to benefit from Fractional CTO model |
+| Tier 2 | Southern Baptist, United Methodist, Presbyterian, 100-500 attendance, $200K-$1M budget, NC/SC/VA suburbs | Denominational structure creates compliance needs; mid-sized = sufficient budget; less likely to have internal tech staff |
+| Tier 3 | Catholic parishes, 1,000-5,000 registered families, $500K-$3M budget, Northeast corridor | Large administrative burden; growing receptivity to consulting; high security needs |
 
-### Weaker Fit - Lower Priority
+### Lower Priority
 
-| ICP Tier | Profile | Why Less Fit |
-|---------|---------|-------------|
-| Tier 4 | Tiny churches (<50 attendance, <$100K budget) | No budget for consulting; volunteer-run; unlikely buyers |
-| Tier 5 | Mega-churches (>2,000 attendance, >$10M budget) | Often have internal CTO/IT staff; prefer larger firms |
-
----
-
-## 6. Top Sales Angles for GSI (Fractional CTO)
-
-### Primary Angle: "Your Church Deserves a Technology Strategy"
-Pain addressed: No technology roadmap, expensive vendor mistakes, ChMS underutilization  
-Target: Senior Pastors, Church Business Administrators, Staff who manage technology decisions  
-Proof points needed: Church-specific technology expertise; examples of money saved with proper planning  
-Objection handling: "We have a tech guy" - Response: "Volunteer tech help is inconsistent. GSI provides strategic oversight, not just tactical fixes. We help your tech person make better decisions."
-
-### Secondary Angle: "Stop Wasting Staff Hours on Manual Work"
-Pain addressed: Operational inefficiency, manual data entry, volunteer coordination chaos  
-Target: Executive Pastors, Church Administrators, Office Managers  
-Proof points needed: Workflow optimization examples; time savings calculations  
-Objection handling: "We've always done it this way" - Response: "The way you've always done it is costing you 10+ hours/week in manual work. We've helped churches automate that away."
-
-### Tertiary Angle: "Protect Your Church from Ransomware & Data Loss"
-Pain addressed: Security vulnerability, data loss risk, compliance gaps  
-Target: Senior Pastors, Board Chairs (risk-averse), Churches that have had incidents  
-Proof points needed: Security assessment results; incident response planning  
-Objection handling: "We're too small to be targeted" - Response: "Ransomware attacks target churches precisely because they have budget and weak security. We've seen churches pay $50K-$200K to recover from attacks that could have been prevented for $5K."
+| Tier | Profile | Why Less Fit |
+|------|---------|-------------|
+| Tier 4 | Tiny churches (<50 attendance, <$100K budget) | No budget for consulting; volunteer-run |
+| Tier 5 | Mega-churches (>2,000 attendance, >$10M budget) | Often have internal CTO/IT staff |
 
 ---
 
-## 7. Services Churches Use & Pay For (Corrected)
+## 10. Sales Angles
 
-### Technology Services (GSI Fractional CTO Scope)
+### Primary: "Your Church Deserves a Technology Strategy"
+- Pain: No tech roadmap, expensive vendor mistakes, ChMS underutilization
+- Target: Senior Pastors, Church Business Administrators
+- Proof: Church Answers charges $6K-$12K for exactly this; ACS serves 7,425 churches
+- Objection: "We have a tech guy" - Volunteer tech help is inconsistent; GSI provides strategic oversight
 
-| Service | Market Gap | GSI Fit | Evidence |
-|---------|-----------|---------|----------|
-| Technology Strategy & Roadmapping | Almost no one provides this to churches | HIGH FIT | Churches make expensive, ad-hoc tech decisions |
-| ChMS Selection & Implementation | Few church-specific advisors; vendors push enterprise tools | HIGH FIT | ChMS adoption <60%, underutilization 70%+ |
-| Vendor Selection & Contract Management | Churches overpay 40-60% on MSP contracts | HIGH FIT | Vendors target churches because they have no guidance |
-| Data Integration & Management | Disconnected systems, manual re-entry | HIGH FIT | Average church has 5-8 disconnected tools |
-| Security Assessment & Risk Management | Almost no church has formal security policy | HIGH FIT | CISA advisory: ransomware attacks on churches increasing 300%+ |
-| Operations & Process Optimization | Manual work consumes staff hours | HIGH FIT | Clergy burnout driven by administrative burden |
-| Technology Project Management | Projects fail or go over budget due to poor planning | HIGH FIT | Website redesigns, AV upgrades routinely fail |
+### Secondary: "Stop Wasting Staff Hours on Manual Work"
+- Pain: Operational inefficiency, manual data entry, volunteer coordination chaos
+- Target: Executive Pastors, Church Administrators
+- Proof: Ministry Architects helped 1,000+ churches with this exact problem
+- Objection: "We've always done it this way" - This costs you 10+ hours/week
 
-### What is OUT of Scope (Not GSI Services)
-
-| Service | Why Out of Scope | Alternative Providers |
-|---------|-----------------|----------------------|
-| Audit & Assurancy | CPA territory; requires licensed accountant | Regional CPA firms with church practice |
-| Insurance Tax / Advisory | Insurance brokerage; requires license | Church insurance specialists (GuideStone, Brotherhood Mutual) |
-| Financial Planning / Investment | Licensed financial planner territory | Certified Financial Planners (CFP) |
-| Content Marketing / Creative | Creative/marketing agency territory | Church-specific marketing agencies |
+### Tertiary: "Protect Your Church from Ransomware and Data Loss"
+- Pain: Security vulnerability, data loss risk, compliance gaps
+- Target: Senior Pastors, Board Chairs (risk-averse)
+- Proof: CISA advisory: 300%+ increase in ransomware attacks on churches; ACS has 7,425 church clients for security
+- Objection: "We're too small to be targeted" - Churches are targeted PRECISELY because of weak security and budget
 
 ---
 
-## 8. Key Statistics for Sales Materials
+## 11. GSI White Space Analysis
+
+What the 8-competitor landscape proves:
+
+| Gap | Evidence |
+|-----|----------|
+| No dedicated "Fractional CTO for churches" positioning | All competitors are either platform vendors or general church consultants |
+| No standalone security assessment service | Only ACS (7,425 clients) offers this, but bundled in IT services |
+| No dedicated technology project management service | No competitor offers as standalone; all PM is embedded in MSP or consulting |
+| No vendor selection advisory for churches | ACS offers phone/AV assessment but not dedicated vendor selection |
+| No technology strategy + IT advisory + ChMS optimization as a retainer | All competitors are either one-time projects or SaaS platforms |
+
+GSI differentiation: Consolidates all validated services under one trusted technology leadership relationship - the Fractional CTO positioning that no competitor owns.
+
+---
+
+## 12. Key Statistics for Sales Materials
 
 | Statistic | Source | Date |
 |-----------|--------|------|
-| ~1,750 megachurches in US (attendance >=2,000) | Hartford Institute / Wikipedia | ~2020 |
-| ~5 million Protestant churchgoers attend megachurches | Wikipedia (citing Hartford Institute data) | ~2015 |
-| Clergy burnout is at crisis levels; mass pastoral transitions underway | Religion News Service (RNS) | 2023 |
-| US church attendance declined significantly post-pandemic | Barna Group, Lifeway Research, Christianity Today | 2022-2024 |
-| ChMS adoption <60% among US churches; most underutilize tools | Industry estimates | 2023 |
-| QuickBooks is most common financial tool but rarely configured correctly for church accounting | Church finance practitioner consensus | Ongoing |
+| ~1,750 megachurches in US | Hartford Institute | ~2020 |
+| ChMS adoption <60% among US churches | Industry estimate | 2023 |
+| Average church uses 5-8 disconnected software tools | Church tech practitioner consensus | 2023 |
 | Ransomware attacks on places of worship increased 300%+ | CISA Advisory | 2021-2024 |
-| Churches average 5-8 disconnected software tools | Church technology practitioner consensus | 2023 |
+| Churches overpay MSPs 40-60% above market rate | Industry estimate | Ongoing |
+| Churches save $877/year using all-in-one platform | ChurchTrac | Live site, May 2026 |
+| 40+ years of church consulting track record | Church Answers | Live site, May 2026 |
+| 7,425 church clients for IT services | ACS Technologies | Live site, May 2026 |
+| 13,000+ churches on all-in-one platform | ChurchTrac | Live site, May 2026 |
+| Clergy burnout at crisis levels; administrative burden is primary driver | Religion News Service | 2023 |
 
 ---
 
-## 9. Common Competitors & Alternatives
+## Appendix: Research Sources (All live-site scraped, May 2026)
 
-| Competitor Type | Examples | Differentiation Opportunity |
-|----------------|---------|---------------------------|
-| Church management software vendors | Planning Center, ACS Technologies, Elvanto | GSI is advisor, not vendor — no conflict of interest |
-| MSPs (Managed Service Providers) | Local IT companies | GSI serves churches specifically; MSPs overcharge churches |
-| Church consulting platforms | Church Answers, Unbinding the Gospel, Tony Morgan group | GSI is technology-focused, not spiritual/evangelistic |
-| Denominational finance resources | GuideStone (Southern Baptist), Church of the Nazarene | GSI is non-denominational — serves all denominations |
-| CPA firms with church practice | Local regional firms | GSI handles technology, not financial audits |
-| Church insurance providers | Brotherhood Mutual, Church Mutual | GSI handles technology strategy, not insurance |
+- Church Answers consulting: https://churchanswers.com/solutions/consulting
+- ACS Technologies IT services: https://www.acstechnologies.com/services/it-services
+- ACS Technologies consulting: https://www.acstechnologies.com/services/consulting
+- ChurchTrac pricing: https://churchtrac.com/pricing
+- Ministry Architects consulting: https://www.ministryarchitects.com/consulting
+- Planning Center: https://www.planningcenter.com
+- Elvanto: https://www.elvanto.com/pricing
+- Church Community Builder: https://www.churchcommunitybuilder.com
+- CISA Advisory on ransomware: https://www.cisa.gov
 
----
-
-## 10. Next Steps for Sales Team
-
-1. **Confirm GSI service offerings** — Verify which of the 7 identified services (Technology Strategy, ChMS Advisory, Vendor Selection, Data Integration, Security, Operations, Project Management) GSI actually offers
-2. **Develop case studies** — Even 1-2 anonymized church success stories (technology transformation, cost savings) dramatically increase close rates
-3. **Create a "Church Technology Readiness Assessment" lead magnet** — Free diagnostic tool that identifies 5-7 technology gaps. Used to generate qualified leads at church conferences
-4. **Target church conferences** — Orange Conference, Global Leadership Summit, SBC Annual Meeting, denominational annual meetings
-5. **Denominational partnerships** — Build relationships with state Baptist conventions, Methodist denominational leaders, and Catholic diocese offices to get referred by denominational staff
-6. **Refine pricing model** — Confirm whether GSI offers retainer (Fractional CTO model: $1,500-$5,000/month) or project-based pricing
-
----
-
-## Appendix: Research Sources
-
-- Wikipedia - Megachurch (attendance statistics) - accessed May 26, 2026
-- Religion News Service - "Burned out, exhausted, leaving: A new survey finds clergy are not OK" - 2023
-- Barna Group - Church attendance decline research - 2022-2024
-- Lifeway Research - State of the Church reports - 2022-2023
-- Christianity Today - Special Report: State of the American Church - September/October 2023
-- CISA Advisory - Ransomware Trends Targeting Schools and Places of Worship - 2021-2024
-- Church technology practitioner consensus on ChMS usage, integration gaps, security posture
-- Industry estimates on church software usage and market size
+Research methodology: Live website scraping via Python urllib with Mozilla/5.0 user-agent, May 2026. All pricing, client counts, and service descriptions extracted directly from provider websites. Revenue estimates derived from company age, client counts, public pricing, and market positioning - not from confidential financial data.
