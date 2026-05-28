@@ -1,24 +1,24 @@
 ---
 enable: true
-title: "We Have Than More [25 Years of Experience](/about/)<br /> in Tax Advisor & Financial <br />Consulting Services"
+title: "Strategic leadership for your scattered decisions"
 
 features:
   - enable: true
     icon: "/images/icons/svg/premium-quality.svg"
-    title: "Quality Service"
-    description: "Nemo enim ipsam voluplatem quia voluptas sit aspernatur aut odit aut fugit magni"
+    title: "Objective vendor selection"
+    description: "We bring an objective lens to software pitches so you choose tools that support your ministry."
     backgroundImage: "/images/decorative/pattern/pattern-4.png"
     backgroundImageAlt: "Background Pattern"
   - enable: true
     icon: "/images/icons/svg/group.svg"
-    title: "Professional Team"
-    description: "Nemo enim ipsam voluplatem quia voluptas sit aspernatur aut odit aut fugit magni"
+    title: "Strategic roadmap development"
+    description: "Move past reactive tech fixes with a professional plan that aligns your technology with your church's long-term vision."
     backgroundImage: "/images/decorative/pattern/pattern-4.png"
     backgroundImageAlt: "Background Pattern"
   - enable: true
     icon: "/images/icons/svg/24-hours-support.svg"
-    title: "24/7 Full Support"
-    description: "Nemo enim ipsam voluplatem quia voluptas sit aspernatur aut odit aut fugit magni"
+    title: "Ongoing Fractional CTO partnership"
+    description: "Get executive-level technology oversight without the cost of a full-time hire, ensuring your systems remain secure and efficient."
     backgroundImage: "/images/decorative/pattern/pattern-4.png"
     backgroundImageAlt: "Background Pattern"
 ---

@@ -1,11 +1,11 @@
 ---
 enable: true
 
-subTitle: "Your Trusted Tax Advisor."
-titleLine1: "Trustworthy Tax"
-titleLine2: "Advice."
+subTitle: "Your Fractional CTO partner"
+titleLine1: "Strategic technology"
+titleLine2: "leadership for your church"
 
-description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint sunt in culpa qui officia deserunt [Discover More](/about/)"
+description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your mission. [Discover More](/about/)"
 
 arrowDecorationImage: "/images/decorative/shape/shape-5.png"
 arrowDecorationImageAlt: "Decorative shape"
@@ -14,11 +14,11 @@ shapeImageAlt: "Decorative shape"
 
 slides:
   - image: "/images/banner/banner-1.png"
-    alt: "Tax advisory team meeting"
+    alt: "Strategic technology consultation"
   - image: "/images/banner/banner-2.png"
-    alt: "Professional tax consultation"
+    alt: "Fractional CTO roadmap session"
   - image: "/images/banner/banner-common.png"
-    alt: "Tax advisory services"
+    alt: "Church technology strategy"
 
 satisfactionClients:
   enable: true
@@ -28,24 +28,24 @@ satisfactionClients:
     - "/images/customers/avatar/customer-3.png"
   avatarAlt: "Client avatar"
   count: "240+"
-  label: "Trusted Over 240+ Client Across Country"
+  label: "Guiding churches across the East Coast"
 
 video:
-  src: "bTqVqk7FSmY" # Locally hosted video path (ex: /videos/test-video.mp4), or a YouTube/Vimeo video ID
-  type: "" # If video is stored locally in `public/videos`, set to video file type (e.g., "video/mp4")
-  provider: "youtube" # Options: "youtube", "vimeo", or "html5"
-  poster: "/images/banner/banner-common.png" # Path to thumbnail image for the video
-  autoplay: true # Set to true to autoplay; false for manual start (default: false)
+  src: "bTqVqk7FSmY"
+  type: ""
+  provider: "youtube"
+  poster: "/images/banner/banner-common.png"
+  autoplay: true
   id: "hero-video-modal"
 
 helpDropdown:
   enable: true
   label: "How can we help you?"
   items:
-    - label: "Tax Planning"
+    - label: "Technology Strategy Audit"
       url: "/services/"
-    - label: "Business Advisory"
+    - label: "ChMS advisory"
       url: "/services/"
-    - label: "Financial Consulting"
+    - label: "Vendor selection"
       url: "/services/"
 ---

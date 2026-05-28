@@ -2,30 +2,30 @@
 enable: true
 list:
   - enable: true
-    badge: "Who We Are"
-    title: "Providing Quality Tax Services & Consulting"
-    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."
+    badge: "Who we are"
+    title: "Guidance for your church's digital transformation"
+    description: "We provide the strategic oversight you need to ensure your technology serves your mission, not the other way around."
     services:
-      - title: "Financial Advising"
-        percent: "85%"
-      - title: "Business Consulting"
-        percent: "95%"
+      - title: "Strategic partnership"
+        percent: "100%"
+      - title: "Vendor objectivity"
+        percent: "100%"
     image: "/images/about/about-1.png"
-    imageAlt: "About Company"
-    imageVerticalTitle: "We Have Than 25 Years of Experience"
+    imageAlt: "About Good Shepherd Insights"
+    imageVerticalTitle: "Expertise in church technology"
     leftImagePostion: true
 
   - enable: true
-    badge: "About Company"
-    title: "Professional Approach and Quality Services"
-    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."
+    badge: "Our approach"
+    title: "A partner in strategic decision making"
+    description: "We help you move past scattered decisions to a professional roadmap, ensuring every tool is utilized and every dollar is spent wisely."
     services:
-      - title: "Best Taxation Service"
-      - title: "Business Strategy & Growth"
-      - title: "Highly Dedicated Worker"
-      - title: "99.9% Customer Satisfaction"
+      - title: "Technology Strategy Audit"
+      - title: "Strategic roadmap"
+      - title: "Vendor selection"
+      - title: "Fractional CTO leadership"
     image: "/images/about/about-2.png"
-    imageAlt: "About Company"
-    imageVerticalTitle: "99.9% Customer Satisfaction"
+    imageAlt: "GSI strategic approach"
+    imageVerticalTitle: "Your partner in growth"
     leftImagePostion: false
 ---
