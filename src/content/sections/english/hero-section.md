@@ -28,14 +28,14 @@ satisfactionClients:
     - "/images/customers/avatar/customer-3.png"
   avatarAlt: "Client avatar"
   count: "240+"
-  label: "Trusted Over 240+ Client Across Country"
+  label: "Guiding churches across the East Coast"
 
 video:
-  src: "bTqVqk7FSmY" # Locally hosted video path (ex: /videos/test-video.mp4), or a YouTube/Vimeo video ID
-  type: "" # If video is stored locally in `public/videos`, set to video file type (e.g., "video/mp4")
-  provider: "youtube" # Options: "youtube", "vimeo", or "html5"
-  poster: "/images/banner/banner-common.png" # Path to thumbnail image for the video
-  autoplay: true # Set to true to autoplay; false for manual start (default: false)
+  src: "bTqVqk7FSmY"
+  type: ""
+  provider: "youtube"
+  poster: "/images/banner/banner-common.png"
+  autoplay: true
   id: "hero-video-modal"
 
 helpDropdown:

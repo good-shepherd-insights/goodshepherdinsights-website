@@ -1,10 +1,10 @@
 # Site Configuration
 [site]
-  title            = "Taxo" # Shared title for SEO and OpenGraph
-  description      = "A modern Astro theme for tax advisors, accounting firms, and financial consulting businesses. Built with Tailwind CSS and Astro, it is easy to customize and optimized for professional service websites." # Shared description for SEO and OpenGraph
-  tagline          = "Tax Advisor & Financial Consulting Astro Theme"
+  title            = "Good Shepherd Insights" # Shared title for SEO and OpenGraph
+  description      = "Professional Fractional CTO services for mid-sized East Coast churches. We provide strategic technology leadership to align your tools with your mission." # Shared description for SEO and OpenGraph
+  tagline          = "Fractional CTO leadership for mid-sized churches"
   taglineSeparator = "" # default is " - " 
-  baseUrl          = "https://taxo-astro.pages.dev" # Base URL for the site and used in OpenGraph meta tags.
+  baseUrl          = "https://goodshepherdinsights.com" # Base URL for the site and used in OpenGraph meta tags.
   logo             = "/images/logo.png" # Path to the site's logo
   logoAlternate    = "/images/logo-light.svg" # Path to the site's logo
   logoText         = "" # Text displayed next to the logo
@@ -25,16 +25,16 @@
 # Specific SEO configurations that complement the general site settings.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
-  author = "Getastrothemes"
+  author = "Good Shepherd Insights"
   keywords = [
-    "tax advisor astro theme",
-    "financial consulting astro theme",
-    "accounting firm website template",
-    "finance business astro theme",
-    "tax consultant website template",
-    "astro theme for accountants",
-    "tailwind css finance template",
-    "professional services astro theme",
+    "fractional cto for churches",
+    "church technology strategy",
+    "mid-sized church tech solutions",
+    "church software optimization",
+    "technology audit for churches",
+    "church digital transformation",
+    "east coast church technology",
+    "church vendor management",
   ]
   robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
 
@@ -66,7 +66,7 @@
 
   # docs - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
   # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "https://formsubmit.co/temp.gats@gmail.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
+  contactFormAction = "https://formsubmit.co/contact@goodshepherdinsights.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
   # formspree | formsubmit.co | netlify (default is formsubmit.co)
   contactFormProvider = "formsubmit.co"
 
@@ -98,10 +98,10 @@
 
   # Global Contact Information
   [settings.contactInfo]
-    address = "75 Garuda., Maju, INA 789"
-    email   = "support@yourdomain.tld"
-    phone   = "+000(123)556989"
-    mapLink = "https://www.google.com/maps?q=Brooklyn,New York&output=embed"
+    address = "East Coast, USA"
+    email   = "contact@goodshepherdinsights.com"
+    phone   = ""
+    mapLink = "https://www.google.com/maps?q=East+Coast,USA&output=embed"
 
   # Header Offcanvas Configuration
   # Update social links in `src/config/social.json`

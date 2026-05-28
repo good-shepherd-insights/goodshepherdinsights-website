@@ -14,30 +14,30 @@
       "menus": [
         {
           "enable": true,
-          "name": "Core Services",
-          "description": "Delivery work for companies shipping websites, products, and conversion-focused redesigns.",
+          "name": "Core services",
+          "description": "Strategic technology services designed for mid-sized churches.",
           "weight": 0,
           "children": [
             {
               "enable": true,
-              "name": "Web Platforms",
-              "description": "Marketing sites, corporate websites, and CMS builds that stay fast under load.",
+              "name": "Web platforms",
+              "description": "Church websites, member portals, and digital presence solutions.",
               "icon": "Monitor",
               "url": "/services/",
               "weight": 0
             },
             {
               "enable": true,
-              "name": "Product Design",
-              "description": "User flows, interface systems, and handoff-ready screens for real product teams.",
+              "name": "Technology strategy",
+              "description": "Roadmap development and long-term technology planning.",
               "icon": "PenTool",
               "url": "/services/custom-slug-services-1/",
               "weight": 1
             },
             {
               "enable": true,
-              "name": "Frontend Engineering",
-              "description": "Astro, React, and performance-led implementation for modern web stacks.",
+              "name": "Vendor selection",
+              "description": "Objective evaluation and selection of church technology vendors.",
               "icon": "Code2",
               "url": "/services/",
               "weight": 2,
@@ -50,8 +50,8 @@
             },
             {
               "enable": true,
-              "name": "Technical SEO",
-              "description": "Site structure, content architecture, and speed work that improves discoverability.",
+              "name": "Technical optimization",
+              "description": "Site structure, content architecture, and performance optimization.",
               "icon": "Search",
               "url": "/services/",
               "weight": 3
@@ -60,38 +60,38 @@
         },
         {
           "enable": true,
-          "name": "Engagement Models",
-          "description": "Ways clients usually bring Lumio in, from a focused sprint to ongoing product support.",
+          "name": "Engagement models",
+          "description": "Ways churches usually partner with us, from a focused audit to ongoing support.",
           "weight": 1,
           "children": [
             {
               "enable": true,
-              "name": "MVP Launch Sprint",
-              "description": "A compact scope to get a new product or offer live without dragging the timeline.",
+              "name": "Technology strategy audit",
+              "description": "A comprehensive assessment of your current tech stack and recommendations.",
               "icon": "Rocket",
               "url": "/pricing/",
               "weight": 0
             },
             {
               "enable": true,
-              "name": "Team Augmentation",
-              "description": "Plug design and development capacity into an in-house team with less hiring friction.",
+              "name": "Fractional CTO partnership",
+              "description": "Ongoing strategic technology leadership without the cost of a full-time hire.",
               "icon": "Users",
               "url": "/about/",
               "weight": 1
             },
             {
               "enable": true,
-              "name": "Rebuild & Replatform",
-              "description": "Move away from slow, hard-to-manage setups without sacrificing conversion paths.",
+              "name": "System integration",
+              "description": "Move away from disconnected tools to an integrated technology ecosystem.",
               "icon": "RefreshCcw",
               "url": "/case-studies/",
               "weight": 2
             },
             {
               "enable": true,
-              "name": "Retainer Support",
-              "description": "Continuous design, development, and iteration for teams that ship every month.",
+              "name": "Retainer support",
+              "description": "Continuous technology oversight and optimization for growing churches.",
               "icon": "Clock3",
               "url": "/contact/",
               "weight": 3
@@ -100,38 +100,38 @@
         },
         {
           "enable": true,
-          "name": "Proof & Next Steps",
-          "description": "Pages buyers usually want before they book a call or shortlist a partner.",
+          "name": "Proof & next steps",
+          "description": "Pages church leaders usually want before booking a call or partnering with us.",
           "weight": 2,
           "children": [
             {
               "enable": true,
-              "name": "Featured Case Study",
-              "description": "A closer look at one project from problem framing through measurable launch results.",
+              "name": "Featured case study",
+              "description": "A closer look at how we helped one church transform their technology approach.",
               "icon": "ChartNoAxesCombined",
               "url": "/case-studies/custom-slug-case-studies-1/",
               "weight": 0
             },
             {
               "enable": true,
-              "name": "All Case Studies",
-              "description": "Review recent delivery work across product, service, and growth-focused projects.",
+              "name": "All case studies",
+              "description": "Review recent technology transformation projects across different church contexts.",
               "icon": "FolderKanban",
               "url": "/case-studies/",
               "weight": 1
             },
             {
               "enable": true,
-              "name": "Insights & Articles",
-              "description": "Process notes, launch lessons, and practical ideas teams can apply right away.",
+              "name": "Insights & articles",
+              "description": "Process notes, implementation lessons, and practical ideas for church leaders.",
               "icon": "BookOpenText",
               "url": "/blog/",
               "weight": 2
             },
             {
               "enable": true,
-              "name": "Book Discovery Call",
-              "description": "Start with scope, timeline, and budget instead of a vague introductory back-and-forth.",
+              "name": "Book discovery call",
+              "description": "Start with a clear scope discussion instead of a vague introductory back-and-forth.",
               "icon": "MessageSquareMore",
               "url": "/contact/",
               "weight": 3
@@ -141,13 +141,13 @@
       ],
       "cta": {
         "enable": true,
-        "eyebrow": "Delivery Partner",
+        "eyebrow": "Technology Partner",
         "image": "/images/case-studies/case-study-1.png",
-        "title": "Need a team that can design, build, and launch without extra layers?",
+        "title": "Need strategic technology leadership without the cost of a full-time hire?",
         "description": "Use the menu to explore service lines, then move to a real scope conversation when the fit is clear.",
         "items": [
-          "Strategy, design, and engineering in one workflow",
-          "Suited to agencies, B2B firms, and consulting-led brands",
+          "Strategy, implementation, and ongoing support in one workflow",
+          "Suited to churches and ministry organizations",
           "Clear next steps through pricing, case studies, and contact"
         ],
         "button": {
@@ -315,7 +315,7 @@
   "footerPrimary": [
     {
       "enable": true,
-      "name": "About Us",
+      "name": "About us",
       "url": "/about/"
     },
     {
@@ -335,7 +335,7 @@
     },
     {
       "enable": true,
-      "name": "Contact Us",
+      "name": "Contact us",
       "url": "/contact/"
     }
   ],

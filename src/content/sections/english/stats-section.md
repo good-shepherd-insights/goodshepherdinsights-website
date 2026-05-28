@@ -1,5 +1,5 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
+enable: true
 
 backgroundImage: "/images/decorative/pattern/fact-bg.png"
 backgroundImageAlt: "fact-bg"
