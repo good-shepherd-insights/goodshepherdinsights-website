@@ -2,7 +2,8 @@
 enable: true
 
 subTitle: "Fractional CTO Leadership for Churches"
-titleLine1: "Strategic technology leadership"
+titleLine1: "Trustworthy Tax"
+titleLine2: "Advice."
 
 description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your church. [Request Your Technology Strategy Audit](/contact/)"
 
