@@ -1,10 +1,11 @@
 ---
 enable: true
 
-subTitle: "Fractional CTO Leadership for Churches"
-titleLine1: "Strategic technology leadership"
+subTitle: "Your Trusted Tax Advisor."
+titleLine1: "Trustworthy Tax"
+titleLine2: "Advice."
 
-description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your church. [Request Your Technology Strategy Audit](/contact/)"
+description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint sunt in culpa qui officia deserunt [Discover More](/about/)"
 
 arrowDecorationImage: "/images/decorative/shape/shape-5.png"
 arrowDecorationImageAlt: "Decorative shape"
@@ -13,11 +14,11 @@ shapeImageAlt: "Decorative shape"
 
 slides:
   - image: "/images/banner/banner-1.png"
-    alt: "Technology strategy meeting with church leadership"
+    alt: "Tax advisory team meeting"
   - image: "/images/banner/banner-2.png"
-    alt: "Church technology consulting session"
+    alt: "Professional tax consultation"
   - image: "/images/banner/banner-common.png"
-    alt: "Church technology partnership"
+    alt: "Tax advisory services"
 
 satisfactionClients:
   enable: true
@@ -27,24 +28,24 @@ satisfactionClients:
     - "/images/customers/avatar/customer-3.png"
   avatarAlt: "Client avatar"
   count: "240+"
-  label: "Guiding churches across the East Coast"
+  label: "Trusted Over 240+ Client Across Country"
 
 video:
-  src: "bTqVqk7FSmY"
-  type: ""
-  provider: "youtube"
-  poster: "/images/banner/banner-common.png"
-  autoplay: true
+  src: "bTqVqk7FSmY" # Locally hosted video path (ex: /videos/test-video.mp4), or a YouTube/Vimeo video ID
+  type: "" # If video is stored locally in `public/videos`, set to video file type (e.g., "video/mp4")
+  provider: "youtube" # Options: "youtube", "vimeo", or "html5"
+  poster: "/images/banner/banner-common.png" # Path to thumbnail image for the video
+  autoplay: true # Set to true to autoplay; false for manual start (default: false)
   id: "hero-video-modal"
 
 helpDropdown:
   enable: true
   label: "How can we help you?"
   items:
-    - label: "Technology Strategy Audit"
+    - label: "Tax Planning"
       url: "/services/"
-    - label: "Vendor Selection Guidance"
+    - label: "Business Advisory"
       url: "/services/"
-    - label: "ChMS Optimization"
+    - label: "Financial Consulting"
       url: "/services/"
 ---
