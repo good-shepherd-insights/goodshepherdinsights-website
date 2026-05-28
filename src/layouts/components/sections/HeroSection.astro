@@ -118,23 +118,16 @@ if (!enable) {
           data-aos-delay="200"
           class="text-h2-sm sm:text-h2 md:text-display-4 lg:text-display-2 xl:text-display-1 leading-[1.1]">
           {titleLine1 && <div set:html={markdownify(titleLine1)} />}
-          <div
-            class="flex flex-col flex-wrap items-start gap-8 md:flex-row md:items-center lg:gap-14">
-            <div>
-              {titleLine2 && <div set:html={markdownify(titleLine2)} />}
-            </div>
-            {
-              description && (
-                <div class="space-y-4">
-                  <p
-                    class="text-text-dark/85 font-primary prose-a:text-primary prose-a:font-medium prose-a:border-b prose-a:border-primary text-xs font-normal tracking-[0.06em] md:max-w-lg md:text-sm lg:text-lg"
-                    set:html={markdownify(description)}
-                  />
-                </div>
-              )
-            }
-          </div>
+          {titleLine2 && <div set:html={markdownify(titleLine2)} />}
         </h1>
+        {
+          description && (
+            <p
+              class="text-text-dark/85 font-primary prose-a:text-primary prose-a:font-medium prose-a:border-b prose-a:border-primary text-xs font-normal tracking-[0.06em] md:max-w-lg md:text-sm lg:text-lg mt-4"
+              set:html={markdownify(description)}
+            />
+          )
+        }
       </div>
     </div>
   </div>
