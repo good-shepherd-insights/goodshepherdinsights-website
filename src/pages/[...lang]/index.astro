@@ -4,16 +4,17 @@ import { getEntryCTM } from "@/lib/contentParser.astro";
 import { generatePaths } from "@/lib/utils/i18nUtils.ts";
 import FaqSection from "@/components/sections/FaqSection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
-import TeamSection from "@/components/sections/TeamSection.astro";
-import BlogSection from "@/components/sections/BlogSection.astro";
 import HeroSection from "@/components/sections/HeroSection.astro";
 import FeaturesGrid from "@/components/sections/FeaturesGrid.astro";
 import StatsSection from "@/components/sections/StatsSection.astro";
 import AboutSection from "@/components/sections/AboutSection.astro";
 import ServicesSection from "@/components/sections/ServicesSection.astro";
 import CTAVideoSection from "@/components/sections/CTAVideoSection.astro";
+// Removed from homepage layout — available for future use:
 import TestimonialSection from "@/components/sections/TestimonialSection.astro";
 import CaseStudiesSection from "@/components/sections/CaseStudiesSection.astro";
+import TeamSection from "@/components/sections/TeamSection.astro";
+import BlogSection from "@/components/sections/BlogSection.astro";
 
 export function getStaticPaths() {
   return generatePaths();
