@@ -7,9 +7,67 @@
       "url": "/"
     },
     {
+      "enable": true,
+      "name": "\u00c0 propos",
+      "weight": 1,
+      "url": "/about/"
+    },
+    {
+      "enable": true,
+      "name": "Services",
+      "weight": 2,
+      "url": "/services/"
+    },
+    {
+      "enable": true,
+      "name": "Tarifs",
+      "weight": 3,
+      "url": "/pricing/"
+    },
+    {
+      "enable": true,
+      "name": "Contact",
+      "weight": 4,
+      "url": "/contact/"
+    },
+    {
+      "enable": true,
+      "name": "Ressources",
+      "weight": 5,
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "FAQ",
+          "url": "/faq/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "Blog",
+          "weight": 1,
+          "hasChildren": true,
+          "children": [
+            {
+              "enable": true,
+              "name": "Blog",
+              "url": "/blog/",
+              "weight": 0
+            },
+            {
+              "enable": true,
+              "name": "Blog Single",
+              "url": "/blog/custom-slug-post-1/",
+              "weight": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
       "enable": false,
       "name": "Menu principal",
-      "weight": 1,
+      "weight": 10,
       "hasMegaMenu": true,
       "menus": [
         {
@@ -147,7 +205,7 @@
         "description": "Explorez les services, verifiez les references, puis passez a une discussion de scope quand le fit est evident.",
         "items": [
           "Strategie, design et engineering dans un meme flux",
-          "Pensé pour les agences, cabinets et equipes B2B",
+          "Pens\u00e9 pour les agences, cabinets et equipes B2B",
           "Des prochaines etapes claires via tarifs, cas clients et contact"
         ],
         "button": {
@@ -167,8 +225,8 @@
     },
     {
       "name": "Pages",
-      "enable": true,
-      "weight": 2,
+      "enable": false,
+      "weight": 11,
       "hasChildren": true,
       "children": [
         {
@@ -259,7 +317,7 @@
         },
         {
           "enable": false,
-          "name": "Équipe",
+          "name": "\u00c9quipe",
           "url": "/team",
           "weight": 0
         },
@@ -294,7 +352,7 @@
     {
       "enable": false,
       "name": "Composants",
-      "weight": 3,
+      "weight": 12,
       "url": "/components/",
       "badge": {
         "enable": true,
@@ -304,18 +362,12 @@
         "type": "text",
         "_type_comment": "type expected value - text, dot"
       }
-    },
-    {
-      "enable": true,
-      "name": "Contact",
-      "weight": 4,
-      "url": "/contact/"
     }
   ],
   "footerPrimary": [
     {
       "enable": true,
-      "name": "À propos",
+      "name": "\u00c0 propos",
       "url": "/about/"
     },
     {
@@ -325,7 +377,7 @@
     },
     {
       "enable": true,
-      "name": "Équipe",
+      "name": "\u00c9quipe",
       "url": "/team/"
     },
     {
@@ -342,7 +394,7 @@
   "footerSecondary": [
     {
       "enable": true,
-      "name": "À propos",
+      "name": "\u00c0 propos",
       "url": "/about/"
     },
     {
