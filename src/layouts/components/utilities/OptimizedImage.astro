@@ -71,10 +71,29 @@ if (inlineSvg && normalizedSrc.includes(".svg")) {
     SVG = SVG.split("<svg");
 
     if (SVG.length > 1) {
-      const attributes = Object.entries(rest)
+      // Remove existing width/height from SVG to avoid duplicate attributes
+      let svgAttrs = SVG[1]
+        .replace(/\s*width\s*=\s*"[^"]*"/gi, "")
+        .replace(/\s*height\s*=\s*"[^"]*"/gi, "");
+
+      const attrsToInject: string[] = [];
+      if (style) {
+        const styleStr =
+          typeof style === "string"
+            ? style
+            : Object.entries(style)
+                .map(([k, v]) => `${k}:${v}`)
+                .join(";");
+        attrsToInject.push(`style="${styleStr}"`);
+      }
+      if (width) attrsToInject.push(`width="${width}"`);
+      if (height) attrsToInject.push(`height="${height}"`);
+
+      const restAttrs = Object.entries(rest)
         .map(([key, value]) => `${key}="${value}"`)
         .join(" ");
-      SVG[1] = ` data-icon="true" ${attributes} ${SVG[1]}`;
+
+      SVG[1] = ` data-icon="true" ${attrsToInject.join(" ")} ${restAttrs} ${svgAttrs}`;
     }
 
     SVG = SVG.join("<svg");

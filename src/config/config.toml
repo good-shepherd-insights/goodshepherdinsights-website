@@ -8,8 +8,8 @@
   logo             = "/images/good-shepherd-insights.svg" # Path to the site's logo
   logoAlternate    = "/images/good-shepherd-insights.svg" # Path to the site's logo
   logoText         = "" # Text displayed next to the logo
-  logoWidth        = "200px" # Width of the logo
-  logoHeight       = "47px" # Height of the logo
+  logoWidth        = "320px" # Width of the logo
+  logoHeight       = "75px" # Height of the logo
 
   # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)˝
   # Note: Manually restart your server when you change this value
