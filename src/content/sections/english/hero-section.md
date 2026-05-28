@@ -1,11 +1,11 @@
 ---
 enable: true
 
-subTitle: "Your Fractional CTO partner"
-titleLine1: "Strategic technology"
-titleLine2: "leadership for your church"
+subTitle: "Fractional CTO Leadership for Churches"
+titleLine1: "Strategic technology leadership"
+titleLine2: "for churches."
 
-description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your mission. [Discover More](/about/)"
+description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your church. [Request Your Technology Strategy Audit](/contact/)"
 
 arrowDecorationImage: "/images/decorative/shape/shape-5.png"
 arrowDecorationImageAlt: "Decorative shape"
@@ -14,11 +14,11 @@ shapeImageAlt: "Decorative shape"
 
 slides:
   - image: "/images/banner/banner-1.png"
-    alt: "Strategic technology consultation"
+    alt: "Technology strategy meeting with church leadership"
   - image: "/images/banner/banner-2.png"
-    alt: "Fractional CTO roadmap session"
+    alt: "Church technology consulting session"
   - image: "/images/banner/banner-common.png"
-    alt: "Church technology strategy"
+    alt: "Church technology partnership"
 
 satisfactionClients:
   enable: true
@@ -44,8 +44,8 @@ helpDropdown:
   items:
     - label: "Technology Strategy Audit"
       url: "/services/"
-    - label: "ChMS advisory"
+    - label: "Vendor Selection Guidance"
       url: "/services/"
-    - label: "Vendor selection"
+    - label: "ChMS Optimization"
       url: "/services/"
 ---

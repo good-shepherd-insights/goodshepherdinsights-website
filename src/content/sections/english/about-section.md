@@ -2,30 +2,34 @@
 enable: true
 list:
   - enable: true
-    badge: "Who we are"
-    title: "Guidance for your church's digital transformation"
-    description: "We provide the strategic oversight you need to ensure your technology serves your mission, not the other way around."
+    badge: "The Challenge"
+    title: "Disconnected tools create administrative burden."
+    description: "With an average of 5–8 disconnected software tools and ChMS utilization often under 40%, church staff often spend more time on manual data entry than on ministry. We help you coordinate these systems into a single, effective strategy."
     services:
-      - title: "Strategic partnership"
-        percent: "100%"
-      - title: "Vendor objectivity"
-        percent: "100%"
+      - title: "Technology Strategy Audit"
+        percent: "95%"
+      - title: "Vendor Selection Guidance"
+        percent: "90%"
+      - title: "ChMS Optimization"
+        percent: "85%"
+      - title: "Data Integration"
+        percent: "80%"
     image: "/images/about/about-1.png"
-    imageAlt: "About Good Shepherd Insights"
-    imageVerticalTitle: "Expertise in church technology"
+    imageAlt: "Church technology challenges"
+    imageVerticalTitle: "We Help Churches Navigate Technology Decisions"
     leftImagePostion: true
 
   - enable: true
-    badge: "Our approach"
-    title: "A partner in strategic decision making"
-    description: "We help you move past scattered decisions to a professional roadmap, ensuring every tool is utilized and every dollar is spent wisely."
+    badge: "Our Partnership Approach"
+    title: "Fractional CTO Leadership for Your Church"
+    description: "We function as your Fractional CTO — providing the executive oversight needed to coordinate vendors, secure your data, and optimize your operations. We help you move from scattered decisions to a strategic roadmap."
     services:
-      - title: "Technology Strategy Audit"
-      - title: "Strategic roadmap"
-      - title: "Vendor selection"
-      - title: "Fractional CTO leadership"
+      - title: "Strategic Technology Roadmap"
+      - title: "Vendor Selection & Contract Management"
+      - title: "ChMS Advisory & Optimization"
+      - title: "Security Assessment & Risk Management"
     image: "/images/about/about-2.png"
-    imageAlt: "GSI strategic approach"
-    imageVerticalTitle: "Your partner in growth"
+    imageAlt: "Fractional CTO Partnership"
+    imageVerticalTitle: "99.9% Client Satisfaction"
     leftImagePostion: false
 ---
