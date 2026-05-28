@@ -7,7 +7,7 @@
       "url": "/"
     },
     {
-      "enable": true,
+      "enable": false,
       "name": "Mega Menu",
       "weight": 1,
       "hasMegaMenu": true,
@@ -192,7 +192,7 @@
           ]
         },
         {
-          "enable": true,
+          "enable": false,
           "name": "Case Studies",
           "weight": 0,
           "hasChildren": true,
@@ -258,7 +258,7 @@
           "weight": 0
         },
         {
-          "enable": true,
+          "enable": false,
           "name": "Team",
           "url": "/team",
           "weight": 0
@@ -276,7 +276,7 @@
           "weight": 0
         },
         {
-          "enable": true,
+          "enable": false,
           "name": "404",
           "url": "/404/",
           "weight": 0,
@@ -292,7 +292,7 @@
       ]
     },
     {
-      "enable": true,
+      "enable": false,
       "name": "Components",
       "weight": 3,
       "url": "/components/",

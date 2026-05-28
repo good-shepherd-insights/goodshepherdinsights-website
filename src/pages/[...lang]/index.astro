@@ -25,15 +25,15 @@ const page = await getEntryCTM("homepage", "-index", Astro.currentLocale);
 
 <Base {...page?.data} headerLayout="header-1">
   <HeroSection />
-  <FeaturesGrid />
+  {/* SHELVED: FeaturesGrid */}
   <ServicesSection />
-  <StatsSection />
+  {/* SHELVED: StatsSection */}
   <AboutSection />
-  <CTAVideoSection hasLightBackground={true} />
-  <FaqSection
-    mode="dark"
-    badgeVariant="default"
-    hasSectionSpacingBottom={true}
-  />
+  {/* SHELVED: CTAVideoSection */}
+  <TestimonialSection />
+  {/* SHELVED: CaseStudiesSection */}
+  {/* SHELVED: FaqSection */}
+  {/* SHELVED: TeamSection */}
+  <BlogSection />
   <CTASection />
 </Base>
