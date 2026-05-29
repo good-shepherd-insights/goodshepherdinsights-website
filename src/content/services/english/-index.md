@@ -1,8 +1,8 @@
 ---
 badge: "Our Services"
-title: "We're Give A Full Service About All Your King Of Tax"
-titleSecondary: "We Provide Quality Services."
-metaDescription: "This is a example description"
+title: "Strategic Technology Leadership for Churches"
+titleSecondary: "Proactive. Mission-Aligned. Fractional."
+metaDescription: "End reactive tech spending. GSI delivers comprehensive church technology assessments, 1-3 year roadmaps, and Fractional CTO leadership to align your technology with your ministry vision."
 draft: false
 image: "/images/page-header/default.png"
 
