@@ -9,5 +9,5 @@ marquee:
   pauseOnHover: true
   reverse: ""
   duration: "90s"
-  text: "1K+ SATISFIED CLIENTS  &nbsp;&nbsp;  120+ EXPERT TEAM  &nbsp;&nbsp;  99.9% SUCCESS RATE  &nbsp;&nbsp;  24/7 SUPPORT"
+  text: "UNDER 40% CHMS UTILIZATION  &nbsp;&nbsp;  5–8 DISCONNECTED TOOLS  &nbsp;&nbsp;  60% VENDOR OVERCHARGE  &nbsp;&nbsp;  3× RANSOMWARE RISK"
 ---
