@@ -19,7 +19,7 @@
       "url": "/services/"
     },
     {
-      "enable": true,
+      "enable": false,
       "name": "Pricing",
       "weight": 3,
       "url": "/pricing/"
@@ -53,175 +53,10 @@
               "name": "Blog",
               "url": "/blog/",
               "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Blog Single",
-              "url": "/blog/custom-slug-post-1/",
-              "weight": 0
             }
           ]
         }
       ]
-    },
-    {
-      "enable": false,
-      "name": "Mega Menu",
-      "weight": 10,
-      "hasMegaMenu": true,
-      "menus": [
-        {
-          "enable": true,
-          "name": "Core services",
-          "description": "Strategic technology services designed for mid-sized churches.",
-          "weight": 0,
-          "children": [
-            {
-              "enable": true,
-              "name": "Web platforms",
-              "description": "Church websites, member portals, and digital presence solutions.",
-              "icon": "Monitor",
-              "url": "/services/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Technology strategy",
-              "description": "Roadmap development and long-term technology planning.",
-              "icon": "PenTool",
-              "url": "/services/custom-slug-services-1/",
-              "weight": 1
-            },
-            {
-              "enable": true,
-              "name": "Vendor selection",
-              "description": "Objective evaluation and selection of church technology vendors.",
-              "icon": "Code2",
-              "url": "/services/",
-              "weight": 2,
-              "badge": {
-                "enable": true,
-                "label": "Popular",
-                "color": "accent",
-                "type": "text"
-              }
-            },
-            {
-              "enable": true,
-              "name": "Technical optimization",
-              "description": "Site structure, content architecture, and performance optimization.",
-              "icon": "Search",
-              "url": "/services/",
-              "weight": 3
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Engagement models",
-          "description": "Ways churches usually partner with us, from a focused audit to ongoing support.",
-          "weight": 1,
-          "children": [
-            {
-              "enable": true,
-              "name": "Technology strategy audit",
-              "description": "A comprehensive assessment of your current tech stack and recommendations.",
-              "icon": "Rocket",
-              "url": "/pricing/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Fractional CTO partnership",
-              "description": "Ongoing strategic technology leadership without the cost of a full-time hire.",
-              "icon": "Users",
-              "url": "/about/",
-              "weight": 1
-            },
-            {
-              "enable": true,
-              "name": "System integration",
-              "description": "Move away from disconnected tools to an integrated technology ecosystem.",
-              "icon": "RefreshCcw",
-              "url": "/case-studies/",
-              "weight": 2
-            },
-            {
-              "enable": true,
-              "name": "Retainer support",
-              "description": "Continuous technology oversight and optimization for growing churches.",
-              "icon": "Clock3",
-              "url": "/contact/",
-              "weight": 3
-            }
-          ]
-        },
-        {
-          "enable": true,
-          "name": "Proof & next steps",
-          "description": "Pages church leaders usually want before booking a call or partnering with us.",
-          "weight": 2,
-          "children": [
-            {
-              "enable": true,
-              "name": "Featured case study",
-              "description": "A closer look at how we helped one church transform their technology approach.",
-              "icon": "ChartNoAxesCombined",
-              "url": "/case-studies/custom-slug-case-studies-1/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "All case studies",
-              "description": "Review recent technology transformation projects across different church contexts.",
-              "icon": "FolderKanban",
-              "url": "/case-studies/",
-              "weight": 1
-            },
-            {
-              "enable": true,
-              "name": "Insights & articles",
-              "description": "Process notes, implementation lessons, and practical ideas for church leaders.",
-              "icon": "BookOpenText",
-              "url": "/blog/",
-              "weight": 2
-            },
-            {
-              "enable": true,
-              "name": "Book discovery call",
-              "description": "Start with a clear scope discussion instead of a vague introductory back-and-forth.",
-              "icon": "MessageSquareMore",
-              "url": "/contact/",
-              "weight": 3
-            }
-          ]
-        }
-      ],
-      "cta": {
-        "enable": true,
-        "eyebrow": "Technology Partner",
-        "image": "/images/case-studies/case-study-1.png",
-        "title": "Need strategic technology leadership without the cost of a full-time hire?",
-        "description": "Use the menu to explore service lines, then move to a real scope conversation when the fit is clear.",
-        "items": [
-          "Strategy, implementation, and ongoing support in one workflow",
-          "Suited to churches and ministry organizations",
-          "Clear next steps through pricing, case studies, and contact"
-        ],
-        "button": {
-          "enable": true,
-          "label": "Start a Project",
-          "url": "/contact/",
-          "variant": "fill",
-          "tag": "a",
-          "hoverEffect": "creative-fill",
-          "icon": {
-            "enable": true,
-            "name": "ArrowUpRight",
-            "position": "right"
-          }
-        }
-      }
     },
     {
       "name": "Pages",
@@ -260,12 +95,6 @@
               "name": "Case Studies",
               "url": "/case-studies/",
               "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Case Study Single",
-              "url": "/case-studies/custom-slug-case-studies-1/",
-              "weight": 0
             }
           ]
         },
@@ -280,12 +109,6 @@
               "name": "Blog",
               "url": "/blog/",
               "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Blog Single",
-              "url": "/blog/custom-slug-post-1/",
-              "weight": 0
             }
           ]
         },
@@ -299,12 +122,6 @@
               "enable": true,
               "name": "Services",
               "url": "/services/",
-              "weight": 0
-            },
-            {
-              "enable": true,
-              "name": "Services Single",
-              "url": "/services/custom-slug-services-1/",
               "weight": 0
             }
           ]
@@ -332,36 +149,8 @@
           "name": "FAQ",
           "url": "/faq/",
           "weight": 0
-        },
-        {
-          "enable": false,
-          "name": "404",
-          "url": "/404/",
-          "weight": 0,
-          "badge": {
-            "enable": true,
-            "label": "Badge",
-            "color": "accent",
-            "_color_comment": "color expected value - accent, info, success, danger, dark",
-            "type": "text",
-            "_type_comment": "type expected value - text, dot"
-          }
         }
       ]
-    },
-    {
-      "enable": false,
-      "name": "Components",
-      "weight": 12,
-      "url": "/components/",
-      "badge": {
-        "enable": true,
-        "label": "New",
-        "color": "accent",
-        "_color_comment": "color expected value - accent, info, success, danger, dark",
-        "type": "text",
-        "_type_comment": "type expected value - text, dot"
-      }
     }
   ],
   "footerPrimary": [

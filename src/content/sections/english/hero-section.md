@@ -5,7 +5,7 @@ subTitle: "Technology Leadership for Churches and Ministries"
 titleLine1: "Mission Aligned"
 titleLine2: "Insight."
 
-description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your church. [Request Your Technology Strategy Audit](/contact/)"
+description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your ministry. [Request Your Technology Strategy Audit](/contact/)"
 
 arrowDecorationImage: "/images/decorative/shape/shape-5.png"
 arrowDecorationImageAlt: "Decorative shape"
@@ -14,14 +14,14 @@ shapeImageAlt: "Decorative shape"
 
 slides:
   - image: "/images/banner/banner-1.png"
-    alt: "Tax advisory team meeting"
+    alt: "Strategic technology leadership for ministries"
   - image: "/images/banner/banner-2.png"
-    alt: "Professional tax consultation"
+    alt: "Fractional CTO partnership for churches"
   - image: "/images/banner/banner-common.png"
-    alt: "Tax advisory services"
+    alt: "Technology strategy and vendor guidance"
 
 satisfactionClients:
-  enable: true
+  enable: false
   avatars:
     - "/images/customers/avatar/customer-1.png"
     - "/images/customers/avatar/customer-2.png"
@@ -42,10 +42,10 @@ helpDropdown:
   enable: true
   label: "How can we help you?"
   items:
-    - label: "Tax Planning"
+    - label: "Technology Strategy"
       url: "/services/"
-    - label: "Business Advisory"
+    - label: "ChMS Advisory"
       url: "/services/"
-    - label: "Financial Consulting"
+    - label: "Vendor Selection"
       url: "/services/"
 ---

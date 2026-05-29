@@ -17,11 +17,6 @@
     },
     {
       "enable": true,
-      "label": "Dribbble",
-      "url": "https://www.dribbble.com/goodshepherdinsights"
-    },
-    {
-      "enable": true,
       "label": "Instagram",
       "url": "https://www.instagram.com/goodshepherdinsights"
     },
@@ -31,7 +26,7 @@
       "url": "https://www.youtube.com/goodshepherdinsights"
     },
     {
-      "enable": true,
+      "enable": false,
       "label": "WhatsApp",
       "url": "https://wa.me/1234567890"
     }
