@@ -1,7 +1,7 @@
 ---
 badge: "Our Team"
 badgeVariant: "secondary"
-title: "Trust the expertise of our tax advisor & financial consulting"
+title: "Our technology leadership for your ministry"
 image: "/images/team/team-header.png"
 metaDescription: "This is a example description"
 draft: false
@@ -16,7 +16,7 @@ teamSection:
   limit: false # false / number
 
 list:
-  - enable: true
+  - enable: false
     title: "Debra Harris"
     image: "/images/team/team-1.png"
     profession: "Tax Advisor"
@@ -36,7 +36,7 @@ list:
       - enable: true
         label: "BE"
         url: "https://www.behance.net/taxo"
-  - enable: true
+  - enable: false
     title: "D.A Fanlink"
     image: "/images/team/team-2.png"
     profession: "Tax Advisor"
@@ -56,7 +56,7 @@ list:
       - enable: true
         label: "BE"
         url: "https://www.behance.net/taxo"
-  - enable: true
+  - enable: false
     title: "D.A Fanlink"
     image: "/images/team/team-3.png"
     profession: "Tax Advisor"
@@ -76,7 +76,7 @@ list:
       - enable: true
         label: "BE"
         url: "https://www.behance.net/taxo"
-  - enable: true
+  - enable: false
     title: "Olivia Chen"
     image: "/images/team/team-4.png"
     profession: "UI/UX Designer"
@@ -96,7 +96,7 @@ list:
       - enable: true
         label: "BE"
         url: "https://www.behance.net/taxo"
-  - enable: true
+  - enable: false
     title: "Marcus Riley"
     image: "/images/team/team-5.png"
     profession: "Full Stack Developer"
@@ -116,7 +116,7 @@ list:
       - enable: true
         label: "BE"
         url: "https://www.behance.net/taxo"
-  - enable: true
+  - enable: false
     title: "Sophia Turner"
     image: "/images/team/team-6.png"
     profession: "UX/UI Designer"

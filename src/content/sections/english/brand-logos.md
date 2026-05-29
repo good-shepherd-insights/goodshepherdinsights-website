@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 list:
   - src: "/images/customers/company-logo/themeforest.png"
     alt: "themeforest"
