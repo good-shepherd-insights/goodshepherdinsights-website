@@ -26,6 +26,6 @@ list:
     services:
       - title: "Church Technology Strategy"
       - title: "ChMS Selection & Management"
-      - title: "Church Data Protection"
+      - title: "Church Systems Integration"
       - title: "Church Systems Integration"
 ---

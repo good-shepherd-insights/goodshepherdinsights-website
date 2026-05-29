@@ -43,18 +43,6 @@
           "url": "/services/church-systems-integration/",
           "weight": 3
         },
-        {
-          "enable": true,
-          "name": "Protection des données pour églises",
-          "url": "/services/church-data-protection/",
-          "weight": 4
-        },
-        {
-          "enable": true,
-          "name": "Opérations et administration pour églises",
-          "url": "/services/church-operations-administration/",
-          "weight": 5
-        }
       ]
     },
     {

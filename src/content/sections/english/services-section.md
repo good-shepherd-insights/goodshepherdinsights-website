@@ -9,5 +9,5 @@ button:
   variant: "fill"
   hoverEffect: "creative-fill"
 cardLayout: "listImage"
-limit: 6
+limit: 4
 ---

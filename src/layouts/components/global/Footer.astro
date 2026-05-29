@@ -15,12 +15,12 @@ let footerMenus = t("footerPrimary") as NavigationLink[];
 
 const { contactInfo, serviceFolder, caseStudiesFolder } = config.settings;
 
-// Fetch 6 Services
+// Fetch 4 Services
 let servicesList = await getCollectionCTM(
   serviceFolder as "services",
   Astro.currentLocale as string,
 );
-servicesList = servicesList.slice(0, 6);
+servicesList = servicesList.slice(0, 4);
 
 // Fetch 6 Blogs
 let list = await getCollectionCTM(

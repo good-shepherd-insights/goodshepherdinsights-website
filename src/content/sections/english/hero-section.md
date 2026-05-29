@@ -50,8 +50,4 @@ helpDropdown:
       url: "/services/church-vendor-selection-review/"
     - label: "Church Systems Integration"
       url: "/services/church-systems-integration/"
-    - label: "Church Data Protection"
-      url: "/services/church-data-protection/"
-    - label: "Church Operations & Administration"
-      url: "/services/church-operations-administration/"
 ---

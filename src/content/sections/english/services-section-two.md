@@ -11,5 +11,5 @@ button:
   url: "/services/"
   variant: "fill"
 cardLayout: "horizontal"
-limit: 6
+limit: 4
 ---

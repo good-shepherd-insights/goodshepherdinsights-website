@@ -27,7 +27,7 @@ list:
       - title: "Church Technology Strategy"
       - title: "Church Vendor Selection & Review"
       - title: "ChMS Selection & Management"
-      - title: "Church Data Protection"
+      - title: "Church Vendor Selection & Review"
     image: "/images/about/about-2.png"
     imageAlt: "Fractional CTO Partnership"
     imageVerticalTitle: "Guiding Churches Since 2024"

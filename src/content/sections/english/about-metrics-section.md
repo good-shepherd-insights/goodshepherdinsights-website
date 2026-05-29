@@ -18,6 +18,6 @@ list:
         percent: "95%"
       - title: "ChMS Selection & Management"
         percent: "85%"
-      - title: "Church Data Protection"
-        percent: "75%"
+      - title: "Church Systems Integration"
+        percent: "80%"
 ---

@@ -10,7 +10,7 @@ list:
   - enable: true
     title: "How many services do you offer?"
     content: |
-      We offer six services that cover the full technology lifecycle for churches: Church Technology Strategy, ChMS Selection & Management, Church Vendor Selection & Review, Church Systems Integration, Church Data Protection, and Church Operations & Administration.
+      We offer four services that cover the full technology lifecycle for churches: Church Technology Strategy, ChMS Selection & Management, Church Vendor Selection & Review, and Church Systems Integration.
   - enable: true
     title: "What are your terms and conditions?"
     content: |
