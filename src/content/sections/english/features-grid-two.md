@@ -1,17 +1,18 @@
 ---
 enable: true
-badge: "How It Works"
-title: "Three steps to a strategic technology roadmap"
-description: "From scattered decisions to a clear, ministry-aligned plan."
+cardLayout: "insideIcon"
 
-services:
-  - title: "Technology Strategy Audit"
-    description: "We assess your current tech stack, identify gaps and risks, and produce a prioritized roadmap aligned with your ministry goals."
-  - title: "Strategic Roadmap Delivery"
-    description: "You receive a clear, actionable plan covering vendor selection, data protection, systems integration, and operations."
-  - title: "Ongoing Partnership"
-    description: "We continue as your Fractional CTO — guiding implementation, reviewing vendors, and adjusting your strategy as your church grows."
-image: "/images/our-process/our-process-1.png"
-imageAlt: "Our Process"
-imageVerticalTitle: "Strategic Technology Partnership"
+features:
+  - enable: true
+    icon: "/images/icons/svg/expert.svg"
+    title: "Best Taxation Service"
+    description: "All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks"
+  - enable: true
+    icon: "/images/icons/svg/analysis.svg"
+    title: "Business Strategy & Growth"
+    description: "All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks"
+  - enable: true
+    icon: "/images/icons/svg/work.svg"
+    title: "Highly Dedicated Worker"
+    description: "All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks"
 ---

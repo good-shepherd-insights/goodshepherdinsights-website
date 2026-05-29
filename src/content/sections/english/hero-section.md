@@ -42,16 +42,10 @@ helpDropdown:
   enable: true
   label: "How can we help you?"
   items:
-    - label: "Church Technology Strategy"
-      url: "/services/church-technology-strategy/"
-    - label: "ChMS Selection & Management"
-      url: "/services/chms-selection-management/"
-    - label: "Church Vendor Selection & Review"
-      url: "/services/church-vendor-selection-review/"
-    - label: "Church Systems Integration"
-      url: "/services/church-systems-integration/"
-    - label: "Church Data Protection"
-      url: "/services/church-data-protection/"
-    - label: "Church Operations & Administration"
-      url: "/services/church-operations-administration/"
+    - label: "Technology Strategy"
+      url: "/services/"
+    - label: "ChMS Advisory"
+      url: "/services/"
+    - label: "Vendor Selection"
+      url: "/services/"
 ---

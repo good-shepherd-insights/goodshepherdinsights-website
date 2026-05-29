@@ -1,7 +1,7 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-badge: "Partnership"
-title: "Ready to align your technology with your ministry?"
+badge: "Let's Collaboration"
+title: "This Could Be The Start Of Something Special Let's Work Togather!"
 button:
   # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options
   # (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)

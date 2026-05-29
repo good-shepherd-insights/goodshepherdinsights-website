@@ -12,12 +12,12 @@ list:
   - enable: true
     badge: "About Experience"
     title: "Helping You Put Systems in Place that Work"
-    description: "With an average of 5–8 disconnected tools and ChMS utilization often under 40%, church staff spend more time on manual data entry than on ministry. We help you build systems that work."
+    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour,"
     services:
-      - title: "Church Technology Strategy"
+      - title: "Business Consulting"
         percent: "95%"
-      - title: "ChMS Selection & Management"
+      - title: "Financial Advising"
         percent: "85%"
-      - title: "Church Data Protection"
+      - title: "Brand Consulting"
         percent: "75%"
 ---

@@ -1,7 +1,7 @@
 ---
 enable: true
 badge: "Case studies"
-title: "Real churches. Clearer technology decisions. Measurable results."
+title: "Delivering project clarity, greater insight, and strategic alignment."
 scribbleShapeImage: "/images/decorative/scribble/scribble-4.svg"
 scribbleShapeImageAlt: "Scribble Shape"
 
