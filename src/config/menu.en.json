@@ -16,7 +16,46 @@
       "enable": true,
       "name": "Services",
       "weight": 2,
-      "url": "/services/"
+      "url": "/services/",
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "Church Technology Strategy",
+          "url": "/services/church-technology-strategy/",
+          "weight": 0
+        },
+        {
+          "enable": true,
+          "name": "ChMS Selection & Management",
+          "url": "/services/chms-selection-management/",
+          "weight": 1
+        },
+        {
+          "enable": true,
+          "name": "Church Vendor Selection & Review",
+          "url": "/services/church-vendor-selection-review/",
+          "weight": 2
+        },
+        {
+          "enable": true,
+          "name": "Church Systems Integration",
+          "url": "/services/church-systems-integration/",
+          "weight": 3
+        },
+        {
+          "enable": true,
+          "name": "Church Data Protection",
+          "url": "/services/church-data-protection/",
+          "weight": 4
+        },
+        {
+          "enable": true,
+          "name": "Church Operations & Administration",
+          "url": "/services/church-operations-administration/",
+          "weight": 5
+        }
+      ]
     },
     {
       "enable": false,

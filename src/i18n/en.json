@@ -12,8 +12,8 @@
     "paginationCaseStudiesNext": "Next CaseStudies",
     "workingHours": "Working Hours",
     "workHour": "Work Hour",
-    "workingHoursValue": "Sunday\u2013Thursday, 9 AM \u2013 5 PM",
-    "workHourValue": "Monday\u2013Friday: 9 AM \u2013 5 PM",
+    "workingHoursValue": "Monday–Friday, 9 AM – 5 PM",
+    "workHourValue": "Monday–Friday: 9 AM – 5 PM",
     "call": "Call:",
     "callUs": "Call Us",
     "play": "Play",
@@ -31,7 +31,7 @@
     "reply": "Reply"
   },
   "widgets": {
-    "postSearchFormPlaceholder": "Try Searching 'tips'...",
+    "postSearchFormPlaceholder": "Try Searching 'vendor selection'...",
     "categoriesTitle": "Categories",
     "tagsTitle": "Tags",
     "popularTagsTitle": "Popular Tags",
@@ -43,8 +43,8 @@
     "announcement": "Get your Technology Strategy Audit and secure your church's digital future. [Get Started](/contact/)"
   },
   "headerOffcanvas": {
-    "description": "We provide strategic technology leadership for mid-sized East Coast churches.",
-    "buttonLabel": "Let's Talk With Us"
+    "description": "We provide strategic technology partnership for mid-sized East Coast churches.",
+    "buttonLabel": "Let's Chat"
   },
   "blog": {
     "category": "Category",
@@ -64,7 +64,7 @@
     "freeSupport": "Free Support",
     "description": "We provide professional Fractional CTO services to help churches align their technology with their mission.",
     "contact": "Contact",
-    "copyright": "Copyright \u00a9 {{ year }}. [Good Shepherd Insights](https://goodshepherdinsights.com) All Rights Reserved.",
+    "copyright": "Copyright © {{ year }}. [Good Shepherd Insights](https://goodshepherdinsights.com) All Rights Reserved.",
     "since": "Established 2024"
   }
 }
