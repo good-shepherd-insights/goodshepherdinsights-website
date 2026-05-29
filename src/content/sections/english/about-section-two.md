@@ -3,7 +3,7 @@ enable: true
 list:
   - enable: true
     badge: "About Company"
-    title: "We Are The Best Solution For Your Tax Services"
+    title: "Strategic technology partnership for your church"
     image: "/images/about/about-3.png"
     imageAlt: "About Company"
     button:
@@ -22,10 +22,10 @@ list:
   - enable: true
     image: "/images/about/about-1.png"
     imageAlt: "About Company"
-    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."
+    description: "Good Shepherd Insights provides strategic technology partnership for mid-sized churches — guiding vendor selection, securing data, and building a roadmap so every technology decision supports your ministry."
     services:
-      - title: "Best Taxation Service"
-      - title: "Business Strategy & Growth"
-      - title: "Highly Dedicated Worker"
-      - title: "99.9% Customer Satisfaction"
+      - title: "Church Technology Strategy"
+      - title: "ChMS Selection & Management"
+      - title: "Church Data Protection"
+      - title: "Church Systems Integration"
 ---

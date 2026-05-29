@@ -43,7 +43,7 @@ list:
     content: |
       The best first step is a Technology Strategy Audit. This gives us a baseline of your current state so we can build an accurate roadmap.
   - enable: true
-    title: "Is this for mid-sized churches?"
+    title: "Is the Fractional CTO partnership for mid-sized churches?"
     content: |
       Yes. We specifically focus on churches with 200–2,000 attendees where technology has become too complex for a single staff member to manage alone.
 ---

@@ -1,17 +1,15 @@
 ---
 enable: true
-badge: "Nos services"
-title: "Service complet pour tous vos besoins fiscaux"
+badge: "Notre approche"
+title: "Leadership technologique stratégique"
+description: "Nous agissons comme votre CTO fractionné — guidant la sélection des fournisseurs, sécurisant vos données et optimisant vos opérations. Nous vous aidons à passer des décisions dispersées à une feuille de route stratégique."
+image: "/images/services/what-we-prove.png"
+imageAlt: "Leadership technologique stratégique"
 button:
-  # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options
-  # (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)
   enable: true
-  label: "Voir tous les services"
+  label: "Découvrir nos services"
   url: "/services/"
-  variant: "fill" # Optional: fill | outline | text | circle | white
-  hoverEffect: "creative-fill" # Optional: text-flip | creative-fill | magnetic | magnetic-text-flip
-  # rel: "" # Optional
-  # target: "" # Optional
-cardLayout: "listImage" # Optional: listImage | horizontal (default)
-limit: 5
+  variant: "fill"
+cardLayout: "horizontal"
+limit: 6
 ---

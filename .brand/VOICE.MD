@@ -56,6 +56,25 @@ Good Shepherd Insights is a **Partnership and Guidance** firm for churches navig
 | Scattered decisions | break-fix, chaos, mess |
 | Church | organization, house of worship (unless citing a source that uses it) |
 | Staff | team (unless referring to GSI staff) |
+| ChMS | church management software (use ChMS after first definition) |
+
+## Service Names
+
+The following 6 service names are canonical. Use them exactly as written — no abbreviations, no rewording, no alternate names.
+
+1. **Church Technology Strategy** — No tech direction. Entry point via Technology Strategy Audit.
+2. **ChMS Selection & Management** — ChMS chaos, under-40% utilization.
+3. **Church Vendor Selection & Review** — Vendor confusion and overcharge. Advocacy for the church.
+4. **Church Systems Integration** — Data silos, manual entry, disconnected website. Includes website design and development.
+5. **Church Data Protection** — Ransomware, data vulnerability. Frame as stewardship, not fear.
+6. **Church Operations & Administration** — Staff burnout, admin burden.
+
+Rules:
+- Always lead with "Church" — it is how the market searches.
+- Never use corporate consulting language ("Advisory," "Optimization," "Management" outside ChMS context).
+- Service 4 (Church Systems Integration) includes website design and development — never list website as a separate service.
+- Name the outcome, not the process. A pastor should understand the service name on first read.
+- Every service description must use second person, cite specific data, and connect the technology problem to a ministry outcome.
 
 ## On-Voice Examples
 

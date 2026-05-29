@@ -1,48 +1,32 @@
 ---
 enable: true
 
-subTitle: "Make Your Taxes Easy"
-titleLine1: "Reliable & Trusted"
-titleLine2: "Advice"
+subTitle: "Technology Leadership for Churches and Ministries"
+titleLine1: "Mission Aligned"
+titleLine2: "Insight."
 
-description: "There are many variations of passages of Lorem available, but the majority have suffered alteration in some form, by injected humour, or randomised words"
-sinceText: "Since 1990"
+description: "We guide you past vendor confusion with the knowledge to choose the right technology and partners for your ministry. [Request Your Technology Strategy Audit](/contact/)"
+
+sinceText: "Established 2024"
 button:
-  # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options
-  # (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)
   enable: true
-  label: "Make Appointment"
+  label: "Request Your Technology Strategy Audit"
   url: "/contact"
-  # icon: # Optional
-  #   enable: true
-  #   name: "ArrowUpRight" # Optional
-  #   position: "right" # Optional: left | right
-  variant: "fill" # Optional: fill | outline | text | circle | white
-  hoverEffect: "creative-fill" # Optional: text-flip | creative-fill | magnetic | magnetic-text-flip
-  # rel: "" # Optional
-  # target: "" # Optional
+  variant: "fill"
+  hoverEffect: "creative-fill"
 buttonContact:
-  # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options
-  # (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)
   enable: true
-  label: "Contact With Us"
+  label: "Contact Us"
   url: "/contact"
-  # icon: # Optional
-  #   enable: true
-  #   name: "ArrowUpRight" # Optional
-  #   position: "right" # Optional: left | right
-  variant: "text" # Optional: fill | outline | text | circle | white
-  # hoverEffect: "" # Optional: text-flip | creative-fill | magnetic | magnetic-text-flip
-  # rel: "" # Optional
-  # target: "" # Optional
+  variant: "text"
 
 slides:
   - image: "/images/banner/banner-common.png"
-    alt: "Tax advisory team meeting"
+    alt: "Strategic technology leadership for churches"
   - image: "/images/banner/banner-1.png"
-    alt: "Professional tax consultation"
+    alt: "Fractional CTO partnership for ministries"
   - image: "/images/banner/banner-2.png"
-    alt: "Tax advisory services"
+    alt: "Church technology strategy and guidance"
 
 video:
   src: "bTqVqk7FSmY"
