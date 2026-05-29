@@ -10,7 +10,7 @@ image: "/images/page-header/default.png"
 # Uncomment key values that you want to override
 servicesSection:
   enable: true
-  title: ""
+  title: "Strategic Technology Leadership for Your Ministry"
 
   options:
     layout: "grid" # accordion / grid / grid-2-col
