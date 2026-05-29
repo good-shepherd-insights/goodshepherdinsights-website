@@ -1,8 +1,8 @@
 ---
 badge: "Our Services"
-title: "We're Give A Full Service About All Your King Of Tax"
-titleSecondary: "We Provide Quality Services."
-metaDescription: "This is a example description"
+title: "Strategic Technology Leadership for Your Ministry"
+titleSecondary: "Comprehensive Church Technology Advisory."
+metaDescription: "GSI provides vendor-neutral ChMS advisory, Fractional CTO leadership, and strategic technology consulting built exclusively for churches."
 draft: false
 image: "/images/page-header/default.png"
 
@@ -10,7 +10,7 @@ image: "/images/page-header/default.png"
 # Uncomment key values that you want to override
 servicesSection:
   enable: true
-  title: ""
+  title: "Strategic Technology Leadership for Your Ministry"
 
   options:
     layout: "grid" # accordion / grid / grid-2-col
