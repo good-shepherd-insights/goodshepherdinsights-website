@@ -1,8 +1,8 @@
 ---
 badge: "Our Services"
-title: "We're Give A Full Service About All Your King Of Tax"
-titleSecondary: "We Provide Quality Services."
-metaDescription: "This is a example description"
+title: "Fractional CTO & Operational Excellence"
+titleSecondary: "Strategic technology leadership for the local church."
+metaDescription: "Stop administrative overload from burning out your best people. We design the workflow architecture that turns manual tasks into automated systems, protecting your team's calling."
 draft: false
 image: "/images/page-header/default.png"
 
