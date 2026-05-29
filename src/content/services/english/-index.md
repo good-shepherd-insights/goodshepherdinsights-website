@@ -2,7 +2,7 @@
 badge: "Our Services"
 title: "Strategic Technology Leadership for Churches"
 titleSecondary: "Proactive. Mission-Aligned. Fractional."
-metaDescription: "End reactive tech spending. GSI delivers comprehensive church technology assessments, 1-3 year roadmaps, and Fractional CTO leadership to align your technology with your ministry vision."
+metaDescription: "Stop administrative overload from burning out your best people. We design the workflow architecture that turns manual tasks into automated systems, protecting your team's calling."
 draft: false
 image: "/images/page-header/default.png"
 
