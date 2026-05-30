@@ -6,7 +6,7 @@ import BlogSinglePageLayout from "./BlogSinglePageLayout.astro";
 import type { CollectionEntry } from "astro:content";
 import Sidebar from "./widgets/Sidebar.astro";
 import BlogCard from "./cards/BlogCard.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
 import config from ".astro/config.generated.json";
 
 type sidebarType = {
@@ -33,12 +33,16 @@ const {
 // Sidebar enabled flag
 const sidebarEnabled = sidebar?.enable;
 
-const templatePost = content.id.includes("-index")
-  ? await getEntryCTM(
+const templatePost = content?.id?.includes("-index")
+  ? (await getEntryCTM(
       config.settings.blogFolder as "blog",
       "post-1",
       Astro.currentLocale,
-    )
+    )) ||
+    (await getCollectionCTM(
+      config.settings.blogFolder as "blog",
+      Astro.currentLocale,
+    ))[0]
   : content;
 ---
 
