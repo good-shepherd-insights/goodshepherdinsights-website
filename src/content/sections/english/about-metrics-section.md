@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 list:
   - enable: true
     image: "/images/about/about-1.png"

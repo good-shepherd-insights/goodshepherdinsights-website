@@ -6,7 +6,7 @@ draft: false
 
 **Effective Date:** July, 2022
 
-Welcome to Taxo ("we," "our," or "us"). By accessing or using our website, <https://www.taxo.com> ("Website"), you agree to comply with and be bound by the following Terms and Conditions ("Terms"). If you do not agree with these Terms, please do not use our Website.
+Welcome to Good Shepherd Insights ("we," "our," or "us"). By accessing or using our website, <https://www.goodshepherdinsights.com> ("Website"), you agree to comply with and be bound by the following Terms and Conditions ("Terms"). If you do not agree with these Terms, please do not use our Website.
 
 ### Acceptance of Terms
 
@@ -27,7 +27,7 @@ If you create an account on our Website, you are responsible for maintaining the
 
 ### Intellectual Property
 
-All content on the Website, including but not limited to text, images, logos, and software, is the property of Taxo or its licensors and is protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, or modify any content without prior written consent from Taxo.
+All content on the Website, including but not limited to text, images, logos, and software, is the property of Good Shepherd Insights or its licensors and is protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, or modify any content without prior written consent from Good Shepherd Insights.
 
 ### Purchases and Payments
 
@@ -39,7 +39,7 @@ The Website and its content are provided "as is" without warranties of any kind,
 
 ### Limitation of Liability
 
-To the fullest extent permitted by law, Taxo shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Website or inability to access it. Our total liability for any claims related to the Website shall not exceed the amount paid by you, if any, to Taxo.
+To the fullest extent permitted by law, Good Shepherd Insights shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Website or inability to access it. Our total liability for any claims related to the Website shall not exceed the amount paid by you, if any, to Good Shepherd Insights.
 
 ### Termination
 
@@ -51,7 +51,7 @@ Our Website may contain links to third-party websites. We are not responsible fo
 
 ### Governing Law
 
-These Terms are governed by and construed in accordance with the laws of the State of Imaginary, USA, without regard to its conflict of law principles. Any disputes arising under these Terms shall be resolved in the courts located in Imaginary City, USA.
+These Terms are governed by and construed in accordance with the laws of the State of [State], USA, without regard to its conflict of law principles. Any disputes arising under these Terms shall be resolved in the courts located in [City], USA.
 
 ### Changes to Terms
 
@@ -61,9 +61,9 @@ We reserve the right to update or modify these Terms at any time without prior n
 
 If you have any questions or concerns about these Terms, please contact us at:
 
-Taxo
+Good Shepherd Insights
 
-Email: <support@taxo.com>  
-Address: 123 Taxo Lane, Imaginary City, IC 12345, USA
+Email: <anthony@goodshepherdinsights.com>  
+Address: 123 Good Shepherd Insights Lane, Imaginary City, IC 12345, USA
 
-Thank you for using Taxo!
+Thank you for using Good Shepherd Insights!

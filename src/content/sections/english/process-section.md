@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 badge: "Our Process"
 title: "From Audit to Roadmap to Execution"
 description: "Every engagement starts with understanding your current reality. We assess, plan, and then walk alongside you to implement — so your church never faces a technology decision alone."

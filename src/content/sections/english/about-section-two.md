@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 list:
   - enable: true
     badge: "Our Approach"
