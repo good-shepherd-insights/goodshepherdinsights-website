@@ -55,15 +55,9 @@ export async function getStaticPaths() {
 
 const { tag, blogFolder, postIndex } = Astro.props;
 
-let post = await getEntryCTM(
-  blogFolder as "blog",
-  "post-1",
-  Astro.currentLocale,
-);
-
 // Check if blog posts exist in the folder
 let title = titleify(`${tag.name} posts`);
-const description = post?.data.description || postIndex?.data.description;
+const description = postIndex?.data.description;
 ---
 
 <Base
@@ -85,7 +79,7 @@ const description = post?.data.description || postIndex?.data.description;
       filter: { tag: tag },
       breadcrumbExcludedPaths: ["Tag"],
     }}
-    content={{ ...post, ...post?.data }}
+    content={{ ...postIndex, ...postIndex?.data }}
   />
   <CTAGallerySection />
   <CTASection />
