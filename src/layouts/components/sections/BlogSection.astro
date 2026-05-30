@@ -44,9 +44,6 @@ posts = sortByDate(posts);
 posts =
   options?.limit && posts ? posts.slice(0, options?.limit as number) : posts;
 
-if (!posts || posts.length === 0) {
-  return null;
-}
 if (!enable) {
   return null;
 }
