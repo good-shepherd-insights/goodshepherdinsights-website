@@ -1,7 +1,7 @@
 ---
 enable: true
-badge: "Insights"
-title: "Strategic guidance for your church's technology"
+badge: "Fractional CTO Insights"
+title: "Strategic Technology Leadership for Ministries"
 
 options:
   layout: "grid"

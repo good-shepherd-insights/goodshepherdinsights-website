@@ -1,7 +1,7 @@
 ---
-badge: "Insights & Updates"
-title: "Practical guidance on ministry technology"
-metaDescription: "Strategic technology insights for ministries and churches."
+badge: "Fractional CTO Insights"
+title: "Strategic Technology Leadership for Ministries"
+metaDescription: "Expert guidance on navigating church technology, risk management, and digital strategy from a Fractional CTO perspective."
 draft: false
 
 searchSection:

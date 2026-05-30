@@ -1,7 +1,7 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-badge: "GSI Insights"
-title: "Practical Perspectives for Church Technology Leaders"
+badge: "Fractional CTO Insights"
+title: "Strategic Technology Leadership for Ministries"
 
 options:
   layout: "horizontal" # grid | featured | horizontal
