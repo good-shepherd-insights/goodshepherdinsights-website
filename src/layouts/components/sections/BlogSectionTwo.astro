@@ -65,17 +65,15 @@ if (!enable) {
       {title && <SectionTitle title={title} dataAos="reveal-anim-top" />}
     </div>
 
-    {posts && posts.length > 0 && (
-      <div class="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
-        <BlogCard content={posts[0]} options={{ layout: "featured" }} />
-        <div class="grid grid-cols-1 gap-4 md:gap-6">
-          {
-            posts
-              ?.slice(1)
-              .map((post) => <BlogCard content={post} options={options} />)
-          }
-        </div>
+    <div class="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+      <BlogCard content={posts[0]} options={{ layout: "featured" }} />
+      <div class="grid grid-cols-1 gap-4 md:gap-6">
+        {
+          posts
+            ?.slice(1)
+            .map((post) => <BlogCard content={post} options={options} />)
+        }
       </div>
-    )}
+    </div>
   </div>
 </section>
