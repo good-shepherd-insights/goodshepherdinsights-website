@@ -1,5 +1,4 @@
 ---
-import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils";
 import Icons from "@/helpers/Icons.astro";
@@ -108,28 +107,6 @@ const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
         </div>
       </div>
 
-      {(image || image3) && (
-        <div
-          class:list={[
-            "pointer-events-none absolute right-28 z-20 hidden w-80 transform overflow-hidden shadow-2xl transition-all duration-600 lg:block xl:right-41 xl:h-115.75 xl:w-97.5",
-            {
-              "top-8.5": imagePosition === "top" || !imagePosition,
-              "bottom-8.5": imagePosition === "bottom",
-              "top-1/2 -translate-y-1/2": imagePosition === "center",
-            },
-            index === 0
-              ? "scale-100 opacity-100 group-hover:scale-100! group-hover:opacity-100! group-hover/list:scale-95 group-hover/list:opacity-0"
-              : "scale-95 opacity-0 delay-75 group-hover:scale-100 group-hover:opacity-100",
-          ]}>
-          <OptimizedImage
-            src={image || image3 || ""}
-            alt={title}
-            width={376}
-            height={410}
-            class="h-full w-full object-cover"
-          />
-        </div>
-      )}
     </div>
   ) : null
 }

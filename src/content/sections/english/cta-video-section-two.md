@@ -1,8 +1,8 @@
 ---
 enable: true
 badge: "Get Started"
-title: "Changing Your Lives, Changing Your Futures"
-description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words look even slightly believable. If you are going to use a passage"
+title: "Your Church Deserves a Technology Advocate, Not Just a Vendor"
+description: "Every technology vendor has one primary interest — their own revenue. Without an independent technical executive on your side, decisions consistently benefit the vendor more than the ministry. Good Shepherd Insights is that advocate."
 backgroundImage: "/images/banner/banner-2.png"
 backgroundImageAlt: "CTA background"
 scribbleArrow: "/images/decorative/scribble/scribble-4.svg"

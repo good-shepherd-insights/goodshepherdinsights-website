@@ -1,18 +1,18 @@
 ---
-enable: true
+enable: false
 list:
   - enable: true
-    badge: "About Company"
-    title: "We Are The Best Solution For Your Tax Services"
+    badge: "Our Approach"
+    title: "Strategic Technology Leadership, Not Just Another Vendor"
     image: "/images/about/about-3.png"
-    imageAlt: "About Company"
+    imageAlt: "Strategic Partnership"
     button:
       enable: true
       label: "Discover More"
       url: "/about/"
       variant: "fill"
     deocrativeScribble: "/images/decorative/scribble/scribble-2.svg"
-    deocrativeScribbleAlt: "About Company"
+    deocrativeScribbleAlt: "Strategic Partnership"
     testimonial:
       name: "Jhon Richard"
       designation: "Founder"
@@ -21,11 +21,11 @@ list:
 
   - enable: true
     image: "/images/about/about-1.png"
-    imageAlt: "About Company"
-    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."
+    imageAlt: "Ministry Technology Solutions"
+    description: "Every church deserves a technology advocate — someone who understands both ministry and systems. We provide the strategic oversight to coordinate your tools, secure your data, and align technology decisions with your mission."
     services:
-      - title: "Best Taxation Service"
-      - title: "Business Strategy & Growth"
-      - title: "Highly Dedicated Worker"
-      - title: "99.9% Customer Satisfaction"
+      - title: "Fractional CTO Leadership"
+      - title: "ChMS Advisory & Optimization"
+      - title: "Cybersecurity & Risk Management"
+      - title: "99.9% Client Satisfaction"
 ---
