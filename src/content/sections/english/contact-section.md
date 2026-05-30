@@ -48,14 +48,14 @@ form:
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Email Address *"
+      placeholder: "Church Email Address *"
       name: "Email Address" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       type: "email"
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Subject *"
+      placeholder: "Current Church Size (Attendees) *"
       name: "Subject" # This is crucial. Its indicate under which name you want to receive this field data
       required: false
       halfWidth: true
@@ -64,39 +64,45 @@ form:
         search: # if type is search then it will work
           placeholder: ""
         items:
-          - label: "Technology Strategy Audit"
-            value: "Technology Strategy Audit"
+          - label: "Under 200"
+            value: "Under 200"
             selected: false
-          - label: "ChMS Advisory"
-            value: "ChMS Advisory"
+          - label: "200 - 500"
+            value: "200-500"
             selected: false
-          - label: "Vendor Selection"
-            value: "Vendor Selection"
+          - label: "500 - 1,000"
+            value: "500-1000"
+            selected: false
+          - label: "1,000 - 2,000"
+            value: "1000-2000"
+            selected: false
+          - label: "2,000+"
+            value: "2000+"
             selected: false
     - label: ""
-      placeholder: "Subject With Search *"
+      placeholder: "Primary Technology Challenge *"
       name: "Subject With Search" # This is crucial. Its indicate under which name you want to receive this field data
       required: false
       halfWidth: true
       dropdown:
-        type: "search" # select | search - default is select
+        type: "search" # select | search - default is search
         search: # if type is search then it will work
-          placeholder: "Subject With Search"
+          placeholder: "Primary Technology Challenge"
         items:
-          - label: "Technology Strategy Audit"
-            value: "Technology Strategy Audit"
+          - label: "ChMS Issues"
+            value: "ChMS"
             selected: false
-          - label: "ChMS Advisory"
-            value: "ChMS Advisory"
+          - label: "Data Security"
+            value: "Security"
             selected: false
-          - label: "Vendor Selection"
-            value: "Vendor Selection"
+          - label: "System Integration"
+            value: "Integration"
             selected: false
-          - label: "Security Assessment"
-            value: "Security Assessment"
+          - label: "Staff Burnout"
+            value: "Burnout"
             selected: false
-          - label: "General Inquiry"
-            value: "General Inquiry"
+          - label: "Vendor Management"
+            value: "Vendors"
             selected: false
     - label: ""
       tag: "textarea"
@@ -106,7 +112,7 @@ form:
       name: "Message" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       halfWidth: false
-    - label: "Google Search" # only valid for type="checkbox" & type === "radio"
+    - label: "Personal Referral" # only valid for type="checkbox" & type === "radio"
       checked: false # only valid for type="checkbox" & type === "radio"
       name: "User Source" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
@@ -115,7 +121,7 @@ form:
       type: "radio"
       halfWidth: true
       defaultValue: ""
-    - label: "Social Media" # only valid for type="checkbox" & type === "radio"
+    - label: "Event or Conference" # only valid for type="checkbox" & type === "radio"
       name: "User Source" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       groupLabel: "" # Radio Inputs Label

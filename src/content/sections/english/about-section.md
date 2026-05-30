@@ -4,7 +4,7 @@ list:
   - enable: true
     badge: "The Challenge"
     title: "Disconnected tools create administrative burden."
-    description: "With an average of 5–8 disconnected software tools and ChMS utilization often under 40%, church staff often spend more time on manual data entry than on ministry. We help you coordinate these systems into a single, effective strategy."
+    description: "With an average of 5–8 disconnected software tools and ChMS utilization often under 40%, church staff spend more time on manual data entry than on ministry. We help you coordinate these systems into a single, effective strategy."
     services:
       - title: "Technology Strategy Audit"
         percent: "95%"
