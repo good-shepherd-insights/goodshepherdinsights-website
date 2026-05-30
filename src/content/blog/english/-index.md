@@ -1,7 +1,7 @@
 ---
-badge: "Blog & News"
-title: "Check our inside news & update"
-metaDescription: "This is a example description"
+badge: "Insights & Updates"
+title: "Practical guidance on ministry technology"
+metaDescription: "Strategic technology insights for ministries and churches."
 draft: false
 
 searchSection:

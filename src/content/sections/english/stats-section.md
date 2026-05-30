@@ -1,24 +1,24 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
+enable: true
 
 backgroundImage: "/images/decorative/pattern/fact-bg.png"
 backgroundImageAlt: "fact-bg"
 
 list:
   - prependValue: ""
-    value: "15"
-    appendValue: "k+"
-    label: "Project Completed"
-  - prependValue: ""
-    value: "25"
-    appendValue: "+"
-    label: "Years Experience"
-  - prependValue: ""
-    value: "4273"
+    value: "40-60%"
     appendValue: ""
-    label: "Happy Customer"
+    label: "Typical church MSP overcharge"
   - prependValue: ""
-    value: "406"
+    value: "300%+"
     appendValue: ""
-    label: "Professional Worker"
+    label: "Rise in church ransomware (CISA)"
+  - prependValue: ""
+    value: "<40%"
+    appendValue: ""
+    label: "Average ChMS feature utilization"
+  - prependValue: ""
+    value: "5-8"
+    appendValue: ""
+    label: "Disconnected tools per church (avg.)"
 ---

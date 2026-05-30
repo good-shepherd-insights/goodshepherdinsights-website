@@ -1,9 +1,9 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-badge: "Quick Contact"
-title: "Have Questions? Get in Touch!"
-description: "Namo enim ipsam voluptatem quia voluptas sit aspernatur aut odit fugit, sed quia consequuntur magni dolores eos qui ratione"
-contactTitle: "Send A Message"
+badge: "Secure Your Ministry"
+title: "Don't Wait for a Security Incident to Act"
+description: "Most churches only realize their security posture is inadequate after a breach. Let's build your defense now."
+contactTitle: "Request a Security Review"
 list:
   - title: "Have any question?"
     icon: "/images/icons/svg/phone-call.svg"
@@ -18,7 +18,7 @@ list:
 # Check config.toml file for form action related settings
 # this is also used in the footer of the personal case studies homepage
 form:
-  emailSubject: "New form submission from taxo website" # Customized email subject (applicable when anyone submit form, form submission may receive by email depend on provider)
+  emailSubject: "Security Review Request from GSI website" # Customized email subject (applicable when anyone submit form, form submission may receive by email depend on provider)
   submitButton:
     # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)
     enable: true
@@ -39,14 +39,14 @@ form:
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Email Address *"
+      placeholder: "Church Email Address *"
       name: "Email Address" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       type: "email"
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Subject *"
+      placeholder: "Primary Security Concern *"
       name: "Subject" # This is crucial. Its indicate under which name you want to receive this field data
       required: false
       halfWidth: true
@@ -55,14 +55,17 @@ form:
         search: # if type is search then it will work
           placeholder: ""
         items:
-          - label: "General Inquiry"
-            value: "General Inquiry"
+          - label: "Email Security / Spoofing"
+            value: "Email"
             selected: false
-          - label: "Partnership Opportunity"
-            value: "Partnership Opportunity"
+          - label: "Donor Data Protection"
+            value: "Data"
             selected: false
-          - label: "Investment Opportunity"
-            value: "Investment Opportunity"
+          - label: "Ransomware Protection"
+            value: "Ransomware"
+            selected: false
+          - label: "General Governance"
+            value: "General"
             selected: false
     - label: ""
       placeholder: "Subject With Search *"

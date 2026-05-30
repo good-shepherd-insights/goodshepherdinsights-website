@@ -6,7 +6,7 @@ draft: false
 
 **Effective Date: July, 2022**
 
-Welcome to Taxo ("we," "our," or "us"). Your privacy is important to us, and we are committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website, https://www.taxo.com ("Website").
+Welcome to Good Shepherd Insights ("we," "our," or "us"). Your privacy is important to us, and we are committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website, https://www.goodshepherdinsights.com ("Website").
 
 ### Information We Collect
 
@@ -68,7 +68,7 @@ Depending on your location, you may have the following rights regarding your per
 - Restrict processing of your data
 - Withdraw consent for data usage
 
-To exercise your rights, please contact us at privacy@taxo.com.
+To exercise your rights, please contact us at anthony@goodshepherdinsights.com.
 
 ### Third-Party Links
 
@@ -86,8 +86,8 @@ We may update this Privacy Policy from time to time. Any changes will be posted 
 
 If you have any questions or concerns about this Privacy Policy, please contact us at:
 
-Taxo
-Email: privacy@taxo.com
-Address: 123 Taxo Lane, Imaginary City, IC 12345, USA
+Good Shepherd Insights
+Email: anthony@goodshepherdinsights.com
+Address: 123 Good Shepherd Insights Lane, Imaginary City, IC 12345, USA
 
-Thank you for trusting Taxo with your personal information!
+Thank you for trusting Good Shepherd Insights with your personal information!

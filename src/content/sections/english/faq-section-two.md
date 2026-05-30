@@ -1,22 +1,22 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
-title: "Solutions: All Your Questions Answered"
+enable: false # Control the visibility of this section across all pages where it is used
+title: "Partnership Questions Answered"
 
 list:
   - enable: true
-    title: "What Is Tax Advisor Services?"
+    title: "What does a Fractional CTO engagement look like?"
     content: |
-      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum,
+      We provide ongoing, strategic technology leadership tailored to your church's size and needs. This includes regular strategy sessions, vendor management oversight, security assessments, and ChMS optimization — all without the cost of a full-time hire.
   - enable: true
-    title: "How Many Service We Provide?"
+    title: "How does GSI differ from a managed IT provider?"
     content: |
-      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum,
+      MSPs manage your infrastructure. We provide executive-level technology strategy. We sit on your side of the table in every vendor conversation, ensuring decisions serve your ministry — not the vendor's bottom line.
   - enable: true
-    title: "What Are Your Terms and Conditions?"
+    title: "What size church benefits most from your services?"
     content: |
-      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum,
+      Our ideal partners are churches with 200–2,000 attendees where technology decisions have become too complex for a single staff member. If you're evaluating ChMS platforms, managing multiple vendors, or unsure of your security posture, you're likely a strong fit.
   - enable: true
-    title: "What Kinds of Payment Do You Accept?"
+    title: "How quickly can we see results from a Technology Strategy Audit?"
     content: |
-      There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum,
+      Most churches receive their Know Your Church report within two weeks of the assessment. The report includes a prioritized roadmap of immediate actions and long-term strategic initiatives.
 ---

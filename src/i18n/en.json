@@ -12,8 +12,8 @@
     "paginationCaseStudiesNext": "Next CaseStudies",
     "workingHours": "Working Hours",
     "workHour": "Work Hour",
-    "workingHoursValue": "Sun-monday, 09am-5pm",
-    "workHourValue": "Monday To Friday: 9PM - 5PM Saturday Closed",
+    "workingHoursValue": "Sunday\u2013Thursday, 9 AM \u2013 5 PM",
+    "workHourValue": "Monday\u2013Friday: 9 AM \u2013 5 PM",
     "call": "Call:",
     "callUs": "Call Us",
     "play": "Play",
@@ -21,7 +21,7 @@
     "ourServices": "Our Services",
     "recentProjects": "Recent Projects",
     "discoverMore": "Discover More",
-    "hotLine": "Hot Line",
+    "hotLine": "Direct Line",
     "searchHere": "Search Here",
     "letsChat": "Let's Chat",
     "sendRequest": "Send Request",
@@ -37,14 +37,14 @@
     "popularTagsTitle": "Popular Tags",
     "recentPostsTitle": "Recent Posts",
     "haveAnyQuestionsTitle": "Have Any Questions?",
-    "haveAnyQuestionsDescription": "There are many variations of passages of Lorem Ipsum available, but the alteration in some form,"
+    "haveAnyQuestionsDescription": "Our Fractional CTO team is ready to help you build a strategic roadmap for your church's technology."
   },
   "header": {
-    "announcement": "Get Your Free Tax Advisor Today and Save 10% on Your First Session. [Get Started](/contact/)"
+    "announcement": "Get your Technology Strategy Audit and secure your church's digital future. [Get Started](/contact/)"
   },
   "headerOffcanvas": {
-    "description": "We are a digital agency that helps businesses create immersive experiences.",
-    "buttonLabel": "Let’s Talk With Us"
+    "description": "We provide strategic technology leadership for mid-sized East Coast churches.",
+    "buttonLabel": "Let's Talk With Us"
   },
   "blog": {
     "category": "Category",
@@ -57,15 +57,14 @@
     "buttonLabel": "Get in Touch"
   },
   "subscription": {
-    "title": "Add Your Own Details and Inform All Your Tax Requirements"
+    "title": "Stay updated on strategic technology insights for ministries"
   },
   "footer": {
     "menuTitleLinks": "Links",
     "freeSupport": "Free Support",
-    "description": "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus id quod maxime placeat facere assumenda est omnis dolor repellendus.",
+    "description": "We provide professional Fractional CTO services to help churches align their technology with their mission.",
     "contact": "Contact",
-    "copyright": "Copyright © {{ year }}. [Taxo](https://taxo-dev.netlify.app/) All Rights Reserved.",
-    "_comment": "We kindly appreciate it if you retain the theme copyright. Thank you for supporting Taxo!",
-    "since": "since 1990"
+    "copyright": "Copyright \u00a9 {{ year }}. [Good Shepherd Insights](https://goodshepherdinsights.com) All Rights Reserved.",
+    "since": "Established 2024"
   }
 }

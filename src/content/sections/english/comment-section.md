@@ -3,7 +3,7 @@ enable: true
 title: "Leave a comment"
 
 form:
-  emailSubject: "New Blog Comment"
+  emailSubject: "New GSI Blog Comment"
 
   submitButton:
     enable: true

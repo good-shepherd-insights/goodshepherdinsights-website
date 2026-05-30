@@ -1,5 +1,5 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
+enable: false
 badge: "Let's Collaboration"
 title: "This Could Be The Start Of Something Special Let's Work Togather!"
 button:

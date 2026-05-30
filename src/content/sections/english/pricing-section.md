@@ -1,5 +1,5 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
+enable: false # Control the visibility of this section across all pages where it is used
 badge: "Our Pricing Plans"
 title: "Simple, Transparent And Great pricing."
 decorativeImage: "/images/decorative/shape/shape-8.png"

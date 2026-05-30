@@ -1,7 +1,7 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-badge: "General Questions"
-title: "Frequently Asked Question."
+badge: "Common Questions"
+title: "Frequently asked questions."
 backgroundImage: "/images/decorative/pattern/pattern-3.png"
 backgroundImageAlt: "Contact Us"
 decorativeImage: "/images/decorative/contact-person-2.png"
@@ -9,17 +9,17 @@ decorativeImageAlt: "Contact Us"
 
 faqList:
   - enable: true
-    title: "How to Change my Password easily?"
+    title: "How do we choose the right ChMS for our church?"
     content: |
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
+      We evaluate your current systems, ministry workflows, and growth trajectory to recommend a ChMS that fits your congregation — not the other way around.
   - enable: true
-    title: "Tax Consultation for Business"
+    title: "What does a Fractional CTO engagement look like?"
     content: |
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
+      We provide ongoing strategic technology leadership on a part-time basis, helping you make vendor decisions, plan upgrades, and keep your data secure without the cost of a full-time hire.
   - enable: true
-    title: "Best Tax & Financial Planning"
+    title: "How can we reduce the number of disconnected tools we use?"
     content: |
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
+      Most churches we work with are running 5–8 disconnected tools. We help you consolidate and integrate so your staff can focus on ministry instead of data entry.
 
 contactTitle: "Request A Call Back"
 contactBadge: "Send A Message"
@@ -27,7 +27,7 @@ contactBadge: "Send A Message"
 # Check config.toml file for form action related settings
 # this is also used in the footer of the personal case studies homepage
 form:
-  emailSubject: "New form submission from taxo website" # Customized email subject (applicable when anyone submit form, form submission may receive by email depend on provider)
+  emailSubject: "New form submission from GSI website" # Customized email subject (applicable when anyone submit form, form submission may receive by email depend on provider)
   submitButton:
     # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options (e.g., enable, label, url, hoverEffect, variant, icon, tag, rel, class, target, etc.)
     enable: true
@@ -48,14 +48,14 @@ form:
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Email Address *"
+      placeholder: "Church Email Address *"
       name: "Email Address" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       type: "email"
       halfWidth: true
       defaultValue: ""
     - label: ""
-      placeholder: "Subject *"
+      placeholder: "Current Church Size (Attendees) *"
       name: "Subject" # This is crucial. Its indicate under which name you want to receive this field data
       required: false
       halfWidth: true
@@ -64,39 +64,45 @@ form:
         search: # if type is search then it will work
           placeholder: ""
         items:
-          - label: "General Inquiry"
-            value: "General Inquiry"
+          - label: "Under 200"
+            value: "Under 200"
             selected: false
-          - label: "Partnership Opportunity"
-            value: "Partnership Opportunity"
+          - label: "200 - 500"
+            value: "200-500"
             selected: false
-          - label: "Investment Opportunity"
-            value: "Investment Opportunity"
+          - label: "500 - 1,000"
+            value: "500-1000"
+            selected: false
+          - label: "1,000 - 2,000"
+            value: "1000-2000"
+            selected: false
+          - label: "2,000+"
+            value: "2000+"
             selected: false
     - label: ""
-      placeholder: "Subject With Search *"
+      placeholder: "Primary Technology Challenge *"
       name: "Subject With Search" # This is crucial. Its indicate under which name you want to receive this field data
       required: false
       halfWidth: true
       dropdown:
-        type: "search" # select | search - default is select
+        type: "search" # select | search - default is search
         search: # if type is search then it will work
-          placeholder: "Subject With Search"
+          placeholder: "Primary Technology Challenge"
         items:
-          - label: "General Inquiry"
-            value: "General Inquiry"
+          - label: "ChMS Issues"
+            value: "ChMS"
             selected: false
-          - label: "Partnership Opportunity"
-            value: "Partnership Opportunity"
+          - label: "Data Security"
+            value: "Security"
             selected: false
-          - label: "Career Opportunity"
-            value: "Career Opportunity"
+          - label: "System Integration"
+            value: "Integration"
             selected: false
-          - label: "Investment Opportunity"
-            value: "Investment Opportunity"
+          - label: "Staff Burnout"
+            value: "Burnout"
             selected: false
-          - label: "Media Inquiry"
-            value: "Media Inquiry"
+          - label: "Vendor Management"
+            value: "Vendors"
             selected: false
     - label: ""
       tag: "textarea"
@@ -106,7 +112,7 @@ form:
       name: "Message" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       halfWidth: false
-    - label: "Google Search" # only valid for type="checkbox" & type === "radio"
+    - label: "Personal Referral" # only valid for type="checkbox" & type === "radio"
       checked: false # only valid for type="checkbox" & type === "radio"
       name: "User Source" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
@@ -115,7 +121,7 @@ form:
       type: "radio"
       halfWidth: true
       defaultValue: ""
-    - label: "Social Media" # only valid for type="checkbox" & type === "radio"
+    - label: "Event or Conference" # only valid for type="checkbox" & type === "radio"
       name: "User Source" # This is crucial. Its indicate under which name you want to receive this field data
       required: true
       groupLabel: "" # Radio Inputs Label
@@ -153,5 +159,5 @@ form:
       content: We have received your message! We'll get back to you as soon as possible.
     - note: deprecated # info | warning | success | deprecated | hint
       parentClass: "hidden text-sm message error"
-      content: Something went wrong! please use this mail - [taxo-astro-theme@gmail.com](mailto:taxo-astro-theme@gmail.com) to submit a ticket!
+      content: Something went wrong! Please email us directly at [info@goodshepherdinsights.com](mailto:info@goodshepherdinsights.com) to submit a ticket!
 ---

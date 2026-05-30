@@ -1,8 +1,8 @@
 ---
 badge: "Our Services"
-title: "We're Give A Full Service About All Your King Of Tax"
-titleSecondary: "We Provide Quality Services."
-metaDescription: "This is a example description"
+title: "Strategic Technology Leadership for Churches"
+titleSecondary: "Proactive. Mission-Aligned. Fractional."
+metaDescription: "Stop administrative overload from burning out your best people. We design the workflow architecture that turns manual tasks into automated systems, protecting your team's calling."
 draft: false
 image: "/images/page-header/default.png"
 
@@ -10,7 +10,7 @@ image: "/images/page-header/default.png"
 # Uncomment key values that you want to override
 servicesSection:
   enable: true
-  title: ""
+  title: "Strategic Technology Leadership for Your Ministry"
 
   options:
     layout: "grid" # accordion / grid / grid-2-col

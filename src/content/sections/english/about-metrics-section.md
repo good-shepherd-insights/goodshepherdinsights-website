@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 list:
   - enable: true
     image: "/images/about/about-1.png"
@@ -10,14 +10,14 @@ list:
     deocrativeScribbleAlt: "About Experience"
 
   - enable: true
-    badge: "About Experience"
-    title: "Helping You Put Systems in Place that Work"
-    description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour,"
+    badge: "Ministry Impact"
+    title: "Churches Need Technology Leadership, Not Just Tools"
+    description: "Fewer than 40% of churches use their ChMS to its full potential. We provide the strategic oversight to close that gap — turning scattered systems into a coordinated technology strategy."
     services:
-      - title: "Business Consulting"
+      - title: "ChMS Utilization Rate"
         percent: "95%"
-      - title: "Financial Advising"
+      - title: "Security Posture Improvement"
         percent: "85%"
-      - title: "Brand Consulting"
+      - title: "Vendor Cost Reduction"
         percent: "75%"
 ---
