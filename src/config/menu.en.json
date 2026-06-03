@@ -45,16 +45,8 @@
         {
           "enable": true,
           "name": "Blog",
-          "weight": 1,
-          "hasChildren": true,
-          "children": [
-            {
-              "enable": true,
-              "name": "Blog",
-              "url": "/blog/",
-              "weight": 0
-            }
-          ]
+          "url": "/blog/",
+          "weight": 1
         }
       ]
     },
