@@ -55,14 +55,8 @@ export async function getStaticPaths() {
 
 const { category, blogFolder, postIndex } = Astro.props;
 
-let post = await getEntryCTM(
-  blogFolder as "blog",
-  "post-1",
-  Astro.currentLocale,
-);
-
 let title = titleify(`${category.name} posts`);
-const description = post?.data.description || postIndex?.data.description;
+const description = postIndex?.data.description;
 ---
 
 <Base
@@ -84,7 +78,7 @@ const description = post?.data.description || postIndex?.data.description;
       filter: { category: category },
       breadcrumbExcludedPaths: ["Category"],
     }}
-    content={{ ...post, ...post?.data }}
+    content={{ ...postIndex, ...postIndex?.data }}
   />
   <CTAGallerySection />
   <CTASection />
