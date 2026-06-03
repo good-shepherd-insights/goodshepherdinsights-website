@@ -100,7 +100,7 @@
   [settings.contactInfo]
     address = "East Coast, USA"
     email   = "contact@goodshepherdinsights.com"
-    phone   = ""
+    phone   = "[(240) 441-5259](tel:+12404415259)"
     mapLink = "https://www.google.com/maps?q=East+Coast,USA&output=embed"
 
   # Header Offcanvas Configuration
