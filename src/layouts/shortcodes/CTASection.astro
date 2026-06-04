@@ -40,7 +40,7 @@ const slug = href ? getLocaleUrlCTM(href, Astro.currentLocale) : null;
       set:html={markdownify(title)}
     />
   )}
-  <div class="prose-styles prose-p:text-white/90 prose-p:text-lg prose-p:last:mb-6">
+  <div class="prose-styles prose-p:text-white prose-p:text-lg prose-p:last:mb-6">
     <slot />
   </div>
   {slug && (
@@ -49,7 +49,7 @@ const slug = href ? getLocaleUrlCTM(href, Astro.currentLocale) : null;
         url={slug}
         variant="text"
         label={linkText || t("common.viewDetails")}
-        class="text-accent hover:text-accent-dark text-sm uppercase"
+        class="text-white hover:text-accent text-sm uppercase"
       />
     </div>
   )}
