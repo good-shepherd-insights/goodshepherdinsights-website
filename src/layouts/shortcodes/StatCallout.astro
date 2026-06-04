@@ -1,0 +1,42 @@
+---
+/**
+ * StatCallout Component
+ *
+ * Highlighted metric display with large number and contextual description.
+ * Used for key data points on service pages.
+ *
+ * ✅ MDX usage:
+ * <StatCallout value="40%" label="Cost Reduction" description="Average savings within the first year" />
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  value: string;
+  label?: string;
+  description?: string;
+  class?: string;
+}
+
+const { value, label, description, class: className = "" } = Astro.props;
+---
+
+<div class:list={["not-prose mb-10", className]}>
+  <div class="rounded-lg bg-primary/5 border border-primary/10 p-6 md:p-8 text-center">
+    <span
+      class="text-h2-sm md:text-h2 font-secondary font-bold text-primary block"
+      set:html={markdownify(value)}
+    />
+    {label && (
+      <span
+        class="text-sm uppercase tracking-wider text-dark/70 font-medium block mt-1"
+        set:html={markdownify(label)}
+      />
+    )}
+    {description && (
+      <p
+        class="text-text-dark/80 mt-2 m-0"
+        set:html={markdownify(description)}
+      />
+    )}
+  </div>
+</div>
