@@ -20,8 +20,8 @@ interface Props {
 const { title, class: className = "" } = Astro.props;
 ---
 
-<section
-  class:list={["not-prose mb-10 border-l-4 border-accent pl-6", className]}
+<div
+  class:list={["not-prose -mt-8 lg:-mt-12 mb-10 border-l-4 border-accent pl-6", className]}
 >
   {title && (
     <h3
@@ -32,4 +32,4 @@ const { title, class: className = "" } = Astro.props;
   <div class="prose-styles prose-p:last:mb-0">
     <slot />
   </div>
-</section>
+</div>
