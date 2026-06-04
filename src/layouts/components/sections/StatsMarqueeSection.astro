@@ -120,8 +120,7 @@ const { hasLightBackground = false } = Astro.props;
             {marquee?.text && (
               <span
                 class:list={[
-                  "text-body-dark bg-clip-text leading-relaxed font-medium tracking-widest whitespace-nowrap opacity-80",
-                  "[-webkit-background-clip:text] [text-shadow:-1px_-1px_0_var(--color-text-light),1px_-1px_0_var(--color-text-light),-1px_1px_0_var(--color-text-light),1px_1px_0_var(--color-text-light)]",
+                  "text-text-light/85 leading-relaxed font-medium tracking-widest whitespace-nowrap",
                   "text-display-6 md:text-display-5",
                 ]}
                 set:html={marquee.text}
