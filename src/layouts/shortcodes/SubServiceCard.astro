@@ -1,0 +1,43 @@
+---
+/**
+ * SubServiceCard Component
+ *
+ * Visual container for each sub-service section within a service page.
+ * Provides card styling, spacing, optional numbering badge, and visual distinction.
+ *
+ * ✅ MDX usage:
+ * <SubServiceCard number="1" title="CHMS Advisory">
+ *   Markdown content here...
+ * </SubServiceCard>
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  number?: string;
+  title?: string;
+  class?: string;
+}
+
+const { number, title, class: className = "" } = Astro.props;
+---
+
+<div class:list={["sub-service-card not-prose", className]}>
+  <div class="bg-body rounded-lg p-6 md:p-8">
+    <div class="flex items-start gap-4 mb-4">
+      {number && (
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-dark font-secondary">
+          {number}
+        </span>
+      )}
+      {title && (
+        <h3
+          class="text-h3-sm md:text-h3 font-secondary font-medium text-dark m-0"
+          set:html={markdownify(title)}
+        />
+      )}
+    </div>
+    <div class="prose-styles prose-p:last:mb-0">
+      <slot />
+    </div>
+  </div>
+</div>

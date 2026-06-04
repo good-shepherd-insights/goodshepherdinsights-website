@@ -111,6 +111,28 @@
     @apply my-12;
   }
 
+  /* Service Page Components */
+  .sub-service-card {
+    @apply mb-10;
+  }
+
+  .methodology-steps-slot {
+    ol {
+      @apply list-none p-0 m-0;
+      counter-reset: methodology-step;
+
+      > li {
+        @apply relative flex items-start gap-4 pb-6 last:pb-0;
+
+        &::before {
+          @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-dark font-secondary;
+          content: counter(methodology-step) ". ";
+          counter-increment: methodology-step;
+        }
+      }
+    }
+  }
+
   /* Horizontal Space Between Buttons */
   > .btn,
   > .btn-circle {

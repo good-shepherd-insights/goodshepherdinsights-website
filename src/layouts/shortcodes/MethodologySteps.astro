@@ -1,0 +1,45 @@
+---
+/**
+ * MethodologySteps Component
+ *
+ * Renders numbered methodology steps with visual progression indicators.
+ * Supports both `steps` array prop (with markdownify) and <slot /> content.
+ *
+ * ✅ MDX usage (prop-based):
+ * <MethodologySteps steps={["Assess current systems", "Define roadmap", "Implement"]} />
+ *
+ * ✅ MDX usage (slot-based):
+ * <MethodologySteps>
+ *   1. Assess current systems
+ *   2. Define roadmap
+ *   3. Implement
+ * </MethodologySteps>
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  steps?: string[];
+  class?: string;
+}
+
+const { steps, class: className = "" } = Astro.props;
+---
+
+<div class:list={["not-prose mb-10", className]}>
+  {steps ? (
+    <ol class="list-none p-0 m-0" style="counter-reset: methodology-step;">
+      {steps.map((step: string) => (
+        <li class="relative flex items-start gap-4 pb-6 last:pb-0">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-dark font-secondary" style="counter-increment: methodology-step;">
+            <span class="step-number" />
+          </span>
+          <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0 pt-1.5" set:html={markdownify(step)} />
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <div class="methodology-steps-slot">
+      <slot />
+    </div>
+  )}
+</div>
