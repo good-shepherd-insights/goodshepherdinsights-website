@@ -67,7 +67,7 @@ if (!enable) {
             class="group-hover:text-text-dark text-text-light text-h6-sm lg:text-h6 xl:text-h5"
             set:html={markdownify(title)}
           />
-          <p set:html={markdownify(description)} />
+          <p class="text-text-light/85 leading-relaxed" set:html={markdownify(description)} />
         </div>
         <div class="bg-accent group-hover:bg-primary absolute right-4 bottom-4 flex size-2 lg:size-3" />
       </div>
@@ -96,7 +96,7 @@ if (!enable) {
             class="text-h6-sm lg:text-h6 xl:text-h5"
             set:html={markdownify(title)}
           />
-          <p class="text-base lg:text-lg" set:html={markdownify(description)} />
+          <p class="text-text-dark/85 text-base lg:text-lg leading-relaxed" set:html={markdownify(description)} />
         </div>
       </div>
     </div>
@@ -123,7 +123,7 @@ if (!enable) {
         </div>
         <div class="flex justify-between gap-4 lg:flex-col">
           <div class="flex flex-col gap-1 lg:gap-4">
-            <p set:html={markdownify(description)} class="leading-normal" />
+            <p class="text-text-light/85 leading-normal" set:html={markdownify(description)} />
           </div>
           <div class="-mb-2">
             <Icons icon="ArrowUpRight" class="size-8" />

@@ -42,7 +42,7 @@ if (!enable) return;
         {
           title && (
             <h2
-              class="text-h5 xl:text-h4 text-sm text-inherit md:flex-1"
+              class="text-h5 xl:text-h4 font-secondary font-bold text-white md:flex-1"
               set:html={markdownify(title)}
             />
           )
@@ -73,7 +73,7 @@ if (!enable) return;
         {
           subTitle && (
             <div
-              class="lg:text-h6 xl:text-h4 sm:text-h6-sm prose-strong:text-text-light prose-strong:font-secondary prose-strong:font-bold flex items-center gap-2 text-sm font-normal whitespace-nowrap text-inherit sm:text-base lg:flex-1 lg:justify-end"
+              class="lg:text-h6 xl:text-h4 sm:text-h6-sm prose-strong:text-white prose-strong:font-secondary prose-strong:font-bold text-white/85 flex items-center gap-2 text-sm font-normal whitespace-nowrap sm:text-base lg:flex-1 lg:justify-end"
               set:html={markdownify(
                 subTitle + `<strong>` + contactInfo.phone + `</strong>`,
               )}

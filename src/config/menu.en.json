@@ -157,7 +157,7 @@
       "url": "/services/"
     },
     {
-      "enable": true,
+      "enable": false,
       "name": "Team",
       "url": "/team/"
     },
@@ -184,7 +184,7 @@
       "url": "/services/"
     },
     {
-      "enable": true,
+      "enable": false,
       "name": "Projects",
       "url": "/case-studies/"
     },
