@@ -4,13 +4,14 @@ import config from ".astro/config.generated.json";
 import { useTranslations } from "@/lib/utils/i18nUtils.ts";
 import { getCollectionCTM } from "@/lib/contentParser.astro";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import { filteredEnabled } from "@/lib/utils/filteredEnabled";
 import Button from "@/layouts/components/Button.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import Logo from "./Logo.astro";
 import type { NavigationLink } from "@/types";
 import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
 const t = await useTranslations(Astro.currentLocale as string);
-let footerMenus = t("footerPrimary") as NavigationLink[];
+let footerMenus = filteredEnabled(t("footerPrimary") as NavigationLink[]);
 
 const { contactInfo, serviceFolder } = config.settings;
 
