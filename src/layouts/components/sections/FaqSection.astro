@@ -87,7 +87,7 @@ const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
               name="faq-search"
               type="text"
               placeholder={faqSection.searchPlaceholder}
-              class="text-dark h-full w-full border-none bg-transparent px-6 py-4 outline-0 placeholder:opacity-60 focus:shadow-none focus:ring-0 md:py-6"
+            class="text-text-dark/85 h-full w-full border-none bg-transparent px-6 py-4 outline-0 placeholder:opacity-60 focus:shadow-none focus:ring-0 md:py-6"
             />
             <Button
               buttonType="submit"
@@ -109,7 +109,7 @@ const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
         <div
           id="faq-no-results"
           class="mx-auto mt-8 hidden max-w-3xl text-center">
-          <p class="text-h6 text-text-dark">
+          <p class="text-h6 text-text-dark/85">
             {t("common.noFaqsFoundFor")}{" "}
             <span id="faq-search-term" class="text-primary">
               ""
