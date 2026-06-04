@@ -3,7 +3,7 @@
  * CTASection Component
  *
  * Styled call-to-action block for the Fractional CTO transition.
- * Dark background for strong visual contrast signaling end of section.
+ * Uses the brand's dark green background for strong visual contrast with readable text.
  *
  * ✅ MDX usage:
  * <CTASection title="Ready to Transform Your Technology Strategy?" href="/contact" linkText="Schedule a Consultation">
@@ -30,7 +30,7 @@ const slug = href ? getLocaleUrlCTM(href, Astro.currentLocale) : null;
 
 <section
   class:list={[
-    "not-prose mb-10 rounded-xl bg-dark/95 p-8 text-center lg:p-14",
+    "not-prose mb-10 rounded-xl bg-border-dark p-8 text-center lg:p-14",
     className,
   ]}
 >
@@ -40,7 +40,7 @@ const slug = href ? getLocaleUrlCTM(href, Astro.currentLocale) : null;
       set:html={markdownify(title)}
     />
   )}
-  <div class="prose-styles prose-p:text-white/80 prose-p:text-lg prose-p:last:mb-6">
+  <div class="prose-styles prose-p:text-white/90 prose-p:text-lg prose-p:last:mb-6">
     <slot />
   </div>
   {slug && (
