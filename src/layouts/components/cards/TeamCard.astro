@@ -41,13 +41,13 @@ const socialLinks = social?.filter((link) => link.enable);
             <h3 class="sm:text-h5-sm text-h5" set:html={markdownify(title)} />
           )}
           {profession && (
-            <div class="text-primary" set:html={markdownify(profession)} />
+            <div class="text-primary/80 text-sm font-medium" set:html={markdownify(profession)} />
           )}
         </div>
         <div>
           {description && (
             <p
-              class="text-sm lg:text-base"
+              class="text-text-dark/85 text-sm lg:text-base leading-relaxed"
               set:html={markdownify(description)}
             />
           )}

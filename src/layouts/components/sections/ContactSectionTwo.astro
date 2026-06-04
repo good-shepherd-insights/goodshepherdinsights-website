@@ -75,7 +75,7 @@ if (!enable) return null;
           {title && <SectionTitle title={title} dataAos="reveal-anim-right" />}
           {
             description && (
-              <p class="mt-4" set:html={markdownify(description)} />
+              <p class="text-text-dark/85 mt-4" set:html={markdownify(description)} />
             )
           }
 
@@ -95,9 +95,9 @@ if (!enable) return null;
                       />
                     </div>
                     <div class="">
-                      <div>{item.title}</div>
+                      <div class="text-text-dark/80">{item.title}</div>
                       <div
-                        class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary font-bold break-all"
+                        class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary text-text-dark font-bold break-all"
                         set:html={markdownify(
                           (contactInfo as any)[item.settingFieldName],
                         )}

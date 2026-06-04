@@ -1,0 +1,40 @@
+---
+/**
+ * PersonaCard Component
+ *
+ * Renders "Who It's For" audience segments as visual chip/pill cards.
+ * Supports `items` array or <slot /> content.
+ *
+ * ✅ MDX usage (prop-based):
+ * <PersonaCard items={["Church Administrators", "Executive Pastors", "IT Directors"]} />
+ *
+ * ✅ MDX usage (slot-based):
+ * <PersonaCard>
+ *   - Church Administrators
+ *   - Executive Pastors
+ * </PersonaCard>
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  items?: string[];
+  class?: string;
+}
+
+const { items, class: className = "" } = Astro.props;
+---
+
+<div class:list={["not-prose mb-10", className]}>
+  <div class="flex flex-wrap gap-3">
+    {items ? (
+      items.map((item: string) => (
+        <span
+          class="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-dark border border-primary/20"
+          set:html={markdownify(item)}
+        />
+      ))
+    ) : (
+      <slot />
+    )}
+  </div>
+</div>

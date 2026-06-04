@@ -1,0 +1,56 @@
+---
+/**
+ * CTASection Component
+ *
+ * Styled call-to-action block for the Fractional CTO transition.
+ * Uses the brand's dark green background for strong visual contrast with readable text.
+ *
+ * ✅ MDX usage:
+ * <CTASection title="Ready to Transform Your Technology Strategy?" href="/contact" linkText="Schedule a Consultation">
+ *   Discover how our Fractional CTO service can help...
+ * </CTASection>
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import Button from "@/layouts/components/Button.astro";
+
+interface Props {
+  title?: string;
+  href?: string;
+  linkText?: string;
+  class?: string;
+}
+
+const { title, href, linkText, class: className = "" } = Astro.props;
+
+const t = await useTranslations(Astro.currentLocale as string);
+
+const slug = href ? getLocaleUrlCTM(href, Astro.currentLocale) : null;
+---
+
+<section
+  class:list={[
+    "not-prose mb-10 rounded-xl bg-border-dark p-8 text-center text-white lg:p-14",
+    className,
+  ]}
+>
+  {title && (
+    <h3
+      class="text-h3-sm md:text-h2 font-secondary font-bold text-white m-0 mb-5 tracking-tight"
+      set:html={markdownify(title)}
+    />
+  )}
+  <div class="text-white/80 text-lg leading-relaxed space-y-3 [&>p]:m-0 [&>p:last-child]:mb-0">
+    <slot />
+  </div>
+  {slug && (
+    <div class="mt-8">
+      <Button
+        url={slug}
+        variant="text"
+        label={linkText || t("common.viewDetails")}
+        class="text-accent hover:text-white font-semibold text-base tracking-wide uppercase"
+      />
+    </div>
+  )}
+</section>
