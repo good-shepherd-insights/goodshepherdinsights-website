@@ -1,8 +1,8 @@
 /**
  * JSON-LD Generator
- * Generates appropriate JSON-LD data based on the page type and provided content
- * Generates JSON-LD data that search engines like Google, Bing, and DuckDuckGo can use to better understand the content of the page.
- * This can improve the page's visibility in search engine results and provide users with additional information about the page.
+ * Generates an array of JSON-LD schema objects for astro-seo-schema <Schema item={...}>.
+ * Each object gets @id for Google entity graph linking.
+ * Returns [websiteSchema, organizationSchema, pageSchema, breadcrumbSchema].
  */
 import { absoluteUrl } from "./absoluteUrl";
 import { getLocaleUrlCTM } from "./i18nUtils";
@@ -10,65 +10,229 @@ import removeEmptyKeys from "./removeEmptyKeys";
 import trailingSlashChecker from "./trailingSlashChecker";
 import social from "@/config/social.json";
 
-// This component dynamically generates appropriate JSON-LD data based on the page type
 export type JSONLDProps = {
-  canonical?: string; // Canonical URL of the page, used to determine page type
-  title?: string; // Title of the page
-  description?: string; // Description of the page
-  image?: string; // Image URL for blog posts, case studies, or team members
-  categories?: string[]; // Categories or tags for blog posts or case studies
-  author?: string; // Author for blog posts or case studies
-  pageType?: string; // Page type
-
+  canonical?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  categories?: string[];
+  author?: string;
+  pageType?: string;
+  faqItems?: Array<{ question: string; answer: string }>;
+  datePublished?: string;
+  dateModified?: string;
+  serviceType?: string;
   [key: string]: any;
 };
 
-export default function JsonLdGenerator(content: JSONLDProps, Astro: any) {
+function generateBreadcrumb(canonical: string, title: string, baseUrl: string): Record<string, any> {
+  // Ensure canonical is an absolute URL for URL parsing
+  let absoluteCanonical = canonical;
+  if (!canonical.startsWith("http")) {
+    absoluteCanonical = absoluteUrl(canonical.startsWith("/") ? canonical : `/${canonical}`, { url: { href: baseUrl } } as any);
+  }
+
+  const path = new URL(absoluteCanonical).pathname.replace(/\/$/, "");
+  const segments = path.split("/").filter(Boolean);
+  const items: Array<Record<string, any>> = [
+    { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+  ];
+
+  if (segments.length > 0) {
+    segments.forEach((seg, i) => {
+      items.push({
+        "@type": "ListItem",
+        position: i + 2,
+        name: i === segments.length - 1 ? title : seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, " "),
+        item: `${baseUrl}${segments.slice(0, i + 1).join("/")}`,
+      });
+    });
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${absoluteCanonical}#breadcrumb`,
+    itemListElement: items,
+  };
+}
+
+export default function JsonLdGenerator(content: JSONLDProps, Astro: any): any[] {
   let {
     canonical = "/",
     title = "",
     description = "",
     image = "",
     pageType = "",
-    lang = "en", // Default language (should be dynamically set)
-    alternateLangs = [], // Array of alternate language URLs
+    lang = "en",
+    alternateLangs = [],
+    faqItems,
+    datePublished,
+    dateModified,
+    serviceType,
     config,
   } = content || {};
 
-  // Generate JSON-LD data dynamically based on page type
-  let jsonLdData: Record<string, any> = {
-    "@context": "https://schema.org",
-  };
+  const baseUrl = trailingSlashChecker(Astro.url.origin);
+  const siteTitle = config.site.title +
+    (config.site.tagline && (config.site.taglineSeparator || " - ") + config.site.tagline);
 
-  switch (pageType) {
-    default:
-      jsonLdData["@type"] = "WebPage";
-      jsonLdData.name = title;
-      jsonLdData.description = description;
-      jsonLdData.image = image;
-      jsonLdData.url = canonical;
+  const orgData = config.seo.organization || {};
 
-      if (lang) {
-        jsonLdData.inLanguage = lang;
-      }
+  // Ensure canonical is absolute for @id references
+  if (!canonical.startsWith("http")) {
+    canonical = absoluteUrl(canonical.startsWith("/") ? canonical : `/${canonical}`, Astro);
   }
 
-  // Add site metadata to `isPartOf` of jsonLdData
-  const siteTitle =
-    config.site.title +
-    (config.site.tagline &&
-      (config.site.taglineSeparator || " - ") + config.site.tagline);
+  // Build @id base (baseUrl without trailing slash for clean @id construction)
+  const baseUrlClean = baseUrl.replace(/\/$/, "");
 
-  jsonLdData["isPartOf"] = {
+  // 1. WebSite — always present
+  const websiteSchema = removeEmptyKeys({
+    "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${baseUrlClean}/#website`,
     name: siteTitle,
     description: config.site.description,
-    url: trailingSlashChecker(Astro.url.origin),
-  };
+    url: baseUrl,
+    inLanguage: lang || undefined,
+  });
 
-  // Add alternate languages if provided
+  // 2. Organization — always present, referenced by @id
+  const organizationSchema = removeEmptyKeys({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${baseUrlClean}/#organization`,
+    name: config.seo.author,
+    url: baseUrl,
+    sameAs: social.main.filter((item: any) => item.enable).map((item: any) => item.url),
+    logo: { "@type": "ImageObject", url: absoluteUrl(config.site.logo, Astro) },
+    streetAddress: orgData.streetAddress || undefined,
+    addressLocality: orgData.addressLocality || undefined,
+    addressRegion: orgData.addressRegion || undefined,
+    email: orgData.email || undefined,
+    telephone: orgData.telephone || undefined,
+  });
+
+  // 3. Page-specific schema
+  let pageSchema: Record<string, any>;
+
+  switch (pageType) {
+    case "home":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": `${baseUrlClean}/#localbusiness`,
+        name: config.seo.author,
+        description: description,
+        url: baseUrl,
+        image: image,
+        telephone: orgData.telephone || undefined,
+        email: orgData.email || undefined,
+        address: (orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) ? {
+          "@type": "PostalAddress",
+          streetAddress: orgData.streetAddress,
+          addressLocality: orgData.addressLocality,
+          addressRegion: orgData.addressRegion,
+        } : undefined,
+        sameAs: social.main.filter((item: any) => item.enable).map((item: any) => item.url),
+      });
+      break;
+
+    case "service":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": `${canonical}#service`,
+        name: title,
+        description: description,
+        url: canonical,
+        image: image || undefined,
+        provider: { "@id": `${baseUrlClean}/#organization` },
+        serviceType: serviceType || "Consulting Service",
+        areaServed: { "@type": "State", name: orgData.addressRegion || "USA" },
+      });
+      break;
+
+    case "blog-posting":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "@id": `${canonical}#blogposting`,
+        headline: title,
+        description: description,
+        url: canonical,
+        image: image || undefined,
+        datePublished: datePublished || undefined,
+        dateModified: dateModified || datePublished || undefined,
+        author: { "@id": `${baseUrlClean}/#organization` },
+        publisher: { "@id": `${baseUrlClean}/#organization` },
+        mainEntityOfPage: canonical,
+      });
+      break;
+
+    case "faq":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": `${canonical}#faqpage`,
+        mainEntity: faqItems
+          ? faqItems.map((faq: any) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            }))
+          : undefined,
+      });
+      break;
+
+    case "contact":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "@id": `${canonical}#contactpage`,
+        name: title,
+        description: description,
+        url: canonical,
+        mainEntity: { "@id": `${baseUrlClean}/#organization` },
+      });
+      break;
+
+    case "article":
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "@id": `${canonical}#article`,
+        headline: title,
+        description: description,
+        url: canonical,
+        image: image || undefined,
+        datePublished: datePublished || undefined,
+        dateModified: dateModified || datePublished || undefined,
+        author: { "@id": `${baseUrlClean}/#organization` },
+        publisher: { "@id": `${baseUrlClean}/#organization` },
+      });
+      break;
+
+    default:
+      pageSchema = removeEmptyKeys({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${canonical}#webpage`,
+        name: title,
+        description: description,
+        url: canonical,
+        image: image || undefined,
+        inLanguage: lang || undefined,
+      });
+  }
+
+  // Link page to WebSite via @id
+  pageSchema.isPartOf = { "@id": `${baseUrlClean}/#website` };
+
+  // Alternate languages
   if (alternateLangs.length > 0) {
-    jsonLdData.alternateLanguage = alternateLangs
+    pageSchema.alternateLanguage = alternateLangs
       .filter((alt: any) => Astro.currentLocale !== alt.languageCode)
       .map((alt: any) => ({
         "@type": "WebPage",
@@ -77,18 +241,9 @@ export default function JsonLdGenerator(content: JSONLDProps, Astro: any) {
       }));
   }
 
-  // Add `publisher` to jsonLdData
-  jsonLdData.publisher = {
-    "@type": "Organization",
-    name: config.seo.author,
-    url: trailingSlashChecker(Astro.url.origin),
-    sameAs: social.main.filter((item) => item.enable).map((item) => item.url),
-    logo: {
-      "@type": "ImageObject",
-      url: absoluteUrl(config.site.logo, Astro),
-    },
-  };
+  // 4. BreadcrumbList — always present
+  const breadcrumbSchema = generateBreadcrumb(canonical, title, baseUrl);
 
-  // Utility to remove empty or undefined keys
-  return removeEmptyKeys(jsonLdData);
+  // Return array for <Schema item={...}> from astro-seo-schema
+  return [websiteSchema, organizationSchema, pageSchema, breadcrumbSchema];
 }
