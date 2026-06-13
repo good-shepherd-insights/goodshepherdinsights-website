@@ -32,9 +32,6 @@ export default defineConfig({
   devToolbar: {
     enabled: true,
   },
-  redirects: {
-    "/sitemap.xml": "/sitemap-index.xml",
-  },
   fonts,
   i18n: {
     locales: enabledLanguages,

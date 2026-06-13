@@ -263,6 +263,14 @@ async function processSitemaps() {
     }
 
     console.log("✅ Sitemaps processed successfully.");
+
+    // Copy sitemap-index.xml to sitemap.xml for better compatibility
+    const indexFile = path.resolve(DIST_FOLDER, "sitemap-index.xml");
+    const targetFile = path.resolve(DIST_FOLDER, "sitemap.xml");
+    if (await pathExists(indexFile)) {
+      await fs.copyFile(indexFile, targetFile);
+      console.log("✅ Copied sitemap-index.xml to sitemap.xml");
+    }
   } catch (error) {
     console.error("Error processing sitemaps:", error);
     process.exitCode = 1;
