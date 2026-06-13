@@ -236,22 +236,19 @@ async function processSitemaps() {
         const pathname = safePathname(u?.loc);
         if (!pathname) return true; // if we can't parse it, don't delete it
 
-        // Remove "-index" pages
-        if (pathname.includes("-index")) return false;
+        const segments = pathname.split("/").filter(Boolean);
 
-        // Exclude folders (precise match for path segments)
-        if (
-          EXCLUDE_FOLDERS.some((folder) => {
-            const regex = new RegExp(`(^|/)${folder}(/|$)`);
-            return regex.test(pathname);
-          })
-        )
+        // Exclude specific folders (precise match for path segments)
+        if (segments.some((segment) => EXCLUDE_FOLDERS.includes(segment))) {
           return false;
+        }
 
         // Remove draft/excluded URLs
         // Match on either customSlug or generated url path
         for (const bad of excludedUrlSet) {
-          if (bad && pathname.includes(bad)) return false;
+          if (bad && (pathname === bad || pathname === `${bad}/`)) {
+            return false;
+          }
         }
 
         return true;
