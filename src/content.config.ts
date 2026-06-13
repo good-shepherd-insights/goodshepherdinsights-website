@@ -214,6 +214,7 @@ export const collections = {
   services: serviceCollection,
 
   [caseStudiesFolder]: caseStudyCollection,
+  "case-studies": caseStudyCollection,
 
   pages: pagesCollection,
   team: teamCollection,
