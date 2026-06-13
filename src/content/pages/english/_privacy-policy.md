@@ -4,7 +4,7 @@
 ---
 title: "Privacy Policy"
 metaDescription: "This is a example description"
-draft: false
+excludeFromSitemap: true
 ---
 
 **Effective Date: July, 2022**

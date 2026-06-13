@@ -1,5 +1,6 @@
 ---
 badge: "FAQ"
+pageType: "faq"
 title: "Questions & Answers"
 metaDescription: "This is a example description"
 image: "/images/page-header/default.png"
