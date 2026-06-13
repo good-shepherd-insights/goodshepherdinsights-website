@@ -44,7 +44,7 @@
 
   [seo.sitemap]
     enable  = true # Enables or disables sitemap generation on site build
-    exclude = [] # exclude all pages that include these folder names
+    exclude = ["case-studies", "team", "pricing", "privacy-policy", "terms-conditions", "category", "tag", "page", "components"] # exclude all pages that include these folder names
 
 
 # Different theme settings
