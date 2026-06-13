@@ -38,7 +38,7 @@ export async function getStaticPaths() {
 const { page } = Astro.props;
 ---
 
-<Base {...page.data}>
-  <SinglePageLayout content={{ ...page.data, ...page }} class="py-8 md:py-16" />
+<Base {...page?.data}>
+  <SinglePageLayout content={{ ...page?.data, ...page }} class="py-8 md:py-16" />
   <CTASection hasNoLightBackground={true} />
 </Base>
