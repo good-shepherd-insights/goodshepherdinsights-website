@@ -59,7 +59,7 @@ export async function getStaticPaths() {
 const { caseStudies, caseStudiesIndex } = Astro.props;
 ---
 
-<Base {...caseStudies.data}>
+<Base {...caseStudies?.data}>
   <PageHeader
     content={{
       badge: caseStudiesIndex?.data?.badgeSecondary,

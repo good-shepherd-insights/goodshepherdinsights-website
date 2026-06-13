@@ -22,8 +22,8 @@ if (response) return response;
 ---
 
 <Base {...entry?.data}>
-  <PageHeader content={entry.data} />
-  <FaqSection content={entry?.data.faqSection} mode="light" />
+  <PageHeader content={entry?.data} />
+  <FaqSection content={entry?.data?.faqSection} mode="light" />
   <StatsMarqueeSection hasLightBackground={true} />
   <FaqSectionTwo mode="shadow" />
   <CTAGallerySection />

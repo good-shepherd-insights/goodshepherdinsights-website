@@ -3,13 +3,13 @@ import Base from "@/layouts/Base.astro";
 import Button from "@/components/Button.astro";
 ---
 
-<Base title="Page Not Found" disableTagline={true} fitToScreen={false}>
+<Base title="Page Not Found" disableTagline={true} fitToScreen={false} robots="noindex, nofollow">
   <section>
     <div class="container">
       <div class="flex flex-col items-center gap-y-10">
         <div class="space-y-4 text-center text-lg">
           <h1 class="text-8xl sm:text-9xl md:text-[16rem]">404</h1>
-          <h2 class="text-h1-sm md:text-h1">Look Like You’re Lost</h2>
+          <h2 class="text-h1-sm md:text-h1">Look Like You're Lost</h2>
           <p>
             The link you followed probably broken or the page has been removed
           </p>

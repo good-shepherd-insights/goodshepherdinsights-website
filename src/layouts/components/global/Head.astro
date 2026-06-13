@@ -1,13 +1,31 @@
 ---
-import SEO from "@/components/seo/Seo.astro";
-import OpenGraph from "@/components/seo/OpenGraph.astro";
+import SEO from "@/components/SEO.astro";
 import Favicons from "@/components/seo/Favicons.astro";
-import JsonLD from "../widgets/JsonLD.astro";
 import config from ".astro/config.generated.json";
 import { Font } from "astro:assets";
 import fontsJson from "@/config/fonts.json";
+import JsonLdGenerator from "@/lib/utils/JsonLdGenerator";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 
 const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
+
+// Resolve canonical URL with fallback to current page URL
+const resolvedCanonical = Astro.props.canonical
+  ? getLocaleUrlCTM(new URL(Astro.props.canonical, Astro.site).href, Astro.currentLocale)
+  : getLocaleUrlCTM(Astro.url.href, Astro.currentLocale);
+
+// Derive datePublished from date field if not explicitly set
+const datePublished = Astro.props.datePublished
+  ? Astro.props.datePublished
+  : Astro.props.date
+    ? new Date(Astro.props.date).toISOString().split("T")[0]
+    : undefined;
+
+// Generate schema data for astro-seo-schema
+const schemaData = JsonLdGenerator(
+  { ...Astro.props, canonical: resolvedCanonical, datePublished, config },
+  Astro,
+);
 ---
 
 <head>
@@ -18,7 +36,7 @@ const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=5"
   />
-  <SEO {...Astro.props} />
+  <SEO {...Astro.props} canonical={resolvedCanonical} schemaData={schemaData} />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
@@ -31,13 +49,7 @@ const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
   />
   <meta name="generator" content={Astro.generator} />
   {config.head?.content && <Fragment set:html={config.head?.content} />}
-  <OpenGraph {...Astro.props} />
   <Favicons />
-  <JsonLD
-    content={{
-      ...Astro.props,
-    }}
-  />
 
   <!------------------
     Fonts
