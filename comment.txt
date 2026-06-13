@@ -1,0 +1,7 @@
+I have investigated why `/sitemap.xml` was still 404ing. It appears the native Astro redirect was being bypassed or conflicting with Vercel's trailing slash configuration.
+
+I have just pushed a more robust fix to PR #69:
+1.  **Physical File Copy**: Updated the build script (`scripts/remove-draft-from-sitemap.mjs`) to physically copy `sitemap-index.xml` to `sitemap.xml` in the `dist` folder. This ensures the file exists where search engines expect it, regardless of redirect logic.
+2.  **Verified Branch**: Confirmed these changes are on `feat/GOO-94/seo-schema-readiness`.
+
+Please note that **these fixes are in PR #69 and have not yet been merged to the main site**. You will likely still see a 404 on the live production URL until the PR is merged and deployed. If you have a preview URL for this PR, you should be able to verify it there once the build completes.

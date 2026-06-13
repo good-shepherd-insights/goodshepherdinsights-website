@@ -58,7 +58,7 @@ export async function getStaticPaths() {
 const { service, serviceIndex } = Astro.props;
 ---
 
-<Base {...service.data} hideOffcanvas={true}>
+<Base {...service?.data} hideOffcanvas={true}>
   <PageHeader
     content={{
       badge: service?.data?.title,

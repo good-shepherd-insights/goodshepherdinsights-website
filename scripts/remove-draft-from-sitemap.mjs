@@ -239,8 +239,13 @@ async function processSitemaps() {
         // Remove "-index" pages
         if (pathname.includes("-index")) return false;
 
-        // Exclude folders
-        if (EXCLUDE_FOLDERS.some((folder) => pathname.includes(folder)))
+        // Exclude folders (precise match for path segments)
+        if (
+          EXCLUDE_FOLDERS.some((folder) => {
+            const regex = new RegExp(`(^|/)${folder}(/|$)`);
+            return regex.test(pathname);
+          })
+        )
           return false;
 
         // Remove draft/excluded URLs

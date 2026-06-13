@@ -54,7 +54,7 @@ export async function getStaticPaths() {
 const { post, postIndex } = Astro.props;
 ---
 
-<Base {...post.data}>
+<Base {...post?.data}>
   <PageHeader
     content={{
       badge: post?.data?.categories?.[0],
