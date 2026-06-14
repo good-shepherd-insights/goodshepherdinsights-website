@@ -1,0 +1,40 @@
+---
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+import config from ".astro/config.generated.json";
+
+const {
+  authorName = config.seo.author || "Good Shepherd Insights",
+  authorBio = "Fractional CTO providing strategic technology leadership for mid-sized churches.",
+  authorImage = "/images/team/team-1.png",
+  authorUrl = "/about",
+} = Astro.props;
+---
+
+<section class="section-padding">
+  <div class="container">
+    <div class="items-center gap-8 md:flex">
+      <div class="mb-6 shrink-0 md:mb-0">
+        <OptimizedImage
+          src={authorImage}
+          alt={authorName}
+          width={120}
+          height={120}
+          class="rounded-full"
+        />
+      </div>
+      <div class="text-center md:text-left">
+        <p class="text-dark font-secondary text-xl font-bold">{authorName}</p>
+        <p class="text-dark/70 mt-1 text-sm font-medium uppercase tracking-wider">
+          Fractional CTO
+        </p>
+        <p class="text-dark/60 mt-4 leading-relaxed">{authorBio}</p>
+        <a
+          href={authorUrl}
+          class="text-primary mt-4 inline-block font-medium hover:underline"
+        >
+          Learn more about {authorName} &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

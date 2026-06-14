@@ -8,6 +8,11 @@ import ContactSectionTwo from "@/components/sections/ContactSectionTwo.astro";
 import ContactMap from "@/components/sections/ContactMap.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { ContactPage } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import config from ".astro/config.generated.json";
 
 export function getStaticPaths() {
   return generatePaths();
@@ -22,6 +27,20 @@ const contactIndex = await getEntryCTM(
 // Remove drafts pages in production
 const response = handleDraftPage(contactIndex?.data);
 if (response) return response;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// Build ContactPage schema inline
+const contactPageSchema: ContactPage = {
+  "@type": "ContactPage",
+  "@id": `${resolvedCanonical}#contactpage`,
+  name: contactIndex?.data?.title,
+  description: contactIndex?.data?.description,
+  url: resolvedCanonical,
+  mainEntity: { "@id": `${baseUrlClean}/#organization` },
+};
 ---
 
 <Base {...contactIndex?.data}>
@@ -30,4 +49,7 @@ if (response) return response;
   <ContactMap />
   <CTAGallerySection />
   <CTASection />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...contactPageSchema } as any} />
 </Base>

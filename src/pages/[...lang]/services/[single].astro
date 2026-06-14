@@ -12,6 +12,10 @@ import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { Service, FAQPage } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
@@ -56,13 +60,64 @@ export async function getStaticPaths() {
 }
 
 const { service, serviceIndex } = Astro.props;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+const orgData = config.seo.organization || {};
+
+// Resolve canonical for this service page
+const resolvedCanonical = Astro.props.canonical
+  ? absoluteUrl(Astro.props.canonical, Astro)
+  : absoluteUrl(Astro.url.pathname, Astro);
+
+// Build Service schema inline
+const serviceSchema: Service = {
+  "@type": "Service",
+  "@id": `${resolvedCanonical}#service`,
+  name: service?.data?.title,
+  description: service?.data?.description || service?.data?.metaDescription,
+  url: resolvedCanonical,
+  ...(service?.data?.image && { image: absoluteUrl(service.data.image, Astro) }),
+  provider: { "@id": `${baseUrlClean}/#organization` },
+  serviceType: service?.data?.serviceType || "Consulting Service",
+  areaServed: {
+    "@type": "State",
+    name: orgData.addressRegion || "USA",
+  },
+};
+
+// Build FAQPage schema from FaqSectionTwo data
+// Fetch the FAQ section data for this service page
+const faqSectionData = (
+  await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
+)?.data;
+
+const faqList = faqSectionData?.list
+  ?.filter((item: any) => item.enable !== false)
+  ?.map((item: any) => ({
+    "@type": "Question",
+    name: item.title,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.content,
+    },
+  })) || [];
+
+let faqSchema: FAQPage | undefined;
+if (faqList.length > 0) {
+  faqSchema = {
+    "@type": "FAQPage",
+    "@id": `${resolvedCanonical}#faqpage`,
+    mainEntity: faqList,
+  };
+}
 ---
 
 <Base {...service?.data} hideOffcanvas={true}>
   <PageHeader
     content={{
       badge: service?.data?.title,
-      title: serviceIndex?.data?.titleSecondary,
+      title: service?.data?.title,
       image: service?.data?.image,
       imageText: service?.data?.title,
     }}
@@ -74,4 +129,8 @@ const { service, serviceIndex } = Astro.props;
   <FaqSectionTwo mode="shadow" />
   <CTAGallerySection />
   <CTASection />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...serviceSchema } as any} />
+  {faqSchema && <Schema item={{ "@context": "https://schema.org", ...faqSchema } as any} />}
 </Base>

@@ -1,0 +1,108 @@
+---
+import { Schema } from "astro-seo-schema";
+import type { WebSite, Organization, BreadcrumbList } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import config from ".astro/config.generated.json";
+import social from "@/config/social.json";
+
+const { title = "", canonical = "" } = Astro.props;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+
+const siteTitle =
+  config.site.title +
+  (config.site.tagline &&
+    (config.site.taglineSeparator || " - ") + config.site.tagline);
+
+const orgData = config.seo.organization || {};
+
+// Resolve canonical to absolute for @id references
+let absoluteCanonical = canonical;
+if (canonical && !canonical.startsWith("http")) {
+  absoluteCanonical = absoluteUrl(
+    canonical.startsWith("/") ? canonical : `/${canonical}`,
+    Astro,
+  );
+} else if (!canonical) {
+  absoluteCanonical = absoluteUrl(Astro.url.pathname, Astro);
+}
+
+// 1. WebSite schema
+const websiteSchema: WebSite = {
+  "@type": "WebSite",
+  "@id": `${baseUrlClean}/#website`,
+  name: siteTitle,
+  description: config.site.description,
+  url: baseUrl,
+};
+
+// 2. Organization schema
+const organizationSchema: Organization = {
+  "@type": "Organization",
+  "@id": `${baseUrlClean}/#organization`,
+  name: config.seo.author,
+  url: baseUrl,
+  sameAs: social.main
+    .filter((item: any) => item.enable)
+    .map((item: any) => item.url),
+  logo: {
+    "@type": "ImageObject",
+    url: absoluteUrl(config.site.logo, Astro),
+  },
+  ...((orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) && {
+    address: {
+      "@type": "PostalAddress",
+      ...(orgData.streetAddress && { streetAddress: orgData.streetAddress }),
+      ...(orgData.addressLocality && {
+        addressLocality: orgData.addressLocality,
+      }),
+      ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
+    },
+  }),
+  ...(orgData.email && { email: orgData.email }),
+  ...(orgData.telephone && { telephone: orgData.telephone }),
+};
+
+// 3. BreadcrumbList schema
+let breadcrumbCanonical = absoluteCanonical;
+if (!breadcrumbCanonical.startsWith("http")) {
+  breadcrumbCanonical = absoluteUrl(
+    breadcrumbCanonical.startsWith("/") ? breadcrumbCanonical : `/${breadcrumbCanonical}`,
+    Astro,
+  );
+}
+
+const path = new URL(breadcrumbCanonical).pathname.replace(/\/$/, "");
+const segments = path.split("/").filter(Boolean);
+
+const items = [
+  {
+    "@type": "ListItem" as const,
+    position: 1,
+    name: "Home",
+    item: baseUrl,
+  },
+  ...segments.map((seg, i) => ({
+    "@type": "ListItem" as const,
+    position: i + 2,
+    name:
+      i === segments.length - 1
+        ? title
+        : seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, " "),
+    item: `${baseUrl}${segments.slice(0, i + 1).join("/")}`,
+  })),
+];
+
+const breadcrumbSchema: BreadcrumbList = {
+  "@type": "BreadcrumbList",
+  "@id": `${breadcrumbCanonical}#breadcrumb`,
+  itemListElement: items,
+};
+---
+
+<Schema item={{ "@context": "https://schema.org", ...websiteSchema } as any} />
+<Schema item={{ "@context": "https://schema.org", ...organizationSchema } as any} />
+<Schema item={{ "@context": "https://schema.org", ...breadcrumbSchema } as any} />

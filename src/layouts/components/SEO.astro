@@ -1,6 +1,5 @@
 ---
 import { Seo } from "astro-seo-meta";
-import { Schema } from "astro-seo-schema";
 import { getLocaleUrlCTM, supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import { plainify, removeWhitespace } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
@@ -20,7 +19,6 @@ export interface SEOProps {
   twitter?: string;
   twitterCard?: string;
   ogLocale?: string;
-  schemaData?: any;
 }
 
 const {
@@ -38,12 +36,13 @@ const {
   twitter = config.opengraph.twitter,
   twitterCard = config.opengraph.twitterCard,
   ogLocale = config.opengraph.ogLocale,
-  schemaData,
 } = Astro.props as SEOProps;
 
 // Normalize title and description
 let resolvedTitle = plainify(metaTitle ?? title ?? config.site.title);
-let resolvedDescription = plainify(metaDescription ?? description ?? config.site.description);
+let resolvedDescription = plainify(
+  metaDescription ?? description ?? config.site.description,
+);
 
 // Add tagline if not disabled
 if (!disableTagline && config.site.tagline) {
@@ -57,7 +56,10 @@ resolvedDescription = removeWhitespace(resolvedDescription);
 // Canonical URL
 const resolvedCanonical = canonical
   ? canonical
-  : getLocaleUrlCTM(new URL(Astro.url.href, Astro.site).href, Astro.currentLocale);
+  : getLocaleUrlCTM(
+      new URL(Astro.url.href, Astro.site).href,
+      Astro.currentLocale,
+    );
 
 // OG image — make absolute
 const ogImage = image.startsWith("http")
@@ -96,8 +98,9 @@ if (
     site: twitter || undefined,
   }}
 />
-{resolvedCanonical && <link rel="canonical" href={resolvedCanonical} item-prop="url" />}
+{resolvedCanonical && (
+  <link rel="canonical" href={resolvedCanonical} item-prop="url" />
+)}
 {alternateTags.map((tag) => (
   <link rel="alternate" hreflang={tag.hreflang} href={tag.href} />
 ))}
-{schemaData && schemaData.map((item: any) => <Schema item={item} />)}
