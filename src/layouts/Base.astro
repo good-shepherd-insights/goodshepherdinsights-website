@@ -6,7 +6,6 @@ import Footer from "@/components/global/Footer.astro";
 import removeEmptyKeys from "@/lib/utils/removeEmptyKeys";
 import FooterTwo from "@/components/global/FooterTwo.astro";
 import Header from "@/components/global/header/Header.astro";
-import type { JSONLDProps } from "@/lib/utils/JsonLdGenerator";
 import GlobalScripts from "./components/widgets/GlobalScripts.astro";
 import BackToTop from "./components/widgets/BackToTop.astro";
 import HeaderTwo from "./components/global/header/HeaderTwo.astro";
@@ -14,7 +13,7 @@ import HeaderTwo from "./components/global/header/HeaderTwo.astro";
 import BreakpointIndicator from "./components/widgets/BreakpointIndicator.astro";
 import KeepAstroSourceLoc from "./components/widgets/KeepAstroSourceLoc.astro";
 
-interface Props extends JSONLDProps {
+interface Props {
   className?: string;
   fitToScreen?: boolean;
   footerSpaceTop?: boolean;
@@ -30,15 +29,26 @@ interface Props extends JSONLDProps {
   canonical?: string;
   keywords?: string[];
   disableTagline?: boolean;
-  structuredData?: Props;
+  title?: string;
+  description?: string;
+  image?: string;
+  author?: string;
+  pageType?: string;
+  faqItems?: Array<{ question: string; answer: string }>;
+  datePublished?: string;
+  dateModified?: string;
+  serviceType?: string;
+  date?: Date;
+  categories?: string[];
+  tags?: string[];
   footerLayout?: "footer-1" | "footer-2";
   headerLayout?: "header-1" | "header-2";
+  [key: string]: any;
 }
 
 // destructure frontmatter
 let {
   className,
-  structuredData,
   headerPosition = "sticky",
   hideOffcanvas = true,
   hasBodyDarkBackground = false,
@@ -64,7 +74,7 @@ const resolveFooter = footerLayout || defaultFooter;
 
 <!doctype html>
 <html lang="en">
-  <Head {...props} structuredData={structuredData} />
+  <Head {...props} />
   <body class:list={[hasBodyDarkBackground && "bg-body-dark"]}>
     {
       resolveHeader === "header-2" ? (

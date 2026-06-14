@@ -12,6 +12,10 @@ import extractSlug from "@/lib/utils/extractSlug";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { Article } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
@@ -57,6 +61,31 @@ export async function getStaticPaths() {
 }
 
 const { caseStudies, caseStudiesIndex } = Astro.props;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// Derive datePublished
+const datePublished = caseStudies?.data?.datePublished
+  ? caseStudies.data.datePublished
+  : caseStudies?.data?.date
+    ? new Date(caseStudies.data.date).toISOString().split("T")[0]
+    : undefined;
+
+// Build Article schema inline
+const articleSchema: Article = {
+  "@type": "Article",
+  "@id": `${resolvedCanonical}#article`,
+  headline: caseStudies?.data?.title,
+  description: caseStudies?.data?.description,
+  url: resolvedCanonical,
+  ...(caseStudies?.data?.image && { image: absoluteUrl(caseStudies.data.image, Astro) }),
+  ...(datePublished && { datePublished }),
+  ...(caseStudies?.data?.dateModified && { dateModified: caseStudies.data.dateModified }),
+  author: { "@id": `${baseUrlClean}/#organization` },
+  publisher: { "@id": `${baseUrlClean}/#organization` },
+};
 ---
 
 <Base {...caseStudies?.data}>
@@ -69,4 +98,7 @@ const { caseStudies, caseStudiesIndex } = Astro.props;
   <CaseStudiesSingle content={caseStudies} />
   <CTAGallerySection />
   <CTASection />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...articleSchema } as any} />
 </Base>

@@ -8,6 +8,11 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import extractSlug from "@/lib/utils/extractSlug";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { BlogPosting, Person } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import AuthorBio from "@/components/widgets/AuthorBio.astro";
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
@@ -52,6 +57,49 @@ export async function getStaticPaths() {
 }
 
 const { post, postIndex } = Astro.props;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+
+const authorName = post?.data?.author || config.seo.author;
+const authorUrl = `${baseUrlClean}/about`;
+
+// Resolve canonical for this blog post
+const resolvedCanonical = Astro.props.canonical
+  ? absoluteUrl(Astro.props.canonical, Astro)
+  : absoluteUrl(Astro.url.pathname, Astro);
+
+// Derive datePublished
+const datePublished = post?.data?.datePublished
+  ? post.data.datePublished
+  : post?.data?.date
+    ? new Date(post.data.date).toISOString().split("T")[0]
+    : undefined;
+
+// Build BlogPosting schema inline
+const blogPostingSchema: BlogPosting = {
+  "@type": "BlogPosting",
+  "@id": `${resolvedCanonical}#blogposting`,
+  headline: post?.data?.title,
+  description: post?.data?.metaDescription || post?.data?.description,
+  url: resolvedCanonical,
+  ...(post?.data?.image && { image: absoluteUrl(post.data.image, Astro) }),
+  ...(datePublished && { datePublished }),
+  ...(post?.data?.dateModified && { dateModified: post.data.dateModified }),
+  author: { "@id": `${baseUrlClean}/#person` },
+  publisher: { "@id": `${baseUrlClean}/#organization` },
+  mainEntityOfPage: resolvedCanonical,
+};
+
+// Build Person schema for author
+const personSchema: Person = {
+  "@type": "Person",
+  "@id": `${baseUrlClean}/#person`,
+  name: authorName,
+  url: authorUrl,
+  jobTitle: "Fractional CTO",
+  worksFor: { "@id": `${baseUrlClean}/#organization` },
+};
 ---
 
 <Base {...post?.data}>
@@ -80,4 +128,11 @@ const { post, postIndex } = Astro.props;
     }}
   />
   <CTASection hasNoLightBackground={true} />
+
+  <!-- Author attribution for E-E-A-T -->
+  <AuthorBio authorName={authorName} authorUrl={authorUrl} />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...blogPostingSchema } as any} />
+  <Schema item={{ "@context": "https://schema.org", ...personSchema } as any} />
 </Base>

@@ -13,12 +13,31 @@ import TestimonialSectionTwo from "@/components/sections/TestimonialSectionTwo.a
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import BrandLogos from "@/components/sections/BrandLogos.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { WebPage } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import config from ".astro/config.generated.json";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
 const page = await getEntryCTM("about-us", "-index", Astro.currentLocale);
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// Build WebPage schema inline
+const webPageSchema: WebPage = {
+  "@type": "WebPage",
+  "@id": `${resolvedCanonical}#webpage`,
+  name: page?.data?.title,
+  description: page?.data?.metaDescription || page?.data?.description,
+  url: resolvedCanonical,
+  isPartOf: { "@id": `${baseUrlClean}/#website` },
+};
 ---
 
 <Base {...page?.data} hideOffcanvas={true}>
@@ -33,4 +52,7 @@ const page = await getEntryCTM("about-us", "-index", Astro.currentLocale);
   <CTAGallerySection />
   <BrandLogos />
   <CTASection />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...webPageSchema } as any} />
 </Base>

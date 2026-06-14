@@ -1,10 +1,10 @@
 ---
 import SEO from "@/components/SEO.astro";
 import Favicons from "@/components/seo/Favicons.astro";
+import BaseSchemas from "@/components/widgets/BaseSchemas.astro";
 import config from ".astro/config.generated.json";
 import { Font } from "astro:assets";
 import fontsJson from "@/config/fonts.json";
-import JsonLdGenerator from "@/lib/utils/JsonLdGenerator";
 import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 
 const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
@@ -13,19 +13,6 @@ const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
 const resolvedCanonical = Astro.props.canonical
   ? getLocaleUrlCTM(new URL(Astro.props.canonical, Astro.site).href, Astro.currentLocale)
   : getLocaleUrlCTM(Astro.url.href, Astro.currentLocale);
-
-// Derive datePublished from date field if not explicitly set
-const datePublished = Astro.props.datePublished
-  ? Astro.props.datePublished
-  : Astro.props.date
-    ? new Date(Astro.props.date).toISOString().split("T")[0]
-    : undefined;
-
-// Generate schema data for astro-seo-schema
-const schemaData = JsonLdGenerator(
-  { ...Astro.props, canonical: resolvedCanonical, datePublished, config },
-  Astro,
-);
 ---
 
 <head>
@@ -36,7 +23,10 @@ const schemaData = JsonLdGenerator(
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=5"
   />
-  <SEO {...Astro.props} canonical={resolvedCanonical} schemaData={schemaData} />
+  <SEO {...Astro.props} canonical={resolvedCanonical} />
+  <meta name="author" content={Astro.props.author || config.seo.author} />
+  <meta property="og:site_name" content={config.site.title} />
+  <meta property="og:locale" content={config.opengraph.ogLocale || "en_US"} />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
@@ -50,6 +40,7 @@ const schemaData = JsonLdGenerator(
   <meta name="generator" content={Astro.generator} />
   {config.head?.content && <Fragment set:html={config.head?.content} />}
   <Favicons />
+  <BaseSchemas {...Astro.props} canonical={resolvedCanonical} />
 
   <!------------------
     Fonts
