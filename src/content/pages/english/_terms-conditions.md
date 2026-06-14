@@ -3,7 +3,7 @@
 <!-- Reason: No nav links; orphan legal page. -->
 ---
 title: "Terms & Conditions"
-metaDescription: "Read the terms and conditions for using Good Shepherd Insights' website and services."
+metaDescription: "Read the terms and conditions for using Good Shepherd Insights website and services."
 excludeFromSitemap: true
 ---
 
