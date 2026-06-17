@@ -3,8 +3,8 @@
 <!-- Reason: No nav links; only reference is commented out in contact sections. -->
 ---
 title: "Privacy Policy"
-metaDescription: "This is a example description"
-draft: false
+metaDescription: "Review the privacy policy for Good Shepherd Insights. Learn how we collect, use, and protect your information as we serve your church."
+excludeFromSitemap: true
 ---
 
 **Effective Date: July, 2022**

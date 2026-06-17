@@ -9,6 +9,9 @@ import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { FAQPage } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 
 export function getStaticPaths() {
   return generatePaths();
@@ -19,13 +22,58 @@ const entry = await getEntryCTM("faq", "-index", Astro.currentLocale);
 // Remove drafts pages in production
 const response = handleDraftPage(entry?.data);
 if (response) return response;
+
+// Resolve canonical for this FAQ page
+const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// Build FAQPage schema from faqSection data
+const faqList = entry?.data?.faqSection?.list
+  ?.filter((item: any) => item.enable !== false)
+  ?.map((item: any) => ({
+    "@type": "Question",
+    name: item.title,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.content,
+    },
+  })) || [];
+
+// Fallback: try FaqSectionTwo data if faqSection has no items
+let faqItems = faqList;
+if (faqItems.length === 0) {
+  const faqSectionTwoData = (
+    await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
+  )?.data;
+  faqItems = faqSectionTwoData?.list
+    ?.filter((item: any) => item.enable !== false)
+    ?.map((item: any) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.content,
+      },
+    })) || [];
+}
+
+let faqSchema: FAQPage | undefined;
+if (faqItems.length > 0) {
+  faqSchema = {
+    "@type": "FAQPage",
+    "@id": `${resolvedCanonical}#faqpage`,
+    mainEntity: faqItems,
+  };
+}
 ---
 
 <Base {...entry?.data}>
-  <PageHeader content={entry.data} />
-  <FaqSection content={entry?.data.faqSection} mode="light" />
+  <PageHeader content={entry?.data} />
+  <FaqSection content={entry?.data?.faqSection} mode="light" />
   <StatsMarqueeSection hasLightBackground={true} />
   <FaqSectionTwo mode="shadow" />
   <CTAGallerySection />
   <CTASection />
+
+  <!-- Page-specific structured data -->
+  {faqSchema && <Schema item={{ "@context": "https://schema.org", ...faqSchema } as any} />}
 </Base>

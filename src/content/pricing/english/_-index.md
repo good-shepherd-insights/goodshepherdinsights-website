@@ -3,8 +3,8 @@
 <!-- Reason: Content for pruned pricing.astro page. -->
 ---
 badge: "Our Pricing"
-title: "We have all kind of plans for every business that fit with your needs"
-metaDescription: "This is a example description"
+title: "Fractional CTO Pricing for Mid-Sized Churches"
+metaDescription: "Transparent pricing for church technology leadership. Explore our fractional CTO plans designed to fit the budget of mid-sized churches."
 image: "/images/page-header/default.png"
 draft: false
 ---

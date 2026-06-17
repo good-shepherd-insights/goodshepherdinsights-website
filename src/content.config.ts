@@ -21,6 +21,7 @@ const contentLoader = (base: string) =>
 // Base Page Schema
 // ------------------------
 const basePage = z.object({
+  pageType: z.string().optional(),
   badge: z.string().optional(),
   badgeSecondary: z.string().optional(),
   title: z.string(),
@@ -29,6 +30,8 @@ const basePage = z.object({
   categories: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
   date: z.date().optional(),
+  datePublished: z.string().optional(),
+  dateModified: z.string().optional(),
   comments: z.number().optional(),
   description: z.string().optional(),
   weight: z.number().optional(),
@@ -44,6 +47,8 @@ const basePage = z.object({
   canonical: z.string().optional(),
   keywords: z.array(z.string()).optional(),
   disableTagline: z.boolean().optional(),
+  faqItems: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
+  serviceType: z.string().optional(),
 });
 
 export const page = basePage.extend(sectionsSchema);
@@ -209,6 +214,7 @@ export const collections = {
   services: serviceCollection,
 
   [caseStudiesFolder]: caseStudyCollection,
+  "case-studies": caseStudyCollection,
 
   pages: pagesCollection,
   team: teamCollection,

@@ -1,7 +1,8 @@
 ---
 badge: "FAQ"
+pageType: "faq"
 title: "Questions & Answers"
-metaDescription: "This is a example description"
+metaDescription: "Find answers to common questions about Good Shepherd Insights fractional CTO services, church technology strategy, and digital transformation solutions."
 image: "/images/page-header/default.png"
 draft: false
 
