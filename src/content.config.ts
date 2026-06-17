@@ -40,6 +40,7 @@ const basePage = z.object({
   button: button.optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
+  imageAlt: z.string().optional(),
   robots: z.string().optional(),
   excludeFromSitemap: z.boolean().optional(),
   excludeFromCollection: z.boolean().optional(),
