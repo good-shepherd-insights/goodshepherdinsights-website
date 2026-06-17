@@ -3,7 +3,7 @@ badge: "Our Team"
 badgeVariant: "secondary"
 title: "Our technology leadership for your ministry"
 image: "/images/team/team-header.png"
-metaDescription: "This is a example description"
+metaDescription: "Meet the team of technology experts and ministry leaders at Good Shepherd Insights dedicated to serving the local church."
 draft: false
 
 # Override Default Content of `/sections/team-section.md`

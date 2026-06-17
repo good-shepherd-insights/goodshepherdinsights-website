@@ -1,0 +1,36 @@
+---
+/**
+ * OutcomeBlock Component
+ *
+ * Visually distinct outcome/summary block at the end of each sub-service section.
+ * Uses an accent left border to highlight key results.
+ *
+ * ✅ MDX usage:
+ * <OutcomeBlock title="Expected Outcomes">
+ *   - Reduced operational costs by 30%
+ *   - Improved team efficiency
+ * </OutcomeBlock>
+ */
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  title?: string;
+  class?: string;
+}
+
+const { title, class: className = "" } = Astro.props;
+---
+
+<div class:list={["not-prose mb-10", className]}>
+  <div class="border-l-4 border-accent bg-accent/5 rounded-r-lg p-6 md:p-8">
+    {title && (
+      <h4
+        class="text-h4-sm md:text-h4 font-secondary font-medium text-dark mb-3"
+        set:html={markdownify(title)}
+      />
+    )}
+    <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0">
+      <slot />
+    </div>
+  </div>
+</div>

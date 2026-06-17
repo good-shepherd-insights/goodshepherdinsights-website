@@ -1,4 +1,6 @@
 ---
+// PRUNED: Renamed from team/index.astro on 2026-06-04. Reactivate: remove the underscore prefix to restore this route. Reason: Only in footer primary, not in header navbar; team data stays for TeamSection on About page.
+
 import Base from "@/layouts/Base.astro";
 import { getEntryCTM } from "@/lib/contentParser.astro";
 import handleDraftPage from "@/lib/utils/handleDraftPage";
@@ -26,7 +28,7 @@ if (response) return response;
   <PageHeader content={page?.data} contentClass="max-w-7xl! xl:px-10" />
   <AboutSectionTwo hasSectionSpacingBottom={true} />
   <TeamSection
-    content={page?.data.teamSection}
+    content={page?.data?.teamSection}
     badgeVariant="secondary"
     hasSectionSpacingBottom={true}
   />

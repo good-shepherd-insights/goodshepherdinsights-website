@@ -236,17 +236,19 @@ async function processSitemaps() {
         const pathname = safePathname(u?.loc);
         if (!pathname) return true; // if we can't parse it, don't delete it
 
-        // Remove "-index" pages
-        if (pathname.includes("-index")) return false;
+        const segments = pathname.split("/").filter(Boolean);
 
-        // Exclude folders
-        if (EXCLUDE_FOLDERS.some((folder) => pathname.includes(folder)))
+        // Exclude specific folders (precise match for path segments)
+        if (segments.some((segment) => EXCLUDE_FOLDERS.includes(segment))) {
           return false;
+        }
 
         // Remove draft/excluded URLs
         // Match on either customSlug or generated url path
         for (const bad of excludedUrlSet) {
-          if (bad && pathname.includes(bad)) return false;
+          if (bad && (pathname === bad || pathname === `${bad}/`)) {
+            return false;
+          }
         }
 
         return true;
@@ -263,6 +265,14 @@ async function processSitemaps() {
     }
 
     console.log("✅ Sitemaps processed successfully.");
+
+    // Copy sitemap-index.xml to sitemap.xml for better compatibility
+    const indexFile = path.resolve(DIST_FOLDER, "sitemap-index.xml");
+    const targetFile = path.resolve(DIST_FOLDER, "sitemap.xml");
+    if (await pathExists(indexFile)) {
+      await fs.copyFile(indexFile, targetFile);
+      console.log("✅ Copied sitemap-index.xml to sitemap.xml");
+    }
   } catch (error) {
     console.error("Error processing sitemaps:", error);
     process.exitCode = 1;

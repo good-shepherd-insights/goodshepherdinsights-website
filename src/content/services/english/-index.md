@@ -1,7 +1,6 @@
 ---
 badge: "Our Services"
 title: "Strategic Technology Leadership for Churches"
-titleSecondary: "Proactive. Mission-Aligned. Fractional."
 metaDescription: "Stop administrative overload from burning out your best people. We design the workflow architecture that turns manual tasks into automated systems, protecting your team's calling."
 draft: false
 image: "/images/page-header/default.png"

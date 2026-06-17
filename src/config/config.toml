@@ -44,7 +44,15 @@
 
   [seo.sitemap]
     enable  = true # Enables or disables sitemap generation on site build
-    exclude = [] # exclude all pages that include these folder names
+    exclude = ["case-studies", "team", "pricing", "category", "tag", "404"] # exclude all pages that include these folder names
+
+  [seo.organization]
+    streetAddress = ""
+    addressLocality = "East Coast"
+    addressRegion = "USA"
+    email = "contact@goodshepherdinsights.com"
+    telephone = ""
+    logo = "/images/good-shepherd-insights.svg"
 
 
 # Different theme settings
@@ -100,7 +108,7 @@
   [settings.contactInfo]
     address = "East Coast, USA"
     email   = "contact@goodshepherdinsights.com"
-    phone   = ""
+    phone   = "[(240) 441-5259](tel:+12404415259)"
     mapLink = "https://www.google.com/maps?q=East+Coast,USA&output=embed"
 
   # Header Offcanvas Configuration
@@ -142,7 +150,7 @@
   image       = "/images/og-image.jpg" # Image used in OpenGraph previews
   ogLocale    = "en_US" # Locale setting for OpenGraph
   ogType      = "website" # Type of content for OpenGraph protocol
-  twitter     = "" # Twitter handle for Twitter Card meta tags
+  twitter     = "@GSInsights" # Twitter handle for Twitter Card meta tags
   twitterCard = "summary_large_image" # Type of Twitter Card to use in social sharing
 
 # [head] (Add custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page)

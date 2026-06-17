@@ -1,13 +1,18 @@
 ---
-import SEO from "@/components/seo/Seo.astro";
-import OpenGraph from "@/components/seo/OpenGraph.astro";
+import SEO from "@/components/SEO.astro";
 import Favicons from "@/components/seo/Favicons.astro";
-import JsonLD from "../widgets/JsonLD.astro";
+import BaseSchemas from "@/components/widgets/BaseSchemas.astro";
 import config from ".astro/config.generated.json";
 import { Font } from "astro:assets";
 import fontsJson from "@/config/fonts.json";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 
 const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
+
+// Resolve canonical URL with fallback to current page URL
+const resolvedCanonical = Astro.props.canonical
+  ? getLocaleUrlCTM(new URL(Astro.props.canonical, Astro.site).href, Astro.currentLocale)
+  : getLocaleUrlCTM(Astro.url.href, Astro.currentLocale);
 ---
 
 <head>
@@ -18,7 +23,10 @@ const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=5"
   />
-  <SEO {...Astro.props} />
+  <SEO {...Astro.props} canonical={resolvedCanonical} />
+  <meta name="author" content={Astro.props.author || config.seo.author} />
+  <meta property="og:site_name" content={config.site.title} />
+  <meta property="og:locale" content={config.opengraph.ogLocale || "en_US"} />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
@@ -31,13 +39,8 @@ const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
   />
   <meta name="generator" content={Astro.generator} />
   {config.head?.content && <Fragment set:html={config.head?.content} />}
-  <OpenGraph {...Astro.props} />
   <Favicons />
-  <JsonLD
-    content={{
-      ...Astro.props,
-    }}
-  />
+  <BaseSchemas {...Astro.props} canonical={resolvedCanonical} />
 
   <!------------------
     Fonts

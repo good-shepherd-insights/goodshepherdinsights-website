@@ -1,7 +1,10 @@
+<!-- PRUNED: Renamed from terms-conditions.md on 2026-06-04. -->
+<!-- Reactivate: remove the underscore prefix to restore this content entry. -->
+<!-- Reason: No nav links; orphan legal page. -->
 ---
 title: "Terms & Conditions"
-metaDescription: "This is a example description"
-draft: false
+metaDescription: "Read the terms and conditions for using Good Shepherd Insights website and services."
+excludeFromSitemap: true
 ---
 
 **Effective Date:** July, 2022

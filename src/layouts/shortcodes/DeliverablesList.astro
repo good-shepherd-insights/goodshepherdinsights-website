@@ -1,0 +1,30 @@
+---
+/**
+ * DeliverablesList Component
+ *
+ * A structured list for deliverable items with bold labels and descriptions.
+ * Extends the existing has-list has-list-check pattern with a subtle background tint.
+ *
+ * ✅ MDX usage:
+ * <DeliverablesList>
+ *   - **Assessment Report**: Detailed findings and recommendations
+ *   - **Roadmap Document**: Prioritized technology initiatives
+ * </DeliverablesList>
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "not-prose has-list has-list-check styled-list bg-secondary/30 rounded-lg p-6 mb-10",
+    className,
+  ]}
+>
+  <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0">
+    <slot />
+  </div>
+</div>

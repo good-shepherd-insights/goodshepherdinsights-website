@@ -53,7 +53,7 @@ const rating = customer?.rating ?? 0;
         </div>
         {content && (
           <p
-            class="text-text-dark text-base leading-relaxed xl:text-xl 2xl:text-2xl"
+            class="text-text-dark/85 text-base leading-relaxed xl:text-xl 2xl:text-2xl"
             set:html={markdownify(content)}
           />
         )}
@@ -83,7 +83,7 @@ const rating = customer?.rating ?? 0;
         <div class="my-6 xl:my-6">
           {content && (
             <p
-              class="text-text-dark lg:text-lg xl:text-xl xl:leading-7.5 xl:font-medium"
+              class="text-text-dark/85 lg:text-lg xl:text-xl xl:leading-7.5 xl:font-medium"
               set:html={markdownify(content)}
             />
           )}

@@ -185,7 +185,7 @@ const { hasLightBackground = false } = Astro.props;
           description && (
             <div class="lg:max-w-2xl lg:pr-20">
               <p
-                class="text-text-light leading-relaxed"
+                class="text-text-light/85 leading-relaxed"
                 set:html={markdownify(description)}
               />
             </div>

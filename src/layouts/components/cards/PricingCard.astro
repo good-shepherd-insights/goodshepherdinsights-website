@@ -35,7 +35,7 @@ const {
             <h3 class="text-h5 md:text-h4" set:html={markdownify(name)} />
           )}
           {description && (
-            <p class="text-lg" set:html={markdownify(description)} />
+            <p class="text-text-dark/85 text-lg" set:html={markdownify(description)} />
           )}
         </div>
         {price && (
@@ -52,7 +52,7 @@ const {
             {features.map((feature) => (
               <li class="flex items-center gap-2">
                 <Icons icon="SquareCheckBig" class="text-accent text-xl" />
-                <span set:html={markdownify(feature)} />
+                <span class="text-text-light/85" set:html={markdownify(feature)} />
               </li>
             ))}
           </ul>
