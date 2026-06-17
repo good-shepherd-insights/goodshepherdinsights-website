@@ -30,7 +30,7 @@ let {
 
 let {
   collection,
-  data: { title, image, date, categories, metaDescription } = {},
+  data: { title, image, date, categories, metaDescription, imageAlt } = {},
 } = content;
 
 // Format categories
@@ -133,7 +133,7 @@ const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
           <>
             <OptimizedImage
               src={image}
-              alt={toSentenceCase("Image related to " + title)}
+              alt={imageAlt || toSentenceCase("Image related to " + title)}
               class:list={[
                 "min-w-full object-cover transition duration-500",
                 "h-62",
@@ -172,7 +172,7 @@ const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
         <div class:list={["shrink-0 overflow-hidden", "rounded-md"]}>
           <OptimizedImage
             src={image}
-            alt={title}
+            alt={imageAlt || title}
             width={90}
             height={90}
             quality={40}
