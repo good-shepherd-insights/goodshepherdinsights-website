@@ -90,7 +90,7 @@ const collectionPageSchema = {
     : `Blog - Page ${currentPage}`,
   url: selfCanonical,
   isPartOf: {
-    "@id": `${baseUrl.replace(/\/$/, "")}/blog/#collectionpage`,
+    "@id": `${absoluteUrl(Astro.url.pathname.replace(/\/page\/\d+\/?$/, ""), Astro)}#collectionpage`,
   },
 };
 ---
