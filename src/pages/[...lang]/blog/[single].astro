@@ -13,6 +13,7 @@ import type { BlogPosting, Person } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 import AuthorBio from "@/components/widgets/AuthorBio.astro";
+import { slugifyyy } from "@/lib/utils/textConverter";
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
@@ -64,6 +65,11 @@ const baseUrlClean = baseUrl.replace(/\/$/, "");
 const authorName = post?.data?.author || config.seo.author;
 const authorUrl = `${baseUrlClean}/about`;
 
+// ISSUE 7: Derive a stable @id from the author name to avoid collisions
+// when multiple authors exist. Uses the same slugifyyy utility already
+// used in category/tag pages for URL slugs.
+const authorSlug = slugifyyy(authorName);
+
 // Resolve canonical for this blog post
 const resolvedCanonical = Astro.props.canonical
   ? absoluteUrl(Astro.props.canonical, Astro)
@@ -86,7 +92,7 @@ const blogPostingSchema: BlogPosting = {
   ...(post?.data?.image && { image: absoluteUrl(post.data.image, Astro) }),
   ...(datePublished && { datePublished }),
   ...(post?.data?.dateModified && { dateModified: post.data.dateModified }),
-  author: { "@id": `${baseUrlClean}/#person` },
+  author: { "@id": `${baseUrlClean}/#person-${authorSlug}` },
   publisher: { "@id": `${baseUrlClean}/#organization` },
   mainEntityOfPage: resolvedCanonical,
 };
@@ -94,7 +100,7 @@ const blogPostingSchema: BlogPosting = {
 // Build Person schema for author
 const personSchema: Person = {
   "@type": "Person",
-  "@id": `${baseUrlClean}/#person`,
+  "@id": `${baseUrlClean}/#person-${authorSlug}`,
   name: authorName,
   url: authorUrl,
   jobTitle: "Fractional CTO",

@@ -9,6 +9,9 @@ import LayoutWrapper from "@/components/BlogLayout.astro";
 import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
@@ -71,9 +74,28 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const currentPage = slug && !isNaN(Number(slug)) ? Number(slug) : 1;
 let { postIndex } = Astro.props;
+
+// ISSUE 1 fix: Override canonical to self-reference this paginated page
+// instead of inheriting the blog index canonical from postIndex.data
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// ISSUE 6 fix: CollectionPage schema for pagination listing
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${selfCanonical}#collectionpage`,
+  name: postIndex?.data?.title
+    ? `${postIndex.data.title} - Page ${currentPage}`
+    : `Blog - Page ${currentPage}`,
+  url: selfCanonical,
+  isPartOf: {
+    "@id": `${baseUrl.replace(/\/$/, "")}/blog/#collectionpage`,
+  },
+};
 ---
 
-<Base {...postIndex?.data}>
+<Base {...postIndex?.data} canonical={selfCanonical}>
   <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
   <BlogsHeroSection />
   <LayoutWrapper
@@ -91,4 +113,6 @@ let { postIndex } = Astro.props;
   />
   <CTAGallerySection />
   <CTASection />
+  <!-- ISSUE 6: CollectionPage schema for paginated blog listing -->
+  <Schema item={collectionPageSchema as any} />
 </Base>

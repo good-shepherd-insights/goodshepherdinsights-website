@@ -5,6 +5,7 @@
 title: "Privacy Policy"
 metaDescription: "Review the privacy policy for Good Shepherd Insights. Learn how we collect, use, and protect your information as we serve your church."
 excludeFromSitemap: true
+robots: "noindex, follow"
 ---
 
 **Effective Date: July, 2022**
