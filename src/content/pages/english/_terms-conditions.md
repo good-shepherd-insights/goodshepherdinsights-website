@@ -5,6 +5,7 @@
 title: "Terms & Conditions"
 metaDescription: "Read the terms and conditions for using Good Shepherd Insights website and services."
 excludeFromSitemap: true
+robots: "noindex, follow"
 ---
 
 **Effective Date:** July, 2022

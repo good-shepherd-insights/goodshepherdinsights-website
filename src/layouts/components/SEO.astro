@@ -70,7 +70,9 @@ const ogImage = image.startsWith("http")
 const alternateTags: Array<{ hreflang: string; href: string }> = [];
 if (
   config.settings.multilingual.enable &&
-  !resolvedCanonical.includes("blog/category/")
+  !resolvedCanonical.includes("blog/category/") &&
+  !resolvedCanonical.includes("blog/tag/") &&
+  !resolvedCanonical.includes("blog/page/")
 ) {
   supportedLanguages.forEach((lang) => {
     alternateTags.push({
@@ -99,7 +101,7 @@ if (
   }}
 />
 {resolvedCanonical && (
-  <link rel="canonical" href={resolvedCanonical} item-prop="url" />
+  <link rel="canonical" href={resolvedCanonical} itemprop="url" />
 )}
 {alternateTags.map((tag) => (
   <link rel="alternate" hreflang={tag.hreflang} href={tag.href} />
