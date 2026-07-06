@@ -14,6 +14,9 @@ import CTAVideoSectionTwo from "@/components/sections/CTAVideoSectionTwo.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import BrandLogos from "@/components/sections/BrandLogos.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 
 export function getStaticPaths() {
   return generatePaths();
@@ -28,6 +31,21 @@ const page = await getEntryCTM(
 // Remove drafts pages in production
 const response = handleDraftPage(page?.data);
 if (response) return response;
+
+// ISSUE 6: CollectionPage schema for services listing
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${selfCanonical}#collectionpage`,
+  name: page?.data?.title || "Services",
+  description: page?.data?.metaDescription || page?.data?.description || undefined,
+  url: selfCanonical,
+  isPartOf: {
+    "@id": `${baseUrl.replace(/\/$/, "")}/#website`,
+  },
+};
 ---
 
 <Base {...page?.data} hideOffcanvas={true}>
@@ -41,4 +59,6 @@ if (response) return response;
   <CTAGallerySection />
   <BrandLogos />
   <CTASection />
+  <!-- ISSUE 6: CollectionPage schema for services listing -->
+  <Schema item={collectionPageSchema as any} />
 </Base>
