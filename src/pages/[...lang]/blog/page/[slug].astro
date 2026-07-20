@@ -81,13 +81,19 @@ const baseUrl = trailingSlashChecker(Astro.url.origin);
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 
 // ISSUE 6 fix: CollectionPage schema for pagination listing
+const pageTitle = postIndex?.data?.title
+  ? `${postIndex.data.title} - Page ${currentPage}`
+  : `Blog - Page ${currentPage}`;
+const pageDescription = `${
+  postIndex?.data?.metaDescription ||
+  postIndex?.data?.description ||
+  "Ministry technology articles from Good Shepherd Insights."
+} (Page ${currentPage})`;
 const collectionPageSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": `${selfCanonical}#collectionpage`,
-  name: postIndex?.data?.title
-    ? `${postIndex.data.title} - Page ${currentPage}`
-    : `Blog - Page ${currentPage}`,
+  name: pageTitle,
   url: selfCanonical,
   isPartOf: {
     "@id": `${absoluteUrl(Astro.url.pathname.replace(/\/page\/\d+\/?$/, ""), Astro)}#collectionpage`,
@@ -95,7 +101,12 @@ const collectionPageSchema = {
 };
 ---
 
-<Base {...postIndex?.data} canonical={selfCanonical}>
+<Base
+  {...postIndex?.data}
+  canonical={selfCanonical}
+  title={pageTitle}
+  metaDescription={pageDescription}
+  disableTagline={true}>
   <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
   <BlogsHeroSection />
   <LayoutWrapper

@@ -58,7 +58,7 @@ export async function getStaticPaths() {
 const { category, blogFolder, postIndex } = Astro.props;
 
 let title = titleify(`${category.name} posts`);
-const description = postIndex?.data.description;
+const description = `Church technology insights and guidance tagged ${category.name}, from Good Shepherd Insights.`;
 
 // ISSUE 6: CollectionPage schema for category listing
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
@@ -75,7 +75,7 @@ const collectionPageSchema = {
 <Base
   {...postIndex?.data}
   title={title}
-  description={description}
+  metaDescription={description}
   disableTagline={true}
   robots="noindex, follow">
   <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
