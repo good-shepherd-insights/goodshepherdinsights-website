@@ -120,3 +120,9 @@ export const toSentenceCase = (content: string) => {
 export function removeWhitespace(text: string) {
   return text.replace(/\s+/g, " ").trim();
 }
+
+// Resolve the tagline separator, respecting an intentionally empty string
+// (a plain `||` fallback would silently discard "" and always use " - ")
+export function resolveTaglineSeparator(separator: string | undefined) {
+  return separator !== undefined ? separator : " - ";
+}

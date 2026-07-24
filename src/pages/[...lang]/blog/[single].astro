@@ -108,7 +108,7 @@ const personSchema: Person = {
 };
 ---
 
-<Base {...post?.data}>
+<Base {...post?.data} disableTagline={true}>
   <PageHeader
     content={{
       badge: post?.data?.categories?.[0],
