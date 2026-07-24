@@ -44,7 +44,7 @@ const collectionPageSchema = {
 };
 ---
 
-<Base {...postIndex?.data}>
+<Base {...postIndex?.data} disableTagline={true}>
   <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
   <BlogsHeroSection />
   <BlogLayout
