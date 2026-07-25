@@ -5,7 +5,7 @@ import { markdownify } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
 import { useTranslations } from "@/lib/utils/i18nUtils";
 import OptimizedImage from "./utilities/OptimizedImage.astro";
-import PaginationForSingle from "./widgets/PaginationForSingle.astro";
+import LegacyPaginationForSingle from "./widgets/LegacyPaginationForSingle.astro";
 import { render } from "astro:content";
 
 let {
@@ -146,7 +146,7 @@ if (Array.isArray(information)) {
       </div>
       <div
         class="border-border-dark/20 mt-10 flex justify-between border-y py-6">
-        <PaginationForSingle
+        <LegacyPaginationForSingle
           prevBtnText={t("common.paginationCaseStudiesPrev")}
           nextBtnText={t("common.paginationCaseStudiesNext")}
           currentPage={Astro.props.content}

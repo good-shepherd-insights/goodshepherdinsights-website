@@ -1,0 +1,217 @@
+---
+import { sanityImageUrl, type SanityBlogPost } from "@/lib/sanity/client";
+import dateFormat from "@/lib/utils/dateFormat";
+import { humanize, slugifyyy } from "@/lib/utils/textConverter";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import Icons from "@/helpers/Icons.astro";
+import CTA from "./CTA.astro";
+
+interface Props {
+  posts: SanityBlogPost[];
+  currentSlug: string;
+}
+
+const { posts, currentSlug } = Astro.props;
+const t = await useTranslations(Astro.currentLocale as string);
+
+const categoryCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const category of post.categories || []) {
+    categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+  }
+}
+
+const categories = [...categoryCounts.entries()]
+  .map(([name, count]) => ({ name, count, slug: slugifyyy(name) }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.tags || []) {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  }
+}
+
+const tags = [...tagCounts.entries()]
+  .map(([name, count]) => ({ name, count, slug: slugifyyy(name) }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+const recentPosts = posts
+  .filter((post) => post.slug.current !== currentSlug)
+  .slice(0, 3);
+
+const postUrl = (slug: string) =>
+  getLocaleUrlCTM(slug, Astro.currentLocale, "/blog");
+const categoryUrl = (slug: string) =>
+  getLocaleUrlCTM(slug, Astro.currentLocale, "/blog/category");
+const tagUrl = (slug: string) =>
+  getLocaleUrlCTM(slug, Astro.currentLocale, "/blog/tag");
+
+const searchPosts = posts.map((post) => ({
+  title: post.title,
+  excerpt: post.excerpt || "",
+  href: postUrl(post.slug.current),
+  image: post.coverImage?.asset
+    ? sanityImageUrl(post.coverImage.asset).width(180).height(120).fit("crop").auto("format").url()
+    : "",
+}));
+---
+
+<aside class="order-2 min-w-0 space-y-8 lg:col-span-4">
+  <div class="bg-light rounded-lg p-4 lg:p-8">
+    <form id="sanity-blog-search-form" class="relative flex w-full rounded-lg">
+      <input
+        name="search"
+        type="search"
+        placeholder={t("widgets.postSearchFormPlaceholder")}
+        class="form-input h-full w-full rounded-md border-none pe-14 placeholder:tracking-widest placeholder:opacity-50!"
+        autocomplete="off"
+      />
+      <button
+        type="submit"
+        aria-label="Search posts"
+        class="btn-accent effect-color-dark absolute top-0 right-0 flex size-11 items-center justify-center rounded-none rounded-r-md px-2 transition-colors xl:size-13.5"
+      >
+        <Icons icon="Search" class="size-5" />
+      </button>
+    </form>
+    <div id="sanity-blog-search-results" class="mt-5 hidden space-y-4"></div>
+  </div>
+
+  {
+    categories.length > 0 && (
+      <div class="bg-light rounded-lg p-4 lg:p-8">
+        <h2 class="md:text-h5 text-h5-sm mb-6">{t("widgets.categoriesTitle")}</h2>
+        <div>
+          {categories.map((category) => (
+            <div class="group/category relative flex items-center gap-2 py-1.5 font-medium transition duration-300 first:pt-0 last:pb-0">
+              <span class="group-hover/category:text-accent inline-block transition duration-300 group-hover/category:translate-x-1">
+                <Icons icon="ChevronsRight" />
+              </span>
+              <span class="group-hover/category:text-accent truncate transition duration-300">
+                {category.name}
+              </span>
+              <span class="text-text-dark/50 ml-auto text-sm">{category.count}</span>
+              <a
+                href={categoryUrl(category.slug)}
+                class="absolute inset-0"
+                title={`Filter posts by ${category.name}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    recentPosts.length > 0 && (
+      <div class="bg-light rounded-lg p-4 xl:p-8">
+        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">{t("widgets.recentPostsTitle")}</h2>
+        <div class="space-y-4.5">
+          {recentPosts.map((post) => (
+            <a
+              href={postUrl(post.slug.current)}
+              class="group flex items-center gap-4.5 border-text-dark/15 border-b pb-4.5 last:border-0 last:pb-0"
+              aria-label={`Read ${post.title}`}
+            >
+              {
+                post.coverImage?.asset && (
+                  <div class="size-20 shrink-0 overflow-hidden rounded-md">
+                    <img
+                      src={sanityImageUrl(post.coverImage.asset).width(160).height(160).fit("crop").auto("format").url()}
+                      alt={post.coverImage.alt || post.title}
+                      width="80"
+                      height="80"
+                      loading="lazy"
+                      class="size-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                )
+              }
+              <div>
+                <p class="text-dark line-clamp-2 text-sm font-semibold leading-5">{post.title}</p>
+                <span class="text-text-dark/60 mt-1 block text-xs">
+                  {dateFormat(post.publishedAt, "dd MMM, yyyy")}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    tags.length > 0 && (
+      <div class="bg-light rounded-lg p-4 xl:p-8">
+        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">{t("widgets.popularTagsTitle")}</h2>
+        <div class="flex flex-wrap gap-3">
+          {tags.map((tag) => (
+            <a
+              href={tagUrl(tag.slug)}
+              title={`Filter posts by ${tag.name}`}
+              class="bg-body hover:bg-accent inline-block rounded-md px-4 py-1 font-medium capitalize transition"
+            >
+              {humanize(tag.name)} ({tag.count})
+            </a>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <CTA />
+</aside>
+
+<script is:inline define:vars={{ searchPosts }}>
+  const form = document.getElementById("sanity-blog-search-form");
+  const input = form?.querySelector("input[name=search]");
+  const results = document.getElementById("sanity-blog-search-results");
+  const posts = searchPosts;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>'"]/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "'": "&#39;",
+      '"': "&quot;",
+    })[character]);
+
+  const renderResults = (term) => {
+    if (!results) return;
+    const normalizedTerm = term.trim().toLowerCase();
+
+    if (!normalizedTerm) {
+      results.innerHTML = "";
+      results.classList.add("hidden");
+      return;
+    }
+
+    const matches = posts.filter((post) =>
+      `${post.title} ${post.excerpt}`.toLowerCase().includes(normalizedTerm),
+    );
+
+    results.classList.remove("hidden");
+    results.innerHTML = matches.length
+      ? matches
+          .map(
+            (post) => `
+              <a href="${escapeHtml(post.href)}" class="group flex items-center gap-3 border-text-dark/15 border-b pb-3 last:border-0 last:pb-0">
+                ${post.image ? `<img src="${escapeHtml(post.image)}" alt="" width="56" height="56" class="size-14 shrink-0 rounded-md object-cover" />` : ""}
+                <span class="text-dark text-sm font-semibold leading-5 group-hover:text-accent">${escapeHtml(post.title)}</span>
+              </a>
+            `,
+          )
+          .join("")
+      : `<p class="text-text-dark/70 text-sm">No posts found for “${escapeHtml(term)}”.</p>`;
+  };
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    renderResults(input?.value || "");
+  });
+
+  input?.addEventListener("input", () => renderResults(input.value));
+</script>

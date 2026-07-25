@@ -2,10 +2,8 @@
 import type { Section } from "@/types";
 import BlogCard from "@/layouts/components/cards/BlogCard.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
-import config from ".astro/config.generated.json";
+import { getSanityBlogPosts } from "@/lib/sanity/client";
 import { getEntryCTM } from "@/lib/contentParser.astro";
-import { sortByDate } from "@/lib/utils/sortFunctions";
 import SectionBadge from "../global/SectionBadge.astro";
 import SectionTitle from "../global/SectionTitle.astro";
 import type { blogSectionSchema } from "@/sections.schema";
@@ -32,13 +30,7 @@ let actualContent = overrideObjects(
 // Extracting required values from 'content' object
 let { enable = true, title, badge, options } = actualContent as SectionType;
 
-let posts = await getCollectionCTM(
-  config.settings.blogFolder as "blog",
-  Astro.currentLocale,
-);
-
-// Sort posts by date
-posts = sortByDate(posts);
+let posts = await getSanityBlogPosts();
 
 // Limit the number of items to be displayed
 posts =
