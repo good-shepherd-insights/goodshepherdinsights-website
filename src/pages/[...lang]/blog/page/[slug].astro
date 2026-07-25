@@ -4,7 +4,9 @@ import PageHeader from "@/components/widgets/PageHeader.astro";
 import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
 import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
+import { sanityBlogIndexContent } from "@/lib/sanity/blog";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import config from ".astro/config.generated.json";
 import { Schema } from "astro-seo-schema";
@@ -13,8 +15,19 @@ export async function getStaticPaths() {
   const posts = await getSanityBlogPosts();
   const pageSize = Number(config.settings.pagination) || 10;
   const totalPages = Math.ceil(posts.length / pageSize);
-  const { defaultLanguage, showDefaultLangInUrl } = config.settings.multilingual;
-  return supportedLanguages.flatMap((lang) => Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({ params: { slug: String(i + 2), lang: lang.languageCode === defaultLanguage && !showDefaultLangInUrl ? undefined : lang.languageCode } })));
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
+  return supportedLanguages.flatMap((lang) =>
+    Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+      params: {
+        slug: String(i + 2),
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+      },
+    })),
+  );
 }
 const posts = await getSanityBlogPosts();
 const currentPage = Number(Astro.params.slug) || 1;
@@ -31,8 +44,15 @@ const collectionPageSchema = {
   },
 };
 ---
-<Base title={pageTitle} canonical={selfCanonical} metaDescription="Ministry technology articles from Good Shepherd Insights.">
-  <PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" />
+
+<Base
+  title={pageTitle}
+  canonical={selfCanonical}
+  metaDescription="Ministry technology articles from Good Shepherd Insights.">
+  <PageHeader
+    content={sanityBlogIndexContent}
+    contentClass="max-w-3xl! xl:px-6"
+  />
   <BlogsHeroSection />
   <BlogLayout
     pageType="list"
@@ -41,12 +61,19 @@ const collectionPageSchema = {
       enable: false,
     }}
     contentList={{
-      options: { layout: "grid", columns: 2 },
+      options: { layout: "grid", columns: 2, search: true },
+      searchSection: sanityBlogIndexContent.searchSection,
       pagination: { enable: true, currentPage },
     }}
-    content={{ ...posts[0], title: "Blog", slug: { current: "" }, publishedAt: "" }}
+    content={{
+      ...posts[0],
+      title: "Blog",
+      slug: { current: "" },
+      publishedAt: "",
+    }}
     posts={posts}
   />
+  <CTAGallerySection />
   <CTASection />
   <Schema item={collectionPageSchema as any} />
 </Base>

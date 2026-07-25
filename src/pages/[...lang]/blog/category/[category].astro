@@ -4,7 +4,9 @@ import PageHeader from "@/components/widgets/PageHeader.astro";
 import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
 import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
+import { sanityBlogIndexContent } from "@/lib/sanity/blog";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import { slugifyyy, titleify } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
@@ -12,14 +14,34 @@ import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 export async function getStaticPaths() {
   const allPosts = await getSanityBlogPosts();
-  const categories = [...new Set(allPosts.flatMap((post) => post.categories || []))];
-  const { defaultLanguage, showDefaultLangInUrl } = config.settings.multilingual;
-  return supportedLanguages.flatMap((lang) => categories.map((category) => ({ params: { category: slugifyyy(category), lang: lang.languageCode === defaultLanguage && !showDefaultLangInUrl ? undefined : lang.languageCode }, props: { category } })));
+  const categories = [
+    ...new Set(allPosts.flatMap((post) => post.categories || [])),
+  ];
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
+  return supportedLanguages.flatMap((lang) =>
+    categories.map((category) => ({
+      params: {
+        category: slugifyyy(category),
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+      },
+      props: { category },
+    })),
+  );
 }
 const allPosts = await getSanityBlogPosts();
-const categories = [...new Set(allPosts.flatMap((post) => post.categories || []))];
-const category = (Astro.props.category as string) || categories.find((name) => slugifyyy(name) === Astro.params.category);
-const posts = allPosts.filter((post) => post.categories?.some((name) => slugifyyy(name) === Astro.params.category));
+const categories = [
+  ...new Set(allPosts.flatMap((post) => post.categories || [])),
+];
+const category =
+  (Astro.props.category as string) ||
+  categories.find((name) => slugifyyy(name) === Astro.params.category);
+const posts = allPosts.filter((post) =>
+  post.categories?.some((name) => slugifyyy(name) === Astro.params.category),
+);
 const title = titleify(`${category || "Category"} posts`);
 const description = `Church technology insights and guidance tagged ${category || "category"}, from Good Shepherd Insights.`;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
@@ -32,8 +54,16 @@ const collectionPageSchema = {
   url: selfCanonical,
 };
 ---
-<Base title={title} metaDescription={description} robots="noindex, follow" canonical={selfCanonical}>
-  <PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" />
+
+<Base
+  title={title}
+  metaDescription={description}
+  robots="noindex, follow"
+  canonical={selfCanonical}>
+  <PageHeader
+    content={sanityBlogIndexContent}
+    contentClass="max-w-3xl! xl:px-6"
+  />
   <BlogsHeroSection />
   <BlogLayout
     pageType="list"
@@ -42,13 +72,15 @@ const collectionPageSchema = {
       enable: false,
     }}
     contentList={{
-      options: { layout: "grid", columns: 2 },
+      options: { layout: "grid", columns: 2, search: true },
+      searchSection: sanityBlogIndexContent.searchSection,
       filter: { category: { name: category || "" } },
       breadcrumbExcludedPaths: ["Category"],
     }}
     content={{ ...posts[0], title, slug: { current: "" }, publishedAt: "" }}
     posts={posts}
   />
+  <CTAGallerySection />
   <CTASection />
   <Schema item={collectionPageSchema as any} />
 </Base>

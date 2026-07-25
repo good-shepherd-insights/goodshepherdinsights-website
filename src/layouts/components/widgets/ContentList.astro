@@ -2,6 +2,7 @@
 import Breadcrumbs from "./Breadcrumbs.astro";
 import BlogCard from "@/components/cards/BlogCard.astro";
 import Pagination from "@/components/widgets/Pagination.astro";
+import Search from "./Search.astro";
 import type { SanityBlogPost } from "@/lib/sanity/client";
 import type { SanityBlogOptions } from "@/lib/sanity/blog";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
@@ -12,23 +13,77 @@ interface Props {
   filter?: { category?: { name: string }; tag?: { name: string } };
   breadcrumb?: boolean;
   breadcrumbExcludedPaths?: string[];
+  searchSection?: {
+    title?: string;
+    searchPlaceholder?: string;
+  };
   class?: string;
   onlyForSearch?: boolean;
 }
-const { posts: providedPosts, options = {}, pagination, filter, breadcrumb, breadcrumbExcludedPaths, class: className, onlyForSearch } = Astro.props as Props;
-let posts = providedPosts || await getSanityBlogPosts();
-if (filter?.category) posts = posts.filter((post) => post.categories?.includes(filter.category!.name));
-if (filter?.tag) posts = posts.filter((post) => post.tags?.includes(filter.tag!.name));
-const pageSize = Number((await import(".astro/config.generated.json")).default.settings.pagination) || 10;
+const {
+  posts: providedPosts,
+  options = {},
+  pagination,
+  filter,
+  breadcrumb,
+  breadcrumbExcludedPaths,
+  searchSection,
+  class: className,
+  onlyForSearch,
+} = Astro.props as Props;
+let posts = providedPosts || (await getSanityBlogPosts());
+if (filter?.category)
+  posts = posts.filter((post) =>
+    post.categories?.includes(filter.category!.name),
+  );
+if (filter?.tag)
+  posts = posts.filter((post) => post.tags?.includes(filter.tag!.name));
+const pageSize =
+  Number(
+    (await import(".astro/config.generated.json")).default.settings.pagination,
+  ) || 10;
 const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
 const currentPage = pagination?.currentPage || 1;
-if (pagination?.enable) posts = posts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+if (pagination?.enable)
+  posts = posts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 if (!posts.length) return;
 ---
+
 <div class:list={[onlyForSearch && "hidden", className]}>
-  {breadcrumb && <div class="mb-8"><Breadcrumbs breadcrumbExcludedPaths={breadcrumbExcludedPaths} /></div>}
-  <div class:list={["blog-search-results gap-6", options.layout === "grid" && {"grid grid-cols-1": options.columns === 1, "grid md:grid-cols-2": options.columns === 2, "grid md:grid-cols-2 lg:grid-cols-3": options.columns === 3}]}>
-    {posts.map((post) => <BlogCard content={post} options={options} tag="h2" />)}
+  {
+    breadcrumb && (
+      <div class="mb-8">
+        <Breadcrumbs breadcrumbExcludedPaths={breadcrumbExcludedPaths} />
+      </div>
+    )
+  }
+  {
+    options.search && searchSection && (
+      <Search searchSection={searchSection} layout="list" />
+    )
+  }
+  <div
+    class:list={[
+      "blog-search-results gap-6",
+      options.layout === "grid" && {
+        "grid grid-cols-1": options.columns === 1,
+        "grid md:grid-cols-2": options.columns === 2,
+        "grid md:grid-cols-2 lg:grid-cols-3": options.columns === 3,
+      },
+    ]}>
+    {
+      posts.map((post) => (
+        <BlogCard content={post} options={options} tag="h2" />
+      ))
+    }
   </div>
-  {pagination?.enable && <Pagination collection="blog" currentPage={currentPage} totalPages={totalPages} />}
+  {
+    pagination?.enable && (
+      <Pagination
+        collection="blog"
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
+    )
+  }
 </div>

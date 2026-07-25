@@ -4,20 +4,69 @@ import BlogSinglePageLayout from "./BlogSinglePageLayout.astro";
 import SanityBlogSidebar from "./widgets/SanityBlogSidebar.astro";
 import type { SanityBlogPost } from "@/lib/sanity/client";
 import type { SanityBlogOptions } from "@/lib/sanity/blog";
+import { sanityBlogIndexContent } from "@/lib/sanity/blog";
 type Props = {
   pageType?: "single" | "list";
   hasLightBackground?: boolean;
   sidebar?: { enable: boolean; sticky?: boolean; widgets?: string[] };
   content: SanityBlogPost;
   posts: SanityBlogPost[];
-  contentList?: { options?: SanityBlogOptions; pagination?: { enable: boolean; currentPage: number }; filter?: { category?: { name: string }; tag?: { name: string } }; breadcrumb?: boolean; breadcrumbExcludedPaths?: string[] };
+  contentList?: {
+    options?: SanityBlogOptions;
+    pagination?: { enable: boolean; currentPage: number };
+    filter?: { category?: { name: string }; tag?: { name: string } };
+    breadcrumb?: boolean;
+    breadcrumbExcludedPaths?: string[];
+    searchSection?: typeof sanityBlogIndexContent.searchSection;
+  };
 };
-const { pageType = "single", hasLightBackground = false, sidebar, content, posts, contentList } = Astro.props as Props;
+const {
+  pageType = "single",
+  hasLightBackground = false,
+  sidebar,
+  content,
+  posts,
+  contentList,
+} = Astro.props as Props;
 ---
-<section class:list={[hasLightBackground && "bg-light"]}><div class="relative container">
-  <div class:list={[sidebar?.enable && "grid grid-cols-1 gap-x-4 gap-y-16 lg:grid-cols-12 lg:items-start lg:gap-x-8"]}>
-    {pageType === "list" && <div class:list={["has-video-modal", sidebar?.enable ? "order-1 space-y-10 lg:col-span-8 lg:p-5" : "grid grid-cols-1 justify-items-center space-y-12"]}><ContentList {...contentList} posts={posts} /></div>}
-    {pageType === "single" && <BlogSinglePageLayout content={content} posts={posts} />}
-    {sidebar?.enable && <SanityBlogSidebar posts={posts} currentSlug={content.slug.current} />}
+
+<section class:list={[hasLightBackground && "bg-light"]}>
+  <div class="relative container">
+    <div
+      class:list={[
+        sidebar?.enable &&
+          "grid grid-cols-1 gap-x-4 gap-y-16 lg:grid-cols-12 lg:items-start lg:gap-x-8",
+      ]}>
+      {
+        pageType === "list" && (
+          <div
+            class:list={[
+              "has-video-modal",
+              sidebar?.enable
+                ? "order-1 space-y-10 lg:col-span-8 lg:p-5"
+                : "grid grid-cols-1 justify-items-center space-y-12",
+            ]}>
+            <ContentList
+              {...contentList}
+              searchSection={
+                contentList?.searchSection ||
+                sanityBlogIndexContent.searchSection
+              }
+              posts={posts}
+            />
+          </div>
+        )
+      }
+      {
+        pageType === "single" && (
+          <BlogSinglePageLayout content={content} posts={posts} />
+        )
+      }
+      {
+        sidebar?.enable && (
+          <SanityBlogSidebar posts={posts} currentSlug={content.slug.current} />
+        )
+      }
+    </div>
   </div>
-</div></section>
+</section>
