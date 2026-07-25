@@ -7,6 +7,8 @@ import CTASection from "@/components/sections/CTASection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import config from ".astro/config.generated.json";
+import { Schema } from "astro-seo-schema";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 export async function getStaticPaths() {
   const posts = await getSanityBlogPosts();
   const pageSize = Number(config.settings.pagination) || 10;
@@ -16,5 +18,35 @@ export async function getStaticPaths() {
 }
 const posts = await getSanityBlogPosts();
 const currentPage = Number(Astro.params.slug) || 1;
+const pageTitle = `Blog - Page ${currentPage}`;
+const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${selfCanonical}#collectionpage`,
+  name: pageTitle,
+  url: selfCanonical,
+  isPartOf: {
+    "@id": `${absoluteUrl("/blog", Astro)}#collectionpage`,
+  },
+};
 ---
-<Base title={`Blog - Page ${currentPage}`} canonical={Astro.url.pathname}><PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" /><BlogsHeroSection /><BlogLayout pageType="list" hasLightBackground={true} sidebar={{ enable: false }} content={{ ...posts[0], title: "Blog", slug: { current: "" }, publishedAt: "" }} posts={posts} contentList={{ options: { layout: "grid", columns: 2 }, pagination: { enable: true, currentPage } }} /><CTASection /></Base>
+<Base title={pageTitle} canonical={selfCanonical} metaDescription="Ministry technology articles from Good Shepherd Insights.">
+  <PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" />
+  <BlogsHeroSection />
+  <BlogLayout
+    pageType="list"
+    hasLightBackground={true}
+    sidebar={{
+      enable: false,
+    }}
+    contentList={{
+      options: { layout: "grid", columns: 2 },
+      pagination: { enable: true, currentPage },
+    }}
+    content={{ ...posts[0], title: "Blog", slug: { current: "" }, publishedAt: "" }}
+    posts={posts}
+  />
+  <CTASection />
+  <Schema item={collectionPageSchema as any} />
+</Base>

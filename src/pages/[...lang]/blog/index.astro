@@ -7,7 +7,37 @@ import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
 import { generatePaths } from "@/lib/utils/i18nUtils";
+import { Schema } from "astro-seo-schema";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 const posts = await getSanityBlogPosts();
 export function getStaticPaths() { return generatePaths(); }
+const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${selfCanonical}#collectionpage`,
+  name: "Blog",
+  description: "Ministry technology articles from Good Shepherd Insights.",
+  url: selfCanonical,
+};
 ---
-<Base title="Blog" metaTitle="Blog"><PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" /><BlogsHeroSection /><BlogLayout pageType="list" hasLightBackground={true} sidebar={{ enable: false }} content={{ ...posts[0], title: "Blog", slug: { current: "" }, publishedAt: "" }} posts={posts} contentList={{ options: { layout: "grid", columns: 2 }, pagination: { enable: true, currentPage: 1 } }} /><CTAGallerySection /><CTASection /></Base>
+<Base title="Blog" metaTitle="Blog" description="Ministry technology articles from Good Shepherd Insights." canonical={selfCanonical}>
+  <PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" />
+  <BlogsHeroSection />
+  <BlogLayout
+    pageType="list"
+    hasLightBackground={true}
+    sidebar={{
+      enable: false,
+    }}
+    contentList={{
+      options: { layout: "grid", columns: 2 },
+      pagination: { enable: true, currentPage: 1 },
+    }}
+    content={{ ...posts[0], title: "Blog", slug: { current: "" }, publishedAt: "" }}
+    posts={posts}
+  />
+  <CTAGallerySection />
+  <CTASection />
+  <Schema item={collectionPageSchema as any} />
+</Base>

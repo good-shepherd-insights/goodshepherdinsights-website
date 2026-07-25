@@ -8,6 +8,8 @@ import { getSanityBlogPosts } from "@/lib/sanity/client";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import { slugifyyy, titleify } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
+import { Schema } from "astro-seo-schema";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 export async function getStaticPaths() {
   const allPosts = await getSanityBlogPosts();
   const categories = [...new Set(allPosts.flatMap((post) => post.categories || []))];
@@ -19,5 +21,34 @@ const categories = [...new Set(allPosts.flatMap((post) => post.categories || [])
 const category = (Astro.props.category as string) || categories.find((name) => slugifyyy(name) === Astro.params.category);
 const posts = allPosts.filter((post) => post.categories?.some((name) => slugifyyy(name) === Astro.params.category));
 const title = titleify(`${category || "Category"} posts`);
+const description = `Church technology insights and guidance tagged ${category || "category"}, from Good Shepherd Insights.`;
+const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${selfCanonical}#collectionpage`,
+  name: title,
+  description,
+  url: selfCanonical,
+};
 ---
-<Base title={title} robots="noindex, follow"><PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" /><BlogsHeroSection /><BlogLayout pageType="list" hasLightBackground={true} sidebar={{ enable: false }} content={{ ...posts[0], title, slug: { current: "" }, publishedAt: "" }} posts={posts} contentList={{ options: { layout: "grid", columns: 2 }, filter: { category: { name: category || "" } }, breadcrumbExcludedPaths: ["Category"] }} /><CTASection /></Base>
+<Base title={title} metaDescription={description} robots="noindex, follow" canonical={selfCanonical}>
+  <PageHeader content={{ title: "Blog" }} contentClass="max-w-3xl! xl:px-6" />
+  <BlogsHeroSection />
+  <BlogLayout
+    pageType="list"
+    hasLightBackground={true}
+    sidebar={{
+      enable: false,
+    }}
+    contentList={{
+      options: { layout: "grid", columns: 2 },
+      filter: { category: { name: category || "" } },
+      breadcrumbExcludedPaths: ["Category"],
+    }}
+    content={{ ...posts[0], title, slug: { current: "" }, publishedAt: "" }}
+    posts={posts}
+  />
+  <CTASection />
+  <Schema item={collectionPageSchema as any} />
+</Base>
