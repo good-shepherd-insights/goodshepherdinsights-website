@@ -95,9 +95,35 @@ export default defineConfig({
     plugins: [tailwindcss()],
     server: {
       proxy: {
+        "^/studio/(?:@vite|@react-refresh)": {
+          target: "http://127.0.0.1:3333",
+          ws: true,
+        },
         "/studio": {
           target: "http://127.0.0.1:3333",
           ws: true,
+          configure: (proxy) => {
+            proxy.on("proxyRes", (proxyResponse, request, response) => {
+              if (!request.url || !/^\/studio\/?$/.test(request.url)) return;
+
+              const chunks = [];
+              proxyResponse.on("data", (chunk) => chunks.push(chunk));
+              proxyResponse.on("end", () => {
+                const html = Buffer.concat(chunks)
+                  .toString()
+                  .replaceAll(
+                    'src="/studio/@vite/client"',
+                    'src="http://127.0.0.1:3333/studio/@vite/client"',
+                  )
+                  .replaceAll(
+                    'src="/studio/@react-refresh"',
+                    'src="http://127.0.0.1:3333/studio/@react-refresh"',
+                  );
+                delete proxyResponse.headers["content-length"];
+                response.end(html);
+              });
+            });
+          },
         },
       },
     },
