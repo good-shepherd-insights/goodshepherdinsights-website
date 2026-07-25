@@ -4,6 +4,33 @@ import { getSanityBlogPosts } from "@/lib/sanity/client";
 import { blogTaxonomyUrl, categoryCounts } from "@/lib/sanity/blog";
 import { useTranslations } from "@/lib/utils/i18nUtils";
 const t = await useTranslations(Astro.currentLocale as string);
-const categories = categoryCounts(await getSanityBlogPosts()).sort((a,b) => b.count-a.count);
+const categories = categoryCounts(await getSanityBlogPosts()).sort(
+  (a, b) => b.count - a.count,
+);
 ---
-{categories.length > 0 && <div class="bg-light rounded-lg p-4 lg:p-8"><h2 class="md:text-h5 text-h5-sm mb-6">{t("widgets.categoriesTitle")}</h2>{categories.map((category) => <div class="group/category relative flex items-center gap-2 py-1.5 font-medium"><Icons icon="ChevronsRight" /><span>{category.name}</span><span class="text-text-dark/50 ml-auto text-sm">{category.count}</span><a href={blogTaxonomyUrl("category", category.name, Astro.currentLocale)} class="absolute inset-0" /></div>)}</div>}
+
+{
+  categories.length > 0 && (
+    <div class="bg-light rounded-lg p-4 lg:p-8">
+      <h2 class="md:text-h5 text-h5-sm mb-6">{t("widgets.categoriesTitle")}</h2>
+      {categories.map((category) => (
+        <div class="group/category relative flex items-center gap-2 py-1.5 font-medium">
+          <Icons icon="ChevronsRight" />
+          <span>{category.name}</span>
+          <span class="text-text-dark/50 ml-auto text-sm">
+            {category.count}
+          </span>
+          <a
+            href={blogTaxonomyUrl(
+              "category",
+              category.name,
+              Astro.currentLocale,
+            )}
+            class="absolute inset-0"
+            aria-label={`Filter posts by ${category.name}`}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}

@@ -6,7 +6,10 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import { sanityBlogIndexContent } from "@/lib/sanity/blog";
+import {
+  sanityBlogIndexContent,
+  sanityBlogPlaceholder,
+} from "@/lib/sanity/blog";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import { slugifyyy, titleify } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
@@ -73,7 +76,13 @@ const collectionPageSchema = {
       filter: { tag: { name: tag || "" } },
       breadcrumbExcludedPaths: ["Tag"],
     }}
-    content={{ ...posts[0], title, slug: { current: "" }, publishedAt: "" }}
+    content={{
+      ...sanityBlogPlaceholder,
+      ...posts[0],
+      title,
+      slug: { current: "" },
+      publishedAt: "",
+    }}
     posts={posts}
   />
   <CTAGallerySection />

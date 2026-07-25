@@ -12,6 +12,13 @@ export const sanityBlogIndexContent = {
   },
 };
 
+export const sanityBlogPlaceholder: SanityBlogPost = {
+  _id: "sanity-blog-placeholder",
+  title: "",
+  slug: { current: "" },
+  publishedAt: "",
+};
+
 export type SanityBlogOptions = {
   layout?: "grid" | "featured" | "horizontal" | "compact";
   columns?: number;

@@ -26,11 +26,19 @@ let nextPage: SanityBlogPost | undefined;
 let prevHref: string | undefined;
 let nextHref: string | undefined;
 if (posts && currentSlug) {
-  const currentIndex = posts.findIndex((item) => item.slug.current === currentSlug);
-  prevPage = posts[currentIndex + 1];
-  nextPage = posts[currentIndex - 1];
-  prevHref = prevPage && getLocaleUrlCTM(`/blog/${prevPage.slug.current}`, Astro.currentLocale);
-  nextHref = nextPage && getLocaleUrlCTM(`/blog/${nextPage.slug.current}`, Astro.currentLocale);
+  const currentIndex = posts.findIndex(
+    (item) => item.slug.current === currentSlug,
+  );
+  if (currentIndex !== -1) {
+    prevPage = posts[currentIndex + 1];
+    nextPage = posts[currentIndex - 1];
+    prevHref =
+      prevPage &&
+      getLocaleUrlCTM(`/blog/${prevPage.slug.current}`, Astro.currentLocale);
+    nextHref =
+      nextPage &&
+      getLocaleUrlCTM(`/blog/${nextPage.slug.current}`, Astro.currentLocale);
+  }
 }
 ---
 

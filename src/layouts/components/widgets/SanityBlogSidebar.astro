@@ -52,7 +52,12 @@ const searchPosts = posts.map((post) => ({
   excerpt: post.excerpt || "",
   href: postUrl(post.slug.current),
   image: post.coverImage?.asset
-    ? sanityImageUrl(post.coverImage.asset).width(180).height(120).fit("crop").auto("format").url()
+    ? sanityImageUrl(post.coverImage.asset)
+        .width(180)
+        .height(120)
+        .fit("crop")
+        .auto("format")
+        .url()
     : "",
 }));
 ---
@@ -70,8 +75,7 @@ const searchPosts = posts.map((post) => ({
       <button
         type="submit"
         aria-label="Search posts"
-        class="btn-accent effect-color-dark absolute top-0 right-0 flex size-11 items-center justify-center rounded-none rounded-r-md px-2 transition-colors xl:size-13.5"
-      >
+        class="btn-accent effect-color-dark absolute top-0 right-0 flex size-11 items-center justify-center rounded-none rounded-r-md px-2 transition-colors xl:size-13.5">
         <Icons icon="Search" class="size-5" />
       </button>
     </form>
@@ -81,7 +85,9 @@ const searchPosts = posts.map((post) => ({
   {
     categories.length > 0 && (
       <div class="bg-light rounded-lg p-4 lg:p-8">
-        <h2 class="md:text-h5 text-h5-sm mb-6">{t("widgets.categoriesTitle")}</h2>
+        <h2 class="md:text-h5 text-h5-sm mb-6">
+          {t("widgets.categoriesTitle")}
+        </h2>
         <div>
           {categories.map((category) => (
             <div class="group/category relative flex items-center gap-2 py-1.5 font-medium transition duration-300 first:pt-0 last:pb-0">
@@ -91,11 +97,14 @@ const searchPosts = posts.map((post) => ({
               <span class="group-hover/category:text-accent truncate transition duration-300">
                 {category.name}
               </span>
-              <span class="text-text-dark/50 ml-auto text-sm">{category.count}</span>
+              <span class="text-text-dark/50 ml-auto text-sm">
+                {category.count}
+              </span>
               <a
                 href={categoryUrl(category.slug)}
                 class="absolute inset-0"
                 title={`Filter posts by ${category.name}`}
+                aria-label={`Filter posts by ${category.name}`}
               />
             </div>
           ))}
@@ -107,30 +116,36 @@ const searchPosts = posts.map((post) => ({
   {
     recentPosts.length > 0 && (
       <div class="bg-light rounded-lg p-4 xl:p-8">
-        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">{t("widgets.recentPostsTitle")}</h2>
+        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">
+          {t("widgets.recentPostsTitle")}
+        </h2>
         <div class="space-y-4.5">
           {recentPosts.map((post) => (
             <a
               href={postUrl(post.slug.current)}
-              class="group flex items-center gap-4.5 border-text-dark/15 border-b pb-4.5 last:border-0 last:pb-0"
-              aria-label={`Read ${post.title}`}
-            >
-              {
-                post.coverImage?.asset && (
-                  <div class="size-20 shrink-0 overflow-hidden rounded-md">
-                    <img
-                      src={sanityImageUrl(post.coverImage.asset).width(160).height(160).fit("crop").auto("format").url()}
-                      alt={post.coverImage.alt || post.title}
-                      width="80"
-                      height="80"
-                      loading="lazy"
-                      class="size-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                )
-              }
+              class="group border-text-dark/15 flex items-center gap-4.5 border-b pb-4.5 last:border-0 last:pb-0"
+              aria-label={`Read ${post.title}`}>
+              {post.coverImage?.asset && (
+                <div class="size-20 shrink-0 overflow-hidden rounded-md">
+                  <img
+                    src={sanityImageUrl(post.coverImage.asset)
+                      .width(160)
+                      .height(160)
+                      .fit("crop")
+                      .auto("format")
+                      .url()}
+                    alt={post.coverImage.alt || post.title}
+                    width="80"
+                    height="80"
+                    loading="lazy"
+                    class="size-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+              )}
               <div>
-                <p class="text-dark line-clamp-2 text-sm font-semibold leading-5">{post.title}</p>
+                <p class="text-dark line-clamp-2 text-sm leading-5 font-semibold">
+                  {post.title}
+                </p>
                 <span class="text-text-dark/60 mt-1 block text-xs">
                   {dateFormat(post.publishedAt, "dd MMM, yyyy")}
                 </span>
@@ -145,14 +160,15 @@ const searchPosts = posts.map((post) => ({
   {
     tags.length > 0 && (
       <div class="bg-light rounded-lg p-4 xl:p-8">
-        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">{t("widgets.popularTagsTitle")}</h2>
+        <h2 class="text-h6 xl:text-h5 mb-5 xl:mb-8">
+          {t("widgets.popularTagsTitle")}
+        </h2>
         <div class="flex flex-wrap gap-3">
           {tags.map((tag) => (
             <a
               href={tagUrl(tag.slug)}
               title={`Filter posts by ${tag.name}`}
-              class="bg-body hover:bg-accent inline-block rounded-md px-4 py-1 font-medium capitalize transition"
-            >
+              class="bg-body hover:bg-accent inline-block rounded-md px-4 py-1 font-medium capitalize transition">
               {humanize(tag.name)} ({tag.count})
             </a>
           ))}
@@ -171,13 +187,17 @@ const searchPosts = posts.map((post) => ({
   const posts = searchPosts;
 
   const escapeHtml = (value) =>
-    String(value).replace(/[&<>'"]/g, (character) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      "'": "&#39;",
-      '"': "&quot;",
-    })[character]);
+    String(value).replace(
+      /[&<>'"]/g,
+      (character) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#39;",
+          '"': "&quot;",
+        })[character],
+    );
 
   const renderResults = (term) => {
     if (!results) return;

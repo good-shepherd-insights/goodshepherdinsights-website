@@ -6,7 +6,10 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import { sanityBlogIndexContent } from "@/lib/sanity/blog";
+import {
+  sanityBlogIndexContent,
+  sanityBlogPlaceholder,
+} from "@/lib/sanity/blog";
 import { generatePaths } from "@/lib/utils/i18nUtils";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
@@ -52,6 +55,7 @@ const collectionPageSchema = {
       pagination: { enable: true, currentPage: 1 },
     }}
     content={{
+      ...sanityBlogPlaceholder,
       ...posts[0],
       title: blogTitle,
       slug: { current: "" },

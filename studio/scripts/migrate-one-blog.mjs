@@ -38,7 +38,7 @@ async function migrate(sourcePath) {
   const frontmatter = yaml.load(match[1])
   const bodySource = match[2]
   const slug = frontmatter.customSlug || frontmatter.slug
-  if (!slug) throw new Error(`Missing customSlug in ${sourcePath}`)
+  if (!slug) throw new Error(`Missing slug in ${sourcePath}`)
   const documentId = `blogPost-${slug}`
   const body = toStructuredBody(htmlToPortableText(bodySource))
 
@@ -108,7 +108,11 @@ async function migrate(sourcePath) {
         continue
       }
 
-      if (block._type === 'block' && block.style === 'normal' && /^(Key Point|Key Insight)\s*:/i.test(text)) {
+      if (
+        block._type === 'block' &&
+        block.style === 'normal' &&
+        /^(Key Point|Key Insight)\s*:/i.test(text)
+      ) {
         const match = text.match(/^(Key Point|Key Insight)\s*:\s*/i)
         structured.push({
           _type: 'callout',
@@ -209,7 +213,11 @@ async function migrate(sourcePath) {
       const question = blockText(blocks[cursor])
       const answer = []
       cursor += 1
-      while (cursor < blocks.length && !isHeading(blocks[cursor], 3) && !isHeading(blocks[cursor], 2)) {
+      while (
+        cursor < blocks.length &&
+        !isHeading(blocks[cursor], 3) &&
+        !isHeading(blocks[cursor], 2)
+      ) {
         answer.push(cloneBlock(blocks[cursor], `faq-${start}-${items.length}-${answer.length}`))
         cursor += 1
       }
@@ -218,7 +226,10 @@ async function migrate(sourcePath) {
     }
 
     return items.length
-      ? {_value: {_type: 'faq', _key: `faq-${start}`, heading: blockText(blocks[start]), items}, end: cursor - 1}
+      ? {
+          _value: {_type: 'faq', _key: `faq-${start}`, heading: blockText(blocks[start]), items},
+          end: cursor - 1,
+        }
       : null
   }
 
@@ -237,12 +248,23 @@ async function migrate(sourcePath) {
       cursor += 1
     }
     return items.length
-      ? {_value: {_type: 'sources', _key: `sources-${start}`, heading: blockText(blocks[start]), items}, end: cursor - 1}
+      ? {
+          _value: {
+            _type: 'sources',
+            _key: `sources-${start}`,
+            heading: blockText(blocks[start]),
+            items,
+          },
+          end: cursor - 1,
+        }
       : null
   }
 
   function parseFramework(blocks, start) {
-    if (!isHeading(blocks[start], 2) || !/^Stage (One|Two|Three|Four|Five|Six):/i.test(blockText(blocks[start]))) {
+    if (
+      !isHeading(blocks[start], 2) ||
+      !/^Stage (One|Two|Three|Four|Five|Six):/i.test(blockText(blocks[start]))
+    ) {
       return null
     }
 
@@ -250,13 +272,18 @@ async function migrate(sourcePath) {
     let cursor = start
     while (cursor < blocks.length) {
       const heading = blocks[cursor]
-      const match = isHeading(heading, 2) && blockText(heading).match(/^Stage (One|Two|Three|Four|Five|Six):\s*(.+)$/i)
+      const match =
+        isHeading(heading, 2) &&
+        blockText(heading).match(/^Stage (One|Two|Three|Four|Five|Six):\s*(.+)$/i)
       if (!match) break
 
       const explanation = []
       cursor += 1
       while (cursor < blocks.length && !isHeading(blocks[cursor], 2)) {
-        const normalized = toConstrainedBlock(blocks[cursor], `framework-${start}-${stages.length}-${explanation.length}`)
+        const normalized = toConstrainedBlock(
+          blocks[cursor],
+          `framework-${start}-${stages.length}-${explanation.length}`,
+        )
         if (!normalized) return null
         explanation.push(normalized)
         cursor += 1
@@ -288,7 +315,11 @@ async function migrate(sourcePath) {
   function parseVendorProfile(blocks, start) {
     if (!isHeading(blocks[start], 3)) return null
     const name = blockText(blocks[start])
-    if (!/Planning Center|Church Community Builder|Subsplash|Breeze ChMS|Elvanto|Rock RMS|Pushpay/i.test(name)) {
+    if (
+      !/Planning Center|Church Community Builder|Subsplash|Breeze ChMS|Elvanto|Rock RMS|Pushpay/i.test(
+        name,
+      )
+    ) {
       return null
     }
 
@@ -303,7 +334,9 @@ async function migrate(sourcePath) {
     let currentLabel
     for (const block of segment) {
       const text = blockText(block)
-      const match = text.match(/^(Official Site|Free Trial|Documentation|Support|Download|Community|Contact|Market position|Best for|Core strengths|Limitations|Pricing|When to Choose[^:]*):\s*(.*)$/i)
+      const match = text.match(
+        /^(Official Site|Free Trial|Documentation|Support|Download|Community|Contact|Market position|Best for|Core strengths|Limitations|Pricing|When to Choose[^:]*):\s*(.*)$/i,
+      )
       if (match) {
         currentLabel = match[1].toLowerCase()
         labeled.set(currentLabel, [])
@@ -318,13 +351,16 @@ async function migrate(sourcePath) {
     const required = ['market position', 'best for', 'core strengths', 'limitations', 'pricing']
     if (!required.every((key) => labeled.has(key))) return null
 
-    const officialLinks = segment
-      .flatMap((block) => (block.markDefs || []).filter((mark) => mark._type === 'link').map((mark) => ({
-        _key: `vendor-link-${start}-${mark._key}`,
-        _type: 'officialLink',
-        label: blockText(block),
-        url: mark.href,
-      })))
+    const officialLinks = segment.flatMap((block) =>
+      (block.markDefs || [])
+        .filter((mark) => mark._type === 'link')
+        .map((mark) => ({
+          _key: `vendor-link-${start}-${mark._key}`,
+          _type: 'officialLink',
+          label: blockText(block),
+          url: mark.href,
+        })),
+    )
 
     return {
       _value: {
@@ -344,7 +380,8 @@ async function migrate(sourcePath) {
   }
 
   function parseUseCase(blocks, start) {
-    if (!isHeading(blocks[start], 3) || !/^Use Case \d+:/i.test(blockText(blocks[start]))) return null
+    if (!isHeading(blocks[start], 3) || !/^Use Case \d+:/i.test(blockText(blocks[start])))
+      return null
     return null
   }
 
@@ -353,7 +390,10 @@ async function migrate(sourcePath) {
   }
 
   function blockText(block) {
-    return (block?.children || []).map((child) => child.text || '').join('').trim()
+    return (block?.children || [])
+      .map((child) => child.text || '')
+      .join('')
+      .trim()
   }
 
   function cloneBlock(block, prefix) {
@@ -375,7 +415,10 @@ async function migrate(sourcePath) {
   }
 
   function toConstrainedBlock(block, prefix) {
-    if (block?._type !== 'block' || !['normal', 'bullet', 'number'].includes(block.style || 'normal')) {
+    if (
+      block?._type !== 'block' ||
+      !['normal', 'bullet', 'number'].includes(block.style || 'normal')
+    ) {
       return null
     }
     return cloneBlock(block, prefix)
@@ -437,7 +480,8 @@ function htmlToPortableText(html) {
       return
     }
 
-    const style = tag === 'h1' ? 'h2' : tag === 'h2' || tag === 'h3' || tag === 'blockquote' ? tag : 'normal'
+    const style =
+      tag === 'h1' ? 'h2' : tag === 'h2' || tag === 'h3' || tag === 'blockquote' ? tag : 'normal'
     addBlock(style, node)
   }
 

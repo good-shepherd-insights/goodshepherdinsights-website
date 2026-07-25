@@ -12,7 +12,7 @@ const inlineText = () =>
       ],
       annotations: [
         defineType({
-          name: 'inlineLink',
+          name: 'link',
           title: 'Link',
           type: 'object',
           fields: [
@@ -58,7 +58,7 @@ const constrainedText = () =>
       ],
       annotations: [
         defineType({
-          name: 'constrainedLink',
+          name: 'link',
           title: 'Link',
           type: 'object',
           fields: [
@@ -92,7 +92,12 @@ export const insightList = defineType({
   title: 'Insight list',
   type: 'object',
   fields: [
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'items',
       title: 'Items',
@@ -100,7 +105,15 @@ export const insightList = defineType({
       of: [
         defineArrayMember({
           type: 'object',
-          fields: [defineField({name: 'text', title: 'Text', type: 'array', of: [inlineText()], validation: (Rule) => Rule.required().min(1)})],
+          fields: [
+            defineField({
+              name: 'text',
+              title: 'Text',
+              type: 'array',
+              of: [inlineText()],
+              validation: (Rule) => Rule.required().min(1),
+            }),
+          ],
         }),
       ],
       validation: (Rule) => Rule.required().min(1),
@@ -129,7 +142,12 @@ export const takeaways = defineType({
   title: 'Takeaways',
   type: 'object',
   fields: [
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'items',
       title: 'Items',
@@ -137,7 +155,15 @@ export const takeaways = defineType({
       of: [
         defineArrayMember({
           type: 'object',
-          fields: [defineField({name: 'text', title: 'Text', type: 'array', of: [inlineText()], validation: (Rule) => Rule.required().min(1)})],
+          fields: [
+            defineField({
+              name: 'text',
+              title: 'Text',
+              type: 'array',
+              of: [inlineText()],
+              validation: (Rule) => Rule.required().min(1),
+            }),
+          ],
         }),
       ],
       validation: (Rule) => Rule.required().min(1),
@@ -150,7 +176,12 @@ export const faq = defineType({
   title: 'FAQ',
   type: 'object',
   fields: [
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'items',
       title: 'Questions',
@@ -159,7 +190,12 @@ export const faq = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'question', title: 'Question', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'question',
+              title: 'Question',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({
               name: 'answer',
               title: 'Answer',
@@ -181,7 +217,12 @@ export const sources = defineType({
   title: 'Sources',
   type: 'object',
   fields: [
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'items',
       title: 'Sources',
@@ -190,7 +231,12 @@ export const sources = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({name: 'url', title: 'URL', type: 'string'}),
             defineField({name: 'publisher', title: 'Publisher', type: 'string'}),
             defineField({name: 'publishedAt', title: 'Published at', type: 'string'}),
@@ -208,7 +254,12 @@ export const framework = defineType({
   title: 'Framework',
   type: 'object',
   fields: [
-    defineField({name: 'heading', title: 'Heading', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'steps',
       title: 'Steps',
@@ -217,8 +268,18 @@ export const framework = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'number', title: 'Number', type: 'number', validation: (Rule) => Rule.required().integer().min(1)}),
-            defineField({name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'number',
+              title: 'Number',
+              type: 'number',
+              validation: (Rule) => Rule.required().integer().min(1),
+            }),
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
             defineField({
               name: 'explanation',
               title: 'Explanation',
@@ -240,7 +301,12 @@ export const vendorProfile = defineType({
   title: 'Vendor profile',
   type: 'object',
   fields: [
-    defineField({name: 'name', title: 'Vendor', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'name',
+      title: 'Vendor',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'officialLinks',
       title: 'Official links',
@@ -249,19 +315,62 @@ export const vendorProfile = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'label', title: 'Label', type: 'string', validation: (Rule) => Rule.required()}),
-            defineField({name: 'url', title: 'URL', type: 'string', validation: (Rule) => Rule.required()}),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
           ],
         }),
       ],
       validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({name: 'marketPosition', title: 'Market position', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'bestFor', title: 'Best for', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'coreStrengths', title: 'Core strengths', type: 'array', of: [{type: 'string'}], validation: (Rule) => Rule.required().min(1)}),
-    defineField({name: 'limitations', title: 'Limitations', type: 'array', of: [{type: 'string'}], validation: (Rule) => Rule.required().min(1)}),
-    defineField({name: 'pricing', title: 'Pricing', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'selectionCriteria', title: 'Selection criteria', type: 'array', of: [{type: 'string'}], validation: (Rule) => Rule.required().min(1)}),
+    defineField({
+      name: 'marketPosition',
+      title: 'Market position',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'bestFor',
+      title: 'Best for',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'coreStrengths',
+      title: 'Core strengths',
+      type: 'array',
+      of: [{type: 'string'}],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'limitations',
+      title: 'Limitations',
+      type: 'array',
+      of: [{type: 'string'}],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'pricing',
+      title: 'Pricing',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'selectionCriteria',
+      title: 'Selection criteria',
+      type: 'array',
+      of: [{type: 'string'}],
+      validation: (Rule) => Rule.required().min(1),
+    }),
   ],
 })
 
@@ -270,10 +379,35 @@ export const useCase = defineType({
   title: 'Use case',
   type: 'object',
   fields: [
-    defineField({name: 'title', title: 'Title', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'churchProfile', title: 'Church profile', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'recommendation', title: 'Recommendation', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'rationale', title: 'Rationale', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'budget', title: 'Budget', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'churchProfile',
+      title: 'Church profile',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'recommendation',
+      title: 'Recommendation',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'rationale',
+      title: 'Rationale',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'budget',
+      title: 'Budget',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
   ],
 })

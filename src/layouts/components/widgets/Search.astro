@@ -38,6 +38,18 @@ const posts = await getSanityBlogPosts();
   const form = document.querySelector("[data-sanity-search]"),
     input = form?.querySelector("input"),
     results = document.querySelector("[data-sanity-results]");
+  const escapeHtml = (value) =>
+    value.replace(
+      /[&<>"']/g,
+      (character) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[character],
+    );
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
     const term = input?.value.trim().toLowerCase() || "";
@@ -50,7 +62,7 @@ const posts = await getSanityBlogPosts();
       matches
         .map(
           (post) =>
-            `<a href="${post.href}" class="block text-sm font-semibold">${post.title}</a>`,
+            `<a href="${escapeHtml(post.href)}" class="block text-sm font-semibold">${escapeHtml(post.title)}</a>`,
         )
         .join("") || `<p class="text-sm">No posts found.</p>`;
   });
