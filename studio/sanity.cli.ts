@@ -5,6 +5,9 @@ export default defineCliConfig({
     projectId: '8yy9mp89',
     dataset: 'production'
   },
+  project: {
+    basePath: '/studio',
+  },
   // Keep the nested Studio isolated from the Astro app's parent tsconfig.
   // The Studio does not use TypeScript path aliases.
   vite: {
