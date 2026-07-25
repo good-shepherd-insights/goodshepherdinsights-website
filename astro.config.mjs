@@ -93,6 +93,14 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      proxy: {
+        "/studio": {
+          target: "http://127.0.0.1:3333",
+          ws: true,
+        },
+      },
+    },
     optimizeDeps: {
       exclude: ["astro/runtime/client/dev-toolbar/entrypoint.js"],
     },

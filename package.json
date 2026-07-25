@@ -5,7 +5,8 @@
   "author": "getastrothemes",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "npm run toml:watch -- --watch & astro dev",
+    "dev": "npm run toml:watch -- --watch & npm run dev:studio & astro dev",
+    "dev:studio": "npm --prefix studio run dev -- --host 127.0.0.1 --port 3333",
     "build": "npm run toml:watch && astro build && npm run build:studio && npm run remove-draft-from-sitemap",
     "build:studio": "npm --prefix studio ci --ignore-scripts && npm --prefix studio run build -- ../dist/studio",
     "toml:watch": "node scripts/toml-watcher.mjs",
