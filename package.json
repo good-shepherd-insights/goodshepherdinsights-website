@@ -21,7 +21,7 @@
     "deploy:cf": "wrangler pages deploy"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": "24.18.0"
   },
   "dependencies": {
     "@portabletext/to-html": "^5.0.2",
