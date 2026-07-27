@@ -5,8 +5,10 @@
   "author": "getastrothemes",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "npm run toml:watch -- --watch & astro dev",
-    "build": "npm run toml:watch && astro build && npm run remove-draft-from-sitemap",
+    "dev": "npm run toml:watch -- --watch & npm run dev:studio & astro dev",
+    "dev:studio": "npm --prefix studio run dev -- --host 127.0.0.1 --port 3333",
+    "build": "npm run toml:watch && astro build && npm run build:studio && npm run remove-draft-from-sitemap",
+    "build:studio": "npm --prefix studio ci --ignore-scripts && npm --prefix studio run build -- ../dist/studio",
     "toml:watch": "node scripts/toml-watcher.mjs",
     "preview": "npm run toml:watch & astro build && npm run remove-draft-from-sitemap && astro preview",
     "astro-check": "npm run toml:watch & astro check",
@@ -22,12 +24,15 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
+    "@portabletext/to-html": "^5.0.2",
     "@preline/accordion": "^4.1.3",
     "@preline/collapse": "^4.1.3",
     "@preline/overlay": "^4.1.3",
     "@preline/select": "^4.1.3",
     "@preline/tabs": "^4.1.3",
     "@preline/tooltip": "^4.1.3",
+    "@sanity/client": "^7.25.0",
+    "@sanity/image-url": "^2.1.1",
     "aos": "^2.3.4",
     "astro-seo-meta": "^6.0.0",
     "astro-seo-schema": "^6.0.0",

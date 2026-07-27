@@ -1,56 +1,40 @@
 ---
-import ContentList, {
-  type ContentListProps,
-} from "./widgets/ContentList.astro";
+import ContentList from "./widgets/ContentList.astro";
 import BlogSinglePageLayout from "./BlogSinglePageLayout.astro";
-import type { CollectionEntry } from "astro:content";
-import Sidebar from "./widgets/Sidebar.astro";
-import BlogCard from "./cards/BlogCard.astro";
-import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
-import config from ".astro/config.generated.json";
-
-type sidebarType = {
-  enable: boolean;
-  sticky: boolean;
-  widgets?: string[];
-};
+import SanityBlogSidebar from "./widgets/SanityBlogSidebar.astro";
+import type { SanityBlogPost } from "@/lib/sanity/client";
+import type { SanityBlogOptions } from "@/lib/sanity/blog";
+import { sanityBlogIndexContent } from "@/lib/sanity/blog";
 type Props = {
-  pageType?: "single" | "list"; // Default is "single"
+  pageType?: "single" | "list";
   hasLightBackground?: boolean;
-  sidebar?: sidebarType;
-  content: CollectionEntry<"blog">;
-  contentList?: ContentListProps;
+  sidebar?: { enable: boolean; sticky?: boolean; widgets?: string[] };
+  content: SanityBlogPost;
+  posts: SanityBlogPost[];
+  contentList?: {
+    options?: SanityBlogOptions;
+    pagination?: { enable: boolean; currentPage: number };
+    filter?: { category?: { name: string }; tag?: { name: string } };
+    breadcrumb?: boolean;
+    breadcrumbExcludedPaths?: string[];
+    searchSection?: typeof sanityBlogIndexContent.searchSection;
+  };
 };
-
-// Destructure Astro props with default values
 const {
   pageType = "single",
   hasLightBackground = false,
   sidebar,
   content,
+  posts,
   contentList,
-} = Astro.props;
-// Sidebar enabled flag
-const sidebarEnabled = sidebar?.enable;
-
-const templatePost = content?.id?.includes("-index")
-  ? (await getEntryCTM(
-      config.settings.blogFolder as "blog",
-      "post-1",
-      Astro.currentLocale,
-    )) ||
-    (await getCollectionCTM(
-      config.settings.blogFolder as "blog",
-      Astro.currentLocale,
-    ))[0]
-  : content;
+} = Astro.props as Props;
 ---
 
 <section class:list={[hasLightBackground && "bg-light"]}>
   <div class="relative container">
     <div
       class:list={[
-        sidebarEnabled &&
+        sidebar?.enable &&
           "grid grid-cols-1 gap-x-4 gap-y-16 lg:grid-cols-12 lg:items-start lg:gap-x-8",
       ]}>
       {
@@ -58,57 +42,29 @@ const templatePost = content?.id?.includes("-index")
           <div
             class:list={[
               "has-video-modal",
-              sidebarEnabled
+              sidebar?.enable
                 ? "order-1 space-y-10 lg:col-span-8 lg:p-5"
                 : "grid grid-cols-1 justify-items-center space-y-12",
             ]}>
             <ContentList
               {...contentList}
-              searchSection={content.data.searchSection}
+              searchSection={
+                contentList?.searchSection ||
+                sanityBlogIndexContent.searchSection
+              }
+              posts={posts}
             />
           </div>
         )
       }
       {
-        sidebarEnabled && (
-          <Sidebar
-            content={{
-              ...sidebar,
-              currentPost: content,
-            }}
-          />
-        )
-      }
-      {
         pageType === "single" && (
-          <BlogSinglePageLayout class="single-page-content" content={content} />
+          <BlogSinglePageLayout content={content} posts={posts} />
         )
       }
-
-      {/* Blog Search Results */}
-      <div
-        class:list={[
-          "blog-search-results bg-light hidden rounded-lg p-6 lg:col-span-8",
-          "gap-6",
-          contentList?.options &&
-            contentList.options.layout === "grid" && {
-              "grid grid-cols-1": contentList.options.columns === 1,
-              "grid md:grid-cols-2": contentList.options.columns === 2,
-              "grid md:grid-cols-2 lg:grid-cols-3":
-                contentList.options.columns === 3,
-            },
-        ]}>
-      </div>
-
-      {/* To support posts search functionality, this code is added */}
       {
-        templatePost && (
-          <BlogCard
-            class="template-post-search hidden"
-            content={templatePost as CollectionEntry<"blog">}
-            options={contentList?.options}
-            aria-hidden={true}
-          />
+        sidebar?.enable && (
+          <SanityBlogSidebar posts={posts} currentSlug={content.slug.current} />
         )
       }
     </div>

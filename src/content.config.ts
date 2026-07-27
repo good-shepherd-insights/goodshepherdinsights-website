@@ -4,13 +4,11 @@ import { button, sectionsSchema } from "./sections.schema";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import {
-  BLOG_CARD_LAYOUT,
   CASESTUDIES_CARD_LAYOUT,
   SERVICE_CARD_LAYOUT,
 } from "@/enum";
 
 const caseStudiesFolder = config.settings.caseStudiesFolder as "case-studies";
-const blogFolder = config.settings.blogFolder || "blog";
 const serviceFolder = config.settings.serviceFolder || "services";
 const testimonialFolder = config.settings.testimonialFolder || "testimonial";
 
@@ -89,39 +87,6 @@ const serviceCollection = defineCollection({
         layout: z.enum(SERVICE_CARD_LAYOUT).optional(),
         limit: z.union([z.number().int(), z.literal(false)]).optional(),
       })
-      .optional(),
-  }),
-});
-
-// Blog
-const blogCollection = defineCollection({
-  loader: contentLoader(`./src/content/${blogFolder}`),
-  schema: page.extend({
-    searchSection: z
-      .object({
-        title: z.string(),
-        searchPlaceholder: z.string(),
-        button: button.optional(),
-      })
-      .optional(),
-    options: z
-      .object({
-        search: z.boolean().optional(),
-        layout: z.enum(BLOG_CARD_LAYOUT).optional(),
-        appearance: z.enum(["dark", "light"]).optional(),
-        columns: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
-        limit: z.union([z.number().int(), z.literal(false)]).optional(),
-      })
-      .optional(),
-    commentList: z
-      .array(
-        z.object({
-          avatar: z.string().optional(),
-          name: z.string(),
-          date: z.string(),
-          content: z.string(),
-        }),
-      )
       .optional(),
   }),
 });
@@ -208,14 +173,10 @@ export const testimonialCollection = defineCollection({
 // Export Collections
 // ------------------------
 export const collections = {
-  [blogFolder]: blogCollection,
-  blog: blogCollection,
-
   [serviceFolder]: serviceCollection,
   services: serviceCollection,
 
   [caseStudiesFolder]: caseStudyCollection,
-  "case-studies": caseStudyCollection,
 
   pages: pagesCollection,
   team: teamCollection,
