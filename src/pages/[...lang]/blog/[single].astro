@@ -1,144 +1,59 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
-import config from ".astro/config.generated.json";
-import { getEntryCTM } from "@/lib/contentParser.astro";
-import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
-import BlogLayout from "@/components/BlogLayout.astro";
-import extractSlug from "@/lib/utils/extractSlug";
 import PageHeader from "@/components/widgets/PageHeader.astro";
+import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
-import { Schema } from "astro-seo-schema";
-import type { BlogPosting, Person } from "schema-dts";
+import { getSanityBlogPost, getSanityBlogPosts } from "@/lib/sanity/client";
+import { blogImageUrl } from "@/lib/sanity/blog";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import AuthorBio from "@/components/widgets/AuthorBio.astro";
-import { slugifyyy } from "@/lib/utils/textConverter";
-
+import config from ".astro/config.generated.json";
 export async function getStaticPaths() {
-  const paths = await Promise.all(
-    supportedLanguages.map(async (lang) => {
-      const blogFolder = config.settings.blogFolder as "blog";
-      const { defaultLanguage, showDefaultLangInUrl } =
-        config.settings.multilingual;
-
-      const postIndex = await getEntryCTM(
-        blogFolder as "blog",
-        "-index",
-        lang.languageCode,
-      );
-
-      let posts = await getCollectionCTM(
-        blogFolder as "blog",
-        lang.languageCode,
-      );
-
-      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
-      if (postIndex?.data.draft && import.meta.env.PROD) {
-        return [];
-      }
-
-      return posts.map((post) => ({
-        params: {
-          lang:
-            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
-              ? undefined
-              : lang.languageCode,
-          single: extractSlug(post).split("/").pop(),
-        },
-        props: {
-          post,
-          postIndex,
-        },
-      }));
-    }),
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
+  return (await getSanityBlogPosts()).flatMap((post) =>
+    supportedLanguages.map((lang) => ({
+      params: {
+        single: post.slug.current,
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+      },
+      props: { post, posts: [] },
+    })),
   );
-
-  return paths.flat();
 }
-
-const { post, postIndex } = Astro.props;
-
-const baseUrl = trailingSlashChecker(Astro.url.origin);
-const baseUrlClean = baseUrl.replace(/\/$/, "");
-
-const authorName = post?.data?.author || config.seo.author;
-const authorUrl = `${baseUrlClean}/about`;
-
-// ISSUE 7: Derive a stable @id from the author name to avoid collisions
-// when multiple authors exist. Uses the same slugifyyy utility already
-// used in category/tag pages for URL slugs.
-const authorSlug = slugifyyy(authorName);
-
-// Resolve canonical for this blog post
-const resolvedCanonical = Astro.props.canonical
-  ? absoluteUrl(Astro.props.canonical, Astro)
-  : absoluteUrl(Astro.url.pathname, Astro);
-
-// Derive datePublished
-const datePublished = post?.data?.datePublished
-  ? post.data.datePublished
-  : post?.data?.date
-    ? new Date(post.data.date).toISOString().split("T")[0]
-    : undefined;
-
-// Build BlogPosting schema inline
-const blogPostingSchema: BlogPosting = {
-  "@type": "BlogPosting",
-  "@id": `${resolvedCanonical}#blogposting`,
-  headline: post?.data?.title,
-  description: post?.data?.metaDescription || post?.data?.description,
-  url: resolvedCanonical,
-  ...(post?.data?.image && { image: absoluteUrl(post.data.image, Astro) }),
-  ...(datePublished && { datePublished }),
-  ...(post?.data?.dateModified && { dateModified: post.data.dateModified }),
-  author: { "@id": `${baseUrlClean}/#person-${authorSlug}` },
-  publisher: { "@id": `${baseUrlClean}/#organization` },
-  mainEntityOfPage: resolvedCanonical,
-};
-
-// Build Person schema for author
-const personSchema: Person = {
-  "@type": "Person",
-  "@id": `${baseUrlClean}/#person-${authorSlug}`,
-  name: authorName,
-  url: authorUrl,
-  jobTitle: "Fractional CTO",
-  worksFor: { "@id": `${baseUrlClean}/#organization` },
-};
+const { post: pathPost } = Astro.props;
+const post = pathPost?.body
+  ? pathPost
+  : await getSanityBlogPost(Astro.params.single || "");
+const posts = await getSanityBlogPosts();
+if (!post) return Astro.redirect("/404");
+const canonical = absoluteUrl(Astro.url.pathname, Astro);
 ---
 
-<Base {...post?.data}>
+<Base
+  title={post.title}
+  metaTitle={post.title}
+  metaDescription={post.excerpt}
+  canonical={canonical}
+  image={blogImageUrl(post, 1200, 630)}>
   <PageHeader
     content={{
-      badge: post?.data?.categories?.[0],
-      title: post?.data?.title,
+      title: post.title,
+      badge: post.categories?.[0],
       postData: {
-        date: post?.data?.date,
-        comments: post?.data?.comments,
-        author: post?.data?.author,
+        date: new Date(post.publishedAt),
+        author: "Good Shepherd Insights",
       },
     }}
     contentClass=""
   />
   <BlogLayout
-    sidebar={{
-      enable: true,
-      sticky: true,
-      widgets: ["Search", "Categories", "RecentPosts", "Tags", "CTA"],
-    }}
+    sidebar={{ enable: true, sticky: true }}
     content={post}
-    contentList={{
-      options: postIndex?.data.options,
-      breadcrumb: true,
-    }}
+    posts={posts}
   />
   <CTASection hasNoLightBackground={true} />
-
-  <!-- Author attribution for E-E-A-T -->
-  <AuthorBio authorName={authorName} authorUrl={authorUrl} />
-
-  <!-- Page-specific structured data -->
-  <Schema item={{ "@context": "https://schema.org", ...blogPostingSchema } as any} />
-  <Schema item={{ "@context": "https://schema.org", ...personSchema } as any} />
 </Base>

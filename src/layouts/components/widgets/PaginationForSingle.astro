@@ -1,14 +1,13 @@
 ---
-import { getCollectionCTM } from "@/lib/contentParser.astro";
-import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
+import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
 import Button from "@/components/Button.astro";
-import type { CollectionEntry } from "astro:content";
+import type { SanityBlogPost } from "@/lib/sanity/client";
 
 interface Props {
   prevBtnText?: string;
-  collection?: string;
+  posts?: SanityBlogPost[];
   nextBtnText?: string;
-  currentPage?: CollectionEntry<"blog"> | CollectionEntry<"case-studies">;
+  currentSlug?: string;
   class?: string;
 }
 
@@ -17,31 +16,30 @@ const t = await useTranslations(Astro.currentLocale as string);
 let {
   prevBtnText = t("common.paginationPrevious"),
   nextBtnText = t("common.paginationNext"),
-  collection,
-  currentPage,
+  posts,
+  currentSlug,
   class: className,
 } = Astro.props;
 
-let pages;
-if (collection) {
-  pages = await getCollectionCTM(
-    collection as "blog" | "case-studies",
-    Astro.currentLocale,
+let prevPage: SanityBlogPost | undefined;
+let nextPage: SanityBlogPost | undefined;
+let prevHref: string | undefined;
+let nextHref: string | undefined;
+if (posts && currentSlug) {
+  const currentIndex = posts.findIndex(
+    (item) => item.slug.current === currentSlug,
   );
+  if (currentIndex !== -1) {
+    prevPage = posts[currentIndex + 1];
+    nextPage = posts[currentIndex - 1];
+    prevHref =
+      prevPage &&
+      getLocaleUrlCTM(`/blog/${prevPage.slug.current}`, Astro.currentLocale);
+    nextHref =
+      nextPage &&
+      getLocaleUrlCTM(`/blog/${nextPage.slug.current}`, Astro.currentLocale);
+  }
 }
-
-if (!pages) return;
-
-const currentIndex = pages.findIndex(
-  (item) => item.filePath === currentPage?.filePath,
-);
-
-if (currentIndex === -1) {
-  return;
-}
-
-const prevPage = pages[currentIndex - 1];
-const nextPage = pages[currentIndex + 1];
 ---
 
 <nav
@@ -53,7 +51,7 @@ const nextPage = pages[currentIndex + 1];
   aria-label="Pagination">
   {/* previous */}
   {
-    prevPage && (
+    prevHref && (
       <Button
         variant="text"
         icon={{
@@ -61,7 +59,7 @@ const nextPage = pages[currentIndex + 1];
           name: "ArrowRight",
           position: "left",
         }}
-        url={getEntrySlugCTM(prevPage, Astro.currentLocale)}
+        url={prevHref}
         label={prevBtnText}
         class="hover:text-primary me-auto flex flex-row-reverse items-center gap-2 border-transparent [&_.icons-wrapper]:scale-x-[-1]"
       />
@@ -70,7 +68,7 @@ const nextPage = pages[currentIndex + 1];
 
   {/* next page */}
   {
-    nextPage && (
+    nextHref && (
       <Button
         icon={{
           enable: true,
@@ -78,7 +76,7 @@ const nextPage = pages[currentIndex + 1];
           position: "left",
         }}
         variant="text"
-        url={getEntrySlugCTM(nextPage, Astro.currentLocale)}
+        url={nextHref}
         label={nextBtnText}
         class="hover:text-primary ms-auto border-transparent"
       />

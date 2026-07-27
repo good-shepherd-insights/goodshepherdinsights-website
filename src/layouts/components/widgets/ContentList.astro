@@ -1,97 +1,55 @@
 ---
 import Breadcrumbs from "./Breadcrumbs.astro";
-import type { InferEntrySchema } from "astro:content";
-import { sortByDate } from "@/lib/utils/sortFunctions";
 import BlogCard from "@/components/cards/BlogCard.astro";
-import config from ".astro/config.generated.json";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import Pagination from "@/components/widgets/Pagination.astro";
 import Search from "./Search.astro";
-
-export interface ContentListProps {
+import type { SanityBlogPost } from "@/lib/sanity/client";
+import type { SanityBlogOptions } from "@/lib/sanity/blog";
+import { getSanityBlogPosts } from "@/lib/sanity/client";
+interface Props {
+  posts?: SanityBlogPost[];
+  options?: SanityBlogOptions;
+  pagination?: { enable: boolean; currentPage: number };
+  filter?: { category?: { name: string }; tag?: { name: string } };
   breadcrumb?: boolean;
   breadcrumbExcludedPaths?: string[];
+  searchSection?: {
+    title?: string;
+    searchPlaceholder?: string;
+  };
   class?: string;
-  pagination?: {
-    enable: boolean;
-    currentPage: number;
-  };
-  filter?: {
-    category?: {
-      name: string;
-      slug: string;
-    };
-    tag?: {
-      name: string;
-      slug: string;
-    };
-  };
-  // show filtered content list based on provided taxonomy
-  options?: InferEntrySchema<"blog">["options"];
-  [key: string]: any;
+  onlyForSearch?: boolean;
 }
-
 const {
-  class: className,
-  onlyForSearch,
-  content = "blog",
+  posts: providedPosts,
+  options = {},
   pagination,
   filter,
-  options,
   breadcrumb,
   breadcrumbExcludedPaths,
   searchSection,
-  ...rest
-} = Astro.props as ContentListProps;
-
-const { layout, limit = false, columns = 2 } = options || {};
-
-// Get content list based on content value
-let list = [] as any[];
-let posts = await getCollectionCTM(
-  config.settings.blogFolder as "blog",
-  Astro.currentLocale,
-);
-list = posts;
-
-// Limit content list
-list =
-  limit && list && pagination?.enable === false
-    ? list.slice(0, limit as number)
-    : list;
-
-// Filter content list based on category (If provided)
-if (filter?.category) {
-  list = list.filter((item) =>
-    item.data.categories.includes(filter.category?.name),
+  class: className,
+  onlyForSearch,
+} = Astro.props as Props;
+let posts = providedPosts || (await getSanityBlogPosts());
+if (filter?.category)
+  posts = posts.filter((post) =>
+    post.categories?.includes(filter.category!.name),
   );
-}
-
-// Filter content list based on tag (If provided)
-if (filter?.tag) {
-  list = list.filter((item) => item.data.tags.includes(filter.tag?.name));
-}
-
-// Sort list by date
-list = sortByDate(list);
-
-// For Blog List Pagination
-let totalPages = Math.ceil(posts?.length / config.settings.pagination);
-if (content === "blog" && pagination?.enable) {
-  const indexOfLastPost = pagination?.currentPage * config.settings.pagination;
-  const indexOfFirstPost = indexOfLastPost - config.settings.pagination;
-  list = posts.slice(indexOfFirstPost, indexOfLastPost);
-}
-if (list.length <= 0) return;
+if (filter?.tag)
+  posts = posts.filter((post) => post.tags?.includes(filter.tag!.name));
+const pageSize =
+  Number(
+    (await import(".astro/config.generated.json")).default.settings.pagination,
+  ) || 10;
+const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+const currentPage = pagination?.currentPage || 1;
+if (pagination?.enable)
+  posts = posts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+if (!posts.length) return;
 ---
 
-<div
-  class:list={[
-    {
-      hidden: onlyForSearch,
-    },
-    className,
-  ]}>
+<div class:list={[onlyForSearch && "hidden", className]}>
   {
     breadcrumb && (
       <div class="mb-8">
@@ -99,56 +57,31 @@ if (list.length <= 0) return;
       </div>
     )
   }
-
   {
-    options?.search && searchSection && (
-      <Search class="" searchSection={searchSection} layout="list" />
+    options.search && searchSection && (
+      <Search searchSection={searchSection} layout="list" />
     )
   }
-
   <div
     class:list={[
-      "blog-search-results",
-      "gap-6",
-      layout === "grid" && {
-        "grid grid-cols-1": columns === 1,
-        "grid md:grid-cols-2": columns === 2,
-        "grid md:grid-cols-2 lg:grid-cols-3": columns === 3,
+      "blog-search-results gap-6",
+      options.layout === "grid" && {
+        "grid grid-cols-1": options.columns === 1,
+        "grid md:grid-cols-2": options.columns === 2,
+        "grid md:grid-cols-2 lg:grid-cols-3": options.columns === 3,
       },
-      {
-        hidden: onlyForSearch,
-        "current-page-content": !onlyForSearch,
-      },
-    ]}
-    {...rest}>
+    ]}>
     {
-      !onlyForSearch &&
-        list.map((item) => (
-          <BlogCard content={item} options={options} tag="h2" />
-        ))
+      posts.map((post) => (
+        <BlogCard content={post} options={options} tag="h2" />
+      ))
     }
   </div>
-
-  {/* To support posts search functionality, this code is added */}
-  {
-    list
-      .slice(0, 1)
-      .map((item) => (
-        <BlogCard
-          class="template-post-search hidden"
-          content={item}
-          options={options}
-          tag="h2"
-          aria-hidden={true}
-        />
-      ))
-  }
   {
     pagination?.enable && (
       <Pagination
-        class="pt-4"
         collection="blog"
-        currentPage={pagination?.currentPage || 1}
+        currentPage={currentPage}
         totalPages={totalPages}
       />
     )

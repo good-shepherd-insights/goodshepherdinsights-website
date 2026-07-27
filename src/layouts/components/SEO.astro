@@ -1,7 +1,11 @@
 ---
 import { Seo } from "astro-seo-meta";
 import { getLocaleUrlCTM, supportedLanguages } from "@/lib/utils/i18nUtils.ts";
-import { plainify, removeWhitespace } from "@/lib/utils/textConverter";
+import {
+  plainify,
+  removeWhitespace,
+  resolveTaglineSeparator,
+} from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
 
 export interface SEOProps {
@@ -46,7 +50,7 @@ let resolvedDescription = plainify(
 
 // Add tagline if not disabled
 if (!disableTagline && config.site.tagline) {
-  const separator = config.site.taglineSeparator || " - ";
+  const separator = resolveTaglineSeparator(config.site.taglineSeparator);
   resolvedTitle += separator + config.site.tagline;
 }
 

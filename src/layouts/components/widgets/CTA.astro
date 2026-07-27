@@ -34,7 +34,7 @@ const t = await useTranslations(Astro.currentLocale as string);
         <Icons icon="Mail" class="size-5 fill-black font-bold" />
       </div>
       <div
-        class="text-text-light text-lg font-bold tracking-wide lg:text-xl"
+        class="text-text-light min-w-0 text-sm font-bold leading-tight tracking-normal break-all"
         set:html={markdownify(contactInfo.email, true)}
       />
     </div>

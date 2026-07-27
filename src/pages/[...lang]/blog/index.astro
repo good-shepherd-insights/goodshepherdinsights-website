@@ -1,67 +1,69 @@
 ---
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import Base from "@/layouts/Base.astro";
-import config from ".astro/config.generated.json";
-import handleDraftPage from "@/lib/utils/handleDraftPage";
-import { generatePaths } from "@/lib/utils/i18nUtils.ts";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
 import BlogLayout from "@/components/BlogLayout.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import { getSanityBlogPosts } from "@/lib/sanity/client";
+import {
+  sanityBlogIndexContent,
+  sanityBlogPlaceholder,
+} from "@/lib/sanity/blog";
+import { generatePaths } from "@/lib/utils/i18nUtils";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-
+const posts = await getSanityBlogPosts();
 export function getStaticPaths() {
   return generatePaths();
 }
-const blogFolder = config.settings.blogFolder as "blog";
-
-const postIndex = await getEntryCTM(
-  blogFolder as "blog",
-  "-index",
-  Astro.currentLocale,
-);
-
-// Remove drafts pages in production
-const response = handleDraftPage(postIndex?.data);
-if (response) return response;
-
-// ISSUE 6: CollectionPage schema for blog index listing
-const baseUrl = trailingSlashChecker(Astro.url.origin);
+const {
+  badge: blogBadge,
+  title: blogTitle,
+  metaDescription: blogDescription,
+} = sanityBlogIndexContent;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const collectionPageSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": `${selfCanonical}#collectionpage`,
-  name: postIndex?.data?.title || "Blog",
-  description: postIndex?.data?.metaDescription || postIndex?.data?.description || undefined,
+  name: blogTitle,
+  description: blogDescription,
   url: selfCanonical,
-  isPartOf: {
-    "@id": `${baseUrl.replace(/\/$/, "")}/#website`,
-  },
 };
 ---
 
-<Base {...postIndex?.data}>
-  <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
+<Base
+  title={blogTitle}
+  metaTitle={blogTitle}
+  description={blogDescription}
+  canonical={selfCanonical}>
+  <PageHeader
+    content={{ badge: blogBadge, title: blogTitle }}
+    contentClass="max-w-3xl! xl:px-6"
+  />
   <BlogsHeroSection />
   <BlogLayout
     pageType="list"
     hasLightBackground={true}
     sidebar={{
       enable: false,
-      sticky: true,
     }}
     contentList={{
-      options: postIndex?.data.options,
+      options: { layout: "grid", columns: 2, search: true },
+      searchSection: sanityBlogIndexContent.searchSection,
       pagination: { enable: true, currentPage: 1 },
     }}
-    content={{ ...postIndex, ...postIndex?.data }}
+    content={{
+      ...sanityBlogPlaceholder,
+      ...posts[0],
+      title: blogTitle,
+      slug: { current: "" },
+      publishedAt: "",
+    }}
+    posts={posts}
   />
   <CTAGallerySection />
   <CTASection />
-  <!-- ISSUE 6: CollectionPage schema for blog listing -->
   <Schema item={collectionPageSchema as any} />
 </Base>
