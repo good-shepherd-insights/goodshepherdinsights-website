@@ -37,19 +37,39 @@ export interface SanityBlogPost {
 export type SanityInlineText = Array<{
   _type: "block";
   _key: string;
-  style?: "normal";
+  style?: "normal" | "h2" | "h3" | "blockquote";
+  listItem?: "bullet" | "number";
+  level?: number;
   children: Array<{_type: "span"; _key: string; text: string; marks?: string[]}>;
   markDefs?: Array<{_key: string; _type: string; href?: string; openInNewTab?: boolean}>;
 }>;
 
+export type SanityLegacyBodyBlock = SanityInlineText[number];
+
 export type SanityBody =
-  | SanityInlineText[number]
+  | SanityLegacyBodyBlock
+  | {
+      _type: "articleSection";
+      _key: string;
+      header?: string;
+      headerLevel?: "h2" | "h3";
+      paragraphs: SanityInlineText;
+    }
+  | {
+      _type: "articleList";
+      _key: string;
+      header?: string;
+      headerLevel?: "h2" | "h3";
+      style: "bullet" | "number";
+      items: Array<{text: SanityInlineText}>;
+    }
   | { _type: "bodyImage"; _key: string; asset?: unknown; alt?: string }
   | { _type: "divider"; _key: string; style?: string }
   | { _type: "tldr"; _key: string; text: SanityInlineText }
   | { _type: "insightList"; _key: string; heading: string; items: Array<{text: SanityInlineText}> }
   | { _type: "callout"; _key: string; label: string; text: SanityInlineText }
   | { _type: "takeaways"; _key: string; heading: string; items: Array<{text: SanityInlineText}> }
+  | { _type: "tableOfContents"; _key: string; title?: string }
   | {
       _type: "faq";
       _key: string;

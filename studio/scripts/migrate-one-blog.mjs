@@ -1,19 +1,35 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 
-import {JSDOM} from 'jsdom'
-import yaml from 'js-yaml'
+import matter from 'gray-matter'
+import {parseHTML} from 'linkedom'
 import {marked} from 'marked'
-import {getCliClient} from 'sanity/cli'
+import {createClient} from '@sanity/client'
 
 const studioRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const workspaceRoot = path.resolve(studioRoot, '..')
 const sourceDirectory = path.join(workspaceRoot, 'src/content/blog/english')
+const tokenPath = path.join(os.homedir(), '.config', 'sanity', 'config.json')
+const authToken = JSON.parse(fs.readFileSync(tokenPath, 'utf8')).authToken
+const client = createClient({
+  projectId: '8yy9mp89',
+  dataset: 'production',
+  apiVersion: '2026-01-01',
+  token: authToken,
+  useCdn: false,
+})
 const defaultSourcePath = path.join(
   workspaceRoot,
   'src/content/blog/english/rolling-out-ai-in-church-management-software.mdx',
 )
+const sourceArgIndex = process.argv.indexOf('--source')
+const sourceArgValue =
+  sourceArgIndex >= 0 && process.argv[sourceArgIndex + 1]
+    ? process.argv[sourceArgIndex + 1]
+    : null
+const explicitSourcePath = sourceArgValue ? resolveSourcePath(sourceArgValue) : null
 const dryRun = process.argv.includes('--dry-run')
 const sourcePaths = process.argv.includes('--all')
   ? fs
@@ -21,7 +37,7 @@ const sourcePaths = process.argv.includes('--all')
       .filter((fileName) => fileName.endsWith('.mdx'))
       .sort()
       .map((fileName) => path.join(sourceDirectory, fileName))
-  : [defaultSourcePath]
+  : [explicitSourcePath || defaultSourcePath]
 
 for (const sourcePath of sourcePaths) {
   await migrate(sourcePath)
@@ -29,14 +45,7 @@ for (const sourcePath of sourcePaths) {
 
 async function migrate(sourcePath) {
   const source = fs.readFileSync(sourcePath, 'utf8')
-  const match = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/)
-
-  if (!match) {
-    throw new Error(`Could not parse frontmatter in ${sourcePath}`)
-  }
-
-  const frontmatter = yaml.load(match[1])
-  const bodySource = match[2]
+  const {data: frontmatter, content: bodySource} = matter(source)
   const slug = frontmatter.customSlug || frontmatter.slug
   if (!slug) throw new Error(`Missing slug in ${sourcePath}`)
   const documentId = `blogPost-${slug}`
@@ -50,7 +59,6 @@ async function migrate(sourcePath) {
     throw new Error(`Cover image does not exist: ${imagePath}`)
   }
 
-  const client = getCliClient({apiVersion: '2026-01-01'})
   let coverImage
 
   if (imagePath) {
@@ -123,22 +131,11 @@ async function migrate(sourcePath) {
         continue
       }
 
-      if (isHeading(block) && /^(Core Insights|Answer Box)$/i.test(text)) {
-        const items = []
-        let cursor = index + 1
-        while (cursor < blocks.length && blocks[cursor].listItem) {
-          items.push({
-            _type: 'insightItem',
-            _key: `insight-${index}-${items.length}`,
-            text: [cloneInlineBlock(blocks[cursor], `insight-${index}-${items.length}`)],
-          })
-          cursor += 1
-        }
-        if (items.length) {
-          structured.push({_type: 'insightList', _key: `insights-${index}`, heading: text, items})
-          index = cursor - 1
-          continue
-        }
+      const insightList = parseInsightList(blocks, index)
+      if (insightList) {
+        structured.push(insightList._value)
+        index = insightList.end
+        continue
       }
 
       if (isHeading(block) && /^Key Takeaways(?::|$)/i.test(text)) {
@@ -157,6 +154,18 @@ async function migrate(sourcePath) {
           index = cursor - 1
           continue
         }
+      }
+
+      if (isHeading(block) && /^Table of Contents$/i.test(text)) {
+        structured.push({
+          _type: 'tableOfContents',
+          _key: `toc-${index}`,
+          title: text,
+        })
+        while (index + 1 < blocks.length && blocks[index + 1].listItem) {
+          index += 1
+        }
+        continue
       }
 
       if (isHeading(block) && /^Frequently Asked Questions/i.test(text)) {
@@ -201,7 +210,141 @@ async function migrate(sourcePath) {
       structured.push(block)
     }
 
-    return structured
+    return normalizeArticleFlow(structured)
+  }
+
+  function normalizeArticleFlow(blocks) {
+    const normalized = []
+    let currentSection = null
+
+    const flushSection = () => {
+      if (!currentSection) return
+      if (currentSection.header || currentSection.paragraphs.length) {
+        normalized.push(currentSection)
+      }
+      currentSection = null
+    }
+
+    for (let index = 0; index < blocks.length; index += 1) {
+      const block = blocks[index]
+
+      if (block?._type === 'articleSection' || block?._type === 'articleList') {
+        flushSection()
+        normalized.push(block)
+        continue
+      }
+
+      if (isLegacyCallout(block)) {
+        flushSection()
+        normalized.push(toCallout(block, index))
+        continue
+      }
+
+      if (isHeading(block, 2) || isHeading(block, 3)) {
+        flushSection()
+        currentSection = {
+          _type: 'articleSection',
+          _key: `section-${block._key || index}`,
+          header: blockText(block),
+          headerLevel: block.style,
+          paragraphs: [],
+        }
+        continue
+      }
+
+      if (block?._type === 'block' && block.listItem) {
+        const carriedHeader =
+          currentSection && currentSection.header && currentSection.paragraphs.length === 0
+            ? {header: currentSection.header, headerLevel: currentSection.headerLevel}
+            : null
+        flushSection()
+
+        const items = []
+        const style = block.listItem
+        let cursor = index
+        while (
+          cursor < blocks.length &&
+          blocks[cursor]?._type === 'block' &&
+          blocks[cursor].listItem === style
+        ) {
+          items.push({
+            _type: 'articleListItem',
+            _key: `list-item-${blocks[cursor]._key || cursor}`,
+            text: [cloneInlineBlock(blocks[cursor], `list-item-${index}-${items.length}`)],
+          })
+          cursor += 1
+        }
+
+        normalized.push({
+          _type: 'articleList',
+          _key: `list-${block._key || index}`,
+          ...(carriedHeader || {}),
+          style,
+          items,
+        })
+        index = cursor - 1
+        continue
+      }
+
+      if (block?._type === 'block' && (block.style || 'normal') === 'normal') {
+        if (!currentSection) {
+          currentSection = {
+            _type: 'articleSection',
+            _key: `section-${block._key || index}`,
+            paragraphs: [],
+          }
+        }
+        currentSection.paragraphs.push(cloneParagraphBlock(block, `section-${index}`))
+        continue
+      }
+
+      flushSection()
+      normalized.push(block)
+    }
+
+    flushSection()
+    return normalizeStructuredBlocks(
+      splitMalformedStructuredLists(collapseStructuredPairs(normalized)),
+    )
+  }
+
+  function parseInsightList(blocks, start) {
+    const block = blocks[start]
+    const text = blockText(block)
+    const isWhatYouNeedToKnow =
+      block?._type === 'block' &&
+      (/^What You Need to Know(?: About .+)?\s*:$/i.test(text) ||
+        (isHeading(block) && /^What You Need to Know(?: About .+)?$/i.test(text)))
+    const isLegacyInsightHeading = isHeading(block) && /^(Core Insights|Answer Box)$/i.test(text)
+
+    if (!isWhatYouNeedToKnow && !isLegacyInsightHeading) {
+      return null
+    }
+
+    const items = []
+    let cursor = start + 1
+    while (cursor < blocks.length && blocks[cursor].listItem) {
+      items.push({
+        _type: 'insightItem',
+        _key: `insight-${start}-${items.length}`,
+        text: [cloneInlineBlock(blocks[cursor], `insight-${start}-${items.length}`)],
+      })
+      cursor += 1
+    }
+
+    if (!items.length) {
+      return null
+    }
+
+    return {
+      _value: {
+        _type: 'insightList',
+        _key: `insights-${start}`,
+        heading: text.replace(/:\s*$/, ''),
+        items,
+      },
+      end: cursor - 1,
+    }
   }
 
   function parseFaq(blocks, start) {
@@ -389,6 +532,10 @@ async function migrate(sourcePath) {
     return block?._type === 'block' && (!level || block.style === `h${level}`)
   }
 
+  function isLegacyCallout(block) {
+    return block?._type === 'block' && /^(Key Point|Key Insight)\s*:/i.test(blockText(block))
+  }
+
   function blockText(block) {
     return (block?.children || [])
       .map((child) => child.text || '')
@@ -411,6 +558,15 @@ async function migrate(sourcePath) {
     const cloned = cloneBlock(block, prefix)
     delete cloned.listItem
     delete cloned.level
+    cloned.style = 'normal'
+    return cloned
+  }
+
+  function cloneParagraphBlock(block, prefix) {
+    const cloned = cloneBlock(block, prefix)
+    delete cloned.listItem
+    delete cloned.level
+    cloned.style = 'normal'
     return cloned
   }
 
@@ -428,7 +584,424 @@ async function migrate(sourcePath) {
     const cloned = cloneBlock(block, keyPrefix)
     const first = cloned.children?.[0]
     if (first) first.text = first.text.replace(prefix, '')
+    cloned.style = 'normal'
     return cloned
+  }
+
+  function toCallout(block, index) {
+    const text = blockText(block)
+    const match = text.match(/^(Key Point|Key Insight)\s*:\s*/i)
+    return {
+      _type: 'callout',
+      _key: `callout-${block._key || index}`,
+      label: match[1].replace('point', 'Point').replace('insight', 'Insight'),
+      text: [stripBlockPrefix(block, match[0], `callout-${index}`)],
+    }
+  }
+
+  function collapseStructuredPairs(blocks) {
+    const collapsed = []
+
+    for (let index = 0; index < blocks.length; index += 1) {
+      const block = blocks[index]
+      const next = blocks[index + 1]
+
+      if (isInsightSection(block) && next?._type === 'articleList') {
+        collapsed.push({
+          _type: 'insightList',
+          _key: `insights-${block._key || index}`,
+          heading: normalizeInsightHeading(getSectionLabel(block)),
+          items: next.items.map((item, itemIndex) => ({
+            _type: 'insightItem',
+            _key: item._key || `insight-item-${index}-${itemIndex}`,
+            text: item.text,
+          })),
+        })
+        index += 1
+        continue
+      }
+
+      collapsed.push(block)
+    }
+
+    return collapsed
+  }
+
+  function isInsightSection(block) {
+    const label = getSectionLabel(block)
+    return /^(What You Need to Know(?: About .+)?:?|Core Insights:?|Answer Box:?|Core Insights:\s+What You Need to Know.+)$/i.test(label)
+  }
+
+  function getSectionLabel(block) {
+    if (block?._type === 'articleSection') {
+      if (block.header) return block.header
+      if (block.paragraphs?.length === 1) {
+        return (block.paragraphs[0].children || []).map((child) => child.text || '').join('').trim()
+      }
+    }
+    return ''
+  }
+
+  function normalizeInsightHeading(label) {
+    return label.replace(/^Core Insights:\s*/i, '').replace(/:\s*$/, '')
+  }
+
+  function splitMalformedStructuredLists(blocks) {
+    const output = []
+
+    for (const block of blocks) {
+      if (block?._type !== 'articleList') {
+        output.push(block)
+        continue
+      }
+
+      let currentItems = []
+      let segmentIndex = 0
+
+      const flushList = () => {
+        if (!currentItems.length) return
+        output.push({
+          ...block,
+          _key: segmentIndex === 0 ? block._key : `${block._key}-part-${segmentIndex}`,
+          items: currentItems,
+        })
+        currentItems = []
+        segmentIndex += 1
+      }
+
+      for (const item of block.items || []) {
+        const split = splitInlineTextAtFirstNewline(item.text || [])
+        if (!split) {
+          currentItems.push(item)
+          continue
+        }
+
+        currentItems.push({
+          ...item,
+          text: split.before,
+        })
+        flushList()
+        output.push(...createBlocksFromSpill(split.after, block._key, segmentIndex))
+      }
+
+      flushList()
+    }
+
+    return output
+  }
+
+  function normalizeStructuredBlocks(blocks) {
+    const normalized = []
+
+    for (const block of blocks) {
+      if (block?._type !== 'articleSection') {
+        normalized.push(block)
+        continue
+      }
+
+      normalized.push(...normalizeArticleSection(block))
+    }
+
+    return mergeAdjacentArticleLists(convertStructuredFaqSections(normalized))
+  }
+
+  function normalizeArticleSection(block) {
+    const paragraphs = (block.paragraphs || [])
+      .flatMap((paragraph, index) =>
+        splitParagraphBlockByNewline(paragraph, `${block._key || 'section'}-paragraph-${index}`),
+      )
+      .filter((paragraph) => !isDiscardableStructuredParagraph(blockText(paragraph)))
+
+    const normalized = {
+      ...block,
+      paragraphs,
+    }
+
+    if (!normalized.header && normalized.paragraphs.length >= 2) {
+      const leadText = blockText(normalized.paragraphs[0])
+      if (canPromoteLeadParagraphToHeader(leadText)) {
+        normalized.header = leadText.replace(/:\s*$/, '')
+        normalized.headerLevel = normalized.headerLevel || 'h3'
+        normalized.paragraphs = normalized.paragraphs.slice(1)
+      }
+    }
+
+    if (!normalized.header && normalized.paragraphs.length === 0) {
+      return []
+    }
+
+    return [normalized]
+  }
+
+  function splitParagraphBlockByNewline(block, keyPrefix) {
+    const base = structuredClone(block)
+    const segments = [[]]
+    let segmentIndex = 0
+    let spanIndex = 0
+
+    for (const child of block.children || []) {
+      const parts = String(child.text || '').split('\n')
+
+      for (let index = 0; index < parts.length; index += 1) {
+        const part = parts[index]
+        if (part) {
+          segments[segmentIndex].push({
+            ...child,
+            _key: `${keyPrefix}-span-${spanIndex}`,
+            text: part,
+          })
+          spanIndex += 1
+        }
+
+        if (index < parts.length - 1) {
+          segmentIndex += 1
+          segments[segmentIndex] = []
+        }
+      }
+    }
+
+    return segments
+      .filter((children) => children.some((child) => (child.text || '').trim()))
+      .map((children, index) => ({
+        ...base,
+        _key: `${keyPrefix}-${index}`,
+        children,
+      }))
+  }
+
+  function isDiscardableStructuredParagraph(text) {
+    return (
+      /^PlatformBest ForStarting PriceChurch Size RangeTop Strength/i.test(text) ||
+      /^ModulePriceKey Features/i.test(text) ||
+      /^Feature CategoryCapabilities/i.test(text)
+    )
+  }
+
+  function canPromoteLeadParagraphToHeader(text) {
+    if (!text) return false
+    if (text.endsWith('?')) return true
+    if (/[:.!]/.test(text)) return false
+    return text.split(/\s+/).filter(Boolean).length <= 6
+  }
+
+  function convertStructuredFaqSections(blocks) {
+    const normalized = []
+
+    for (let index = 0; index < blocks.length; index += 1) {
+      const block = blocks[index]
+
+      if (block?._type !== 'articleSection' || !/^Frequently Asked Questions$/i.test(block.header || '')) {
+        normalized.push(block)
+        continue
+      }
+
+      const inlineItems = parseInlineFaqItems(block)
+      if (inlineItems.length) {
+        normalized.push({
+          _type: 'faq',
+          _key: `faq-${block._key || index}`,
+          heading: block.header,
+          items: inlineItems,
+        })
+        continue
+      }
+
+      const items = []
+      let cursor = index + 1
+
+      while (cursor < blocks.length) {
+        const candidate = blocks[cursor]
+        if (candidate?._type !== 'articleSection' || !candidate.header?.endsWith('?')) {
+          break
+        }
+
+        items.push({
+          question: candidate.header,
+          answer: candidate.paragraphs || [],
+        })
+        cursor += 1
+      }
+
+      if (!items.length) {
+        normalized.push(block)
+        continue
+      }
+
+      normalized.push({
+        _type: 'faq',
+        _key: `faq-${block._key || index}`,
+        heading: block.header,
+        items,
+      })
+      index = cursor - 1
+    }
+
+    return normalized
+  }
+
+  function parseInlineFaqItems(block) {
+    const paragraphs = block.paragraphs || []
+    if (!paragraphs.length || paragraphs.length % 2 !== 0) return []
+
+    const items = []
+
+    for (let index = 0; index < paragraphs.length; index += 2) {
+      const question = blockText(paragraphs[index])
+      const answer = paragraphs[index + 1]
+
+      if (!question.endsWith('?') || !answer) {
+        return []
+      }
+
+      items.push({
+        question,
+        answer: [answer],
+      })
+    }
+
+    return items
+  }
+
+  function mergeAdjacentArticleLists(blocks) {
+    const merged = []
+
+    for (const block of blocks) {
+      const previous = merged[merged.length - 1]
+
+      if (
+        block?._type === 'articleList' &&
+        previous?._type === 'articleList' &&
+        previous.style === block.style &&
+        (previous.header || '') === (block.header || '') &&
+        (previous.headerLevel || '') === (block.headerLevel || '')
+      ) {
+        previous.items = [...(previous.items || []), ...(block.items || [])]
+        continue
+      }
+
+      merged.push(block)
+    }
+
+    return merged
+  }
+
+  function splitInlineTextAtFirstNewline(blocks) {
+    let found = false
+    const before = []
+    const after = []
+
+    for (const block of blocks || []) {
+      const beforeChildren = []
+      const afterChildren = []
+      let blockSplit = found
+
+      for (const child of block.children || []) {
+        const text = child.text || ''
+
+        if (blockSplit) {
+          afterChildren.push({...child})
+          continue
+        }
+
+        const newlineIndex = text.indexOf('\n')
+        if (newlineIndex === -1) {
+          beforeChildren.push({...child})
+          continue
+        }
+
+        found = true
+        blockSplit = true
+        const beforeText = text.slice(0, newlineIndex)
+        const afterText = text.slice(newlineIndex + 1)
+
+        if (beforeText) beforeChildren.push({...child, text: beforeText})
+        if (afterText) afterChildren.push({...child, text: afterText})
+      }
+
+      if (beforeChildren.length) {
+        before.push({...block, children: beforeChildren})
+      }
+
+      if (afterChildren.length) {
+        after.push({...block, children: afterChildren})
+      }
+    }
+
+    if (!found) return null
+
+    return {
+      before: normalizeInlineText(before),
+      after: normalizeInlineText(after),
+    }
+  }
+
+  function normalizeInlineText(blocks) {
+    return (blocks || [])
+      .map((block) => ({
+        ...block,
+        children: (block.children || []).filter((child) => child.text),
+      }))
+      .filter((block) => block.children.length > 0)
+  }
+
+  function createBlocksFromSpill(inlineText, keySeed, segmentIndex) {
+    const text = inlineTextToPlainText(inlineText)
+
+    if (!text) return []
+
+    if (/^(Key Point|Key Insight)\s*:/i.test(text)) {
+      return [
+        {
+          _type: 'callout',
+          _key: `${keySeed}-spill-callout-${segmentIndex}`,
+          label: text.startsWith('Key Insight') ? 'Key Insight' : 'Key Point',
+          text: [stripInlinePrefix(inlineText, /^(Key Point|Key Insight)\s*:\s*/i)],
+        },
+      ]
+    }
+
+    if (isHeadingLikeSpill(text)) {
+      return [
+        {
+          _type: 'articleSection',
+          _key: `${keySeed}-spill-heading-${segmentIndex}`,
+          header: text.replace(/:\s*$/, ''),
+          headerLevel: 'h3',
+          paragraphs: [],
+        },
+      ]
+    }
+
+    return [
+      {
+        _type: 'articleSection',
+        _key: `${keySeed}-spill-section-${segmentIndex}`,
+        paragraphs: [inlineText],
+      },
+    ]
+  }
+
+  function inlineTextToPlainText(blocks) {
+    return (blocks || [])
+      .flatMap((block) => (block.children || []).map((child) => child.text || ''))
+      .join('')
+      .trim()
+  }
+
+  function stripInlinePrefix(blocks, prefix) {
+    const cloned = structuredClone(blocks)
+    const first = cloned[0]?.children?.[0]
+    if (first) {
+      first.text = first.text.replace(prefix, '')
+    }
+    return normalizeInlineText(cloned)
+  }
+
+  function isHeadingLikeSpill(text) {
+    if (/^\d+\.\s/.test(text)) return true
+    if (/^[^.!?]{1,120}:$/.test(text)) return true
+    const wordCount = text.split(/\s+/).filter(Boolean).length
+    return wordCount <= 8 && !/[.!?]/.test(text)
   }
 
   if (dryRun) {
@@ -448,13 +1021,158 @@ function toIsoDate(value) {
 }
 
 function htmlToPortableText(html) {
-  const renderedMarkdown = marked.parse(html, {breaks: true})
-  const document = new JSDOM(`<body>${renderedMarkdown}</body>`).window.document
+  if (looksLikeHtmlFragment(html)) {
+    return htmlFragmentToPortableText(html)
+  }
+
+  const tokens = marked.lexer(html, {breaks: true})
   const blocks = []
   let blockIndex = 0
   let keyIndex = 0
 
-  for (const node of document.body.childNodes) {
+  for (const token of tokens) {
+    appendBlockToken(token, 1)
+  }
+
+  return blocks
+
+  function appendBlockToken(token, listLevel) {
+    if (!token || token.type === 'space') return
+
+    if (token.type === 'list') {
+      appendList(token, token.ordered ? 'number' : 'bullet', listLevel)
+      return
+    }
+
+    if (token.type === 'blockquote') {
+      for (const child of token.tokens || []) {
+        appendBlockToken(child, listLevel)
+      }
+      return
+    }
+
+    if (token.type === 'hr') {
+      blocks.push({_type: 'divider', _key: key('divider'), style: 'solid'})
+      return
+    }
+
+    if (token.type === 'heading') {
+      const style = token.depth <= 2 ? 'h2' : 'h3'
+      addBlock(style, token.tokens || [])
+      return
+    }
+
+    if (token.type === 'paragraph' || token.type === 'text') {
+      addBlock('normal', token.tokens || [{type: 'text', text: token.text || token.raw || ''}])
+    }
+  }
+
+  function appendList(listToken, listItem, level) {
+    for (const item of listToken.items || []) {
+      const inlineTokens = []
+
+      for (const childToken of item.tokens || []) {
+        if (childToken.type === 'list') continue
+
+        if (childToken.type === 'text' && Array.isArray(childToken.tokens)) {
+          inlineTokens.push(...childToken.tokens)
+          continue
+        }
+
+        inlineTokens.push(childToken)
+      }
+
+      addBlock('normal', inlineTokens, {listItem, level})
+
+      for (const childToken of item.tokens || []) {
+        if (childToken.type === 'list') {
+          appendList(childToken, childToken.ordered ? 'number' : 'bullet', level + 1)
+        }
+      }
+    }
+  }
+
+  function addBlock(style, inlineTokens, list) {
+    const markDefs = []
+    const children = []
+    appendInlineTokens(inlineTokens, [], children, markDefs)
+
+    if (!children.length || children.every((child) => !child.text.trim())) return
+
+    blocks.push({
+      _type: 'block',
+      _key: key(`block-${blockIndex++}`),
+      style,
+      ...(list || {}),
+      markDefs,
+      children,
+    })
+  }
+
+  function appendInlineTokens(tokens, marks, children, markDefs) {
+    for (const token of tokens || []) {
+      if (!token) continue
+
+      if (token.type === 'text' || token.type === 'escape') {
+        addSpan(token.text || '', marks, children)
+        continue
+      }
+
+      if (token.type === 'br' || (token.type === 'html' && /^<br\s*\/?>$/i.test(token.raw || token.text || ''))) {
+        addSpan('\n', marks, children)
+        continue
+      }
+
+      let nextMarks = marks
+      if (token.type === 'strong') nextMarks = [...nextMarks, 'strong']
+      if (token.type === 'em') nextMarks = [...nextMarks, 'em']
+      if (token.type === 'link') {
+        const href = token.href || ''
+        if (/^(https?:|mailto:|\/)/i.test(href)) {
+          const annotationKey = key(`link-${markDefs.length}`)
+          markDefs.push({
+            _key: annotationKey,
+            _type: 'link',
+            href,
+            openInNewTab: false,
+          })
+          nextMarks = [...nextMarks, annotationKey]
+        }
+      }
+
+      if (Array.isArray(token.tokens)) {
+        appendInlineTokens(token.tokens, nextMarks, children, markDefs)
+        continue
+      }
+
+      if (token.text) {
+        addSpan(token.text, nextMarks, children)
+      }
+    }
+  }
+
+  function addSpan(text, marks, children) {
+    if (!text) return
+    const previous = children.at(-1)
+    if (previous && JSON.stringify(previous.marks) === JSON.stringify(marks)) {
+      previous.text += text
+      return
+    }
+    children.push({_type: 'span', _key: key(`span-${children.length}`), text, marks})
+  }
+
+  function key(prefix) {
+    return `${prefix}-${keyIndex++}`
+  }
+}
+
+function htmlFragmentToPortableText(html) {
+  const {document} = parseHTML(html)
+  const blocks = []
+  let blockIndex = 0
+  let keyIndex = 0
+
+  for (const node of document.childNodes || []) {
     appendNode(node, 1)
   }
 
@@ -462,7 +1180,7 @@ function htmlToPortableText(html) {
 
   function appendNode(node, listLevel) {
     if (node.nodeType === 3) {
-      if (node.textContent.trim()) {
+      if ((node.textContent || '').trim()) {
         addBlock('normal', node)
       }
       return
@@ -475,6 +1193,7 @@ function htmlToPortableText(html) {
       appendList(node, tag === 'ol' ? 'number' : 'bullet', listLevel)
       return
     }
+
     if (tag === 'hr') {
       blocks.push({_type: 'divider', _key: key('divider'), style: 'solid'})
       return
@@ -502,8 +1221,7 @@ function htmlToPortableText(html) {
   function addBlock(style, node, list) {
     const markDefs = []
     const children = []
-    const inlineRoot = list ? node : node
-    appendInline(inlineRoot, [], children, markDefs)
+    appendInline(node, [], children, markDefs)
 
     if (!children.length || children.every((child) => !child.text.trim())) return
 
@@ -518,11 +1236,12 @@ function htmlToPortableText(html) {
   }
 
   function appendInline(node, marks, children, markDefs) {
-    for (const child of node.childNodes) {
+    for (const child of node.childNodes || []) {
       if (child.nodeType === 3) {
-        addSpan(child.textContent, marks, children)
+        addSpan(child.textContent || '', marks, children)
         continue
       }
+
       if (child.nodeType !== 1) continue
 
       const tag = child.tagName.toLowerCase()
@@ -566,4 +1285,20 @@ function htmlToPortableText(html) {
   function key(prefix) {
     return `${prefix}-${keyIndex++}`
   }
+}
+
+function looksLikeHtmlFragment(source) {
+  return /^\s*</.test(source)
+}
+
+function resolveSourcePath(sourcePath) {
+  if (path.isAbsolute(sourcePath)) return sourcePath
+
+  const candidates = [
+    path.resolve(process.cwd(), sourcePath),
+    path.resolve(workspaceRoot, sourcePath),
+    path.resolve(studioRoot, sourcePath),
+  ]
+
+  return candidates.find((candidate) => fs.existsSync(candidate)) || candidates[1]
 }

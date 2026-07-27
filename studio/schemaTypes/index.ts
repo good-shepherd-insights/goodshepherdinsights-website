@@ -1,10 +1,13 @@
 import {blogPost} from './blogPost'
 import {
+  articleList,
+  articleSection,
   callout,
   faq,
   framework,
   insightList,
   sources,
+  tableOfContents,
   takeaways,
   tldr,
   useCase,
@@ -13,10 +16,13 @@ import {
 
 export const schemaTypes = [
   blogPost,
+  articleSection,
+  articleList,
   tldr,
   insightList,
   callout,
   takeaways,
+  tableOfContents,
   faq,
   sources,
   framework,

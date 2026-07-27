@@ -3,13 +3,13 @@ import Base from "@/layouts/Base.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import SanityBlogSidebar from "@/layouts/components/widgets/SanityBlogSidebar.astro";
+import SanityPortableTextContent from "@/layouts/components/widgets/SanityPortableTextContent.astro";
 import {
   getSanityBlogPost,
   getSanityBlogPosts,
   sanityImageUrl,
   type SanityBlogPost,
 } from "@/lib/sanity/client";
-import { portableTextToHtml } from "@/lib/sanity/portableText";
 
 export async function getStaticPaths() {
   const posts = await getSanityBlogPosts();
@@ -37,7 +37,6 @@ if (!post) {
   return Astro.redirect("/404");
 }
 
-const bodyHtml = portableTextToHtml(post.body || []);
 const coverImage = post.coverImage?.asset
   ? sanityImageUrl(post.coverImage.asset).width(896).height(500).fit("crop").auto("format").url()
   : undefined;
@@ -79,7 +78,11 @@ const publishedDate = new Date(post.publishedAt);
           )
         }
 
-        <div class="sanity-article-content prose-styles content has-video-modal pt-10" set:html={bodyHtml} />
+        <SanityPortableTextContent
+          value={post.body || []}
+          class="pt-10"
+          faqMode="shadow"
+        />
 
         {
           post.tags?.length ? (

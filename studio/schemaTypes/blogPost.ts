@@ -56,49 +56,11 @@ export const blogPost = defineType({
     }),
     defineField({
       name: 'body',
-      title: 'Body',
+      title: 'Article content',
       type: 'array',
       of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [
-            {title: 'Normal', value: 'normal'},
-            {title: 'Heading 2', value: 'h2'},
-            {title: 'Heading 3', value: 'h3'},
-            {title: 'Quote', value: 'blockquote'},
-          ],
-          lists: [
-            {title: 'Bullet', value: 'bullet'},
-            {title: 'Numbered', value: 'number'},
-          ],
-          marks: {
-            decorators: [
-              {title: 'Strong', value: 'strong'},
-              {title: 'Emphasis', value: 'em'},
-            ],
-            annotations: [
-              {
-                title: 'Link',
-                name: 'link',
-                type: 'object',
-                fields: [
-                  defineField({
-                    name: 'href',
-                    title: 'URL',
-                    type: 'string',
-                    validation: (Rule) => Rule.required().max(2048),
-                  }),
-                  defineField({
-                    name: 'openInNewTab',
-                    title: 'Open in new tab',
-                    type: 'boolean',
-                    initialValue: true,
-                  }),
-                ],
-              },
-            ],
-          },
-        }),
+        defineArrayMember({type: 'articleSection'}),
+        defineArrayMember({type: 'articleList'}),
         defineArrayMember({
           name: 'bodyImage',
           title: 'Image',
@@ -130,6 +92,7 @@ export const blogPost = defineType({
         defineArrayMember({type: 'insightList'}),
         defineArrayMember({type: 'callout'}),
         defineArrayMember({type: 'takeaways'}),
+        defineArrayMember({type: 'tableOfContents'}),
         defineArrayMember({type: 'faq'}),
         defineArrayMember({type: 'sources'}),
         defineArrayMember({type: 'framework'}),
