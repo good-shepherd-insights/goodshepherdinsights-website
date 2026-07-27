@@ -1,94 +1,41 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
-import config from ".astro/config.generated.json";
 import PageHeader from "@/components/widgets/PageHeader.astro";
-import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
-import LayoutWrapper from "@/components/BlogLayout.astro";
 import BlogsHeroSection from "@/components/sections/BlogsHeroSection.astro";
-import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import { getSanityBlogPosts } from "@/lib/sanity/client";
+import {
+  sanityBlogIndexContent,
+  sanityBlogPlaceholder,
+} from "@/lib/sanity/blog";
+import { supportedLanguages } from "@/lib/utils/i18nUtils";
+import config from ".astro/config.generated.json";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-
 export async function getStaticPaths() {
-  const paths = await Promise.all(
-    supportedLanguages.map(async (lang) => {
-      const blogFolder = config.settings.blogFolder as "blog";
-      const { defaultLanguage, showDefaultLangInUrl } =
-        config.settings.multilingual;
-
-      const postIndex = await getEntryCTM(
-        blogFolder as "blog",
-        "-index",
-        lang.languageCode,
-      );
-
-      const posts = await getCollectionCTM(
-        blogFolder as "blog",
-        lang.languageCode,
-      );
-      const totalPages = Math.ceil(posts.length / config.settings.pagination);
-      const paths = [];
-
-      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
-      if (postIndex?.data.draft && import.meta.env.PROD) {
-        return [];
-      }
-
-      // Disable page generation if config.settings.pagination is 0 or false
-      if (config.settings.pagination === 0 || !config.settings.pagination) {
-        return [];
-      }
-
-      for (let i = 1; i < totalPages; i++) {
-        paths.push({
-          params: {
-            slug: (i + 1).toString(),
-          },
-        });
-      }
-
-      return paths.map((path) => ({
-        params: {
-          slug: path.params.slug,
-          lang:
-            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
-              ? undefined
-              : lang.languageCode,
-        },
-        props: {
-          postIndex,
-          pagination: config.settings.pagination,
-          blogCollection: posts,
-        },
-      }));
-    }),
+  const posts = await getSanityBlogPosts();
+  const pageSize = Number(config.settings.pagination) || 10;
+  const totalPages = Math.ceil(posts.length / pageSize);
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
+  return supportedLanguages.flatMap((lang) =>
+    Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+      params: {
+        slug: String(i + 2),
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+      },
+    })),
   );
-
-  return paths.flat();
 }
-
-const { slug } = Astro.params;
-const currentPage = slug && !isNaN(Number(slug)) ? Number(slug) : 1;
-let { postIndex } = Astro.props;
-
-// ISSUE 1 fix: Override canonical to self-reference this paginated page
-// instead of inheriting the blog index canonical from postIndex.data
-const baseUrl = trailingSlashChecker(Astro.url.origin);
+const posts = await getSanityBlogPosts();
+const currentPage = Number(Astro.params.slug) || 1;
+const pageTitle = `Blog - Page ${currentPage}`;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
-
-// ISSUE 6 fix: CollectionPage schema for pagination listing
-const pageTitle = postIndex?.data?.title
-  ? `${postIndex.data.title} - Page ${currentPage}`
-  : `Blog - Page ${currentPage}`;
-const pageDescription = `${
-  postIndex?.data?.metaDescription ||
-  postIndex?.data?.description ||
-  "Ministry technology articles from Good Shepherd Insights."
-} (Page ${currentPage})`;
 const collectionPageSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -96,34 +43,41 @@ const collectionPageSchema = {
   name: pageTitle,
   url: selfCanonical,
   isPartOf: {
-    "@id": `${absoluteUrl(Astro.url.pathname.replace(/\/page\/\d+\/?$/, ""), Astro)}#collectionpage`,
+    "@id": `${absoluteUrl("/blog", Astro)}#collectionpage`,
   },
 };
 ---
 
 <Base
-  {...postIndex?.data}
-  canonical={selfCanonical}
   title={pageTitle}
-  metaDescription={pageDescription}
-  disableTagline={true}>
-  <PageHeader content={postIndex?.data} contentClass="max-w-3xl! xl:px-6" />
+  canonical={selfCanonical}
+  metaDescription="Ministry technology articles from Good Shepherd Insights.">
+  <PageHeader
+    content={sanityBlogIndexContent}
+    contentClass="max-w-3xl! xl:px-6"
+  />
   <BlogsHeroSection />
-  <LayoutWrapper
+  <BlogLayout
     pageType="list"
     hasLightBackground={true}
     sidebar={{
       enable: false,
-      sticky: true,
     }}
     contentList={{
-      options: { ...postIndex?.data.options },
+      options: { layout: "grid", columns: 2, search: true },
+      searchSection: sanityBlogIndexContent.searchSection,
       pagination: { enable: true, currentPage },
     }}
-    content={{ ...postIndex, ...postIndex?.data }}
+    content={{
+      ...sanityBlogPlaceholder,
+      ...posts[0],
+      title: "Blog",
+      slug: { current: "" },
+      publishedAt: "",
+    }}
+    posts={posts}
   />
   <CTAGallerySection />
   <CTASection />
-  <!-- ISSUE 6: CollectionPage schema for paginated blog listing -->
   <Schema item={collectionPageSchema as any} />
 </Base>

@@ -173,6 +173,23 @@
   }
 }
 
+.sanity-article-content {
+  @apply flex flex-col gap-8;
+
+  > * {
+    @apply my-0!;
+  }
+
+  > section {
+    @apply pt-0!;
+  }
+
+  > .article-insights,
+  > .article-takeaways {
+    @apply p-6!;
+  }
+}
+
 *[class*="container"] {
   @apply mx-auto px-4 sm:px-6;
 }
