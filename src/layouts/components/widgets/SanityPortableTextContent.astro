@@ -1,0 +1,46 @@
+---
+import AccordionList from "./AccordionList.astro";
+import TOC from "./TableOfContents.astro";
+import {
+  portableTextToSections,
+  type PortableTextSection,
+} from "@/lib/sanity/portableText";
+import type { SanityBody } from "@/lib/sanity/client";
+
+interface Props {
+  value: SanityBody[];
+  class?: string;
+  faqMode?: "light" | "dark" | "transparent" | "shadow";
+}
+
+const {
+  value = [],
+  class: className,
+  faqMode = "light",
+} = Astro.props as Props;
+const sections = portableTextToSections(value);
+---
+
+<div class:list={["sanity-article-content", className]}>
+  {
+    sections.map((section: PortableTextSection) =>
+      section.type === "html" ? (
+        <div class="prose-styles content has-video-modal" set:html={section.html} />
+      ) : section.type === "toc" ? (
+        <section class="article-toc-block">
+          <TOC
+            toc={section.toc}
+            title={section.title}
+            marker={false}
+            className="bg-light rounded-lg p-5 md:p-6"
+          />
+        </section>
+      ) : (
+        <section class="article-faq-block space-y-4">
+          <h2 class="text-h3-sm md:text-h3">{section.heading}</h2>
+          <AccordionList content={section.items} mode={faqMode} />
+        </section>
+      ),
+    )
+  }
+</div>
