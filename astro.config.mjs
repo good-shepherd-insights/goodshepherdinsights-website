@@ -12,6 +12,15 @@ import { generateAstroFontsConfig } from "./src/lib/utils/AstroFont.ts";
 import { enabledLanguages } from "./src/lib/utils/i18nUtils.ts";
 
 const fonts = generateAstroFontsConfig(fontsJson);
+const shouldIncludeInSitemap = (page) => {
+  const { pathname } = new URL(page);
+
+  return !(
+    pathname.startsWith("/blog/page/") ||
+    pathname.startsWith("/blog/tag/") ||
+    pathname.startsWith("/blog/category/")
+  );
+};
 let {
   seo: { sitemap: sitemapConfig },
   settings: {
@@ -41,7 +50,7 @@ export default defineConfig({
     },
   },
   integrations: [
-    sitemapConfig.enable ? sitemap() : null,
+    sitemapConfig.enable ? sitemap({ filter: shouldIncludeInSitemap }) : null,
     AutoImport({
       imports: [
         "@/components/Button.astro",

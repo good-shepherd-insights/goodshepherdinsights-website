@@ -276,7 +276,9 @@ const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
         let matchCount = 0;
 
         accordionItems.forEach((item) => {
-          const titleEl = item.querySelector("h3");
+          const titleEl =
+            item.querySelector("[data-accordion-title]") ||
+            item.querySelector("h3");
           const contentEl = item.querySelector("[role='region'] div div");
           const titleText = titleEl?.textContent?.toLowerCase() || "";
           const contentText = contentEl?.textContent?.toLowerCase() || "";
