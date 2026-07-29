@@ -1,21 +1,24 @@
 ---
-import type { Section } from "@/types";
-import { z } from "astro/zod";
-import type { servicesSectionSchema } from "@/sections.schema";
 import ServiceCard from "@/components/cards/ServiceCard.astro";
 import { getSanityServices } from "@/lib/sanity/services";
 
-// Type
-type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
 type Props = {
-  content?: SectionType;
-  loadFrom?: string;
+  content?: {
+    enable?: boolean;
+    layout?: "horizontal" | "listImage";
+    limit?: number;
+  };
   hasPaddingBottom?: boolean;
 };
 
-let servicesList = await getSanityServices();
+const { content, hasPaddingBottom = false } = Astro.props;
+if (content?.enable === false) return;
 
-const { hasPaddingBottom = false } = Astro.props;
+const services = await getSanityServices();
+const servicesList = content?.limit
+  ? services.slice(0, content.limit)
+  : services;
+const layout = content?.layout || "listImage";
 ---
 
 <section
@@ -30,7 +33,7 @@ const { hasPaddingBottom = false } = Astro.props;
           {servicesList.map((service, index) => (
             <ServiceCard
               content={service}
-              options={{ layout: "listImage" }}
+              options={{ layout }}
               index={index}
               tag="h2"
             />

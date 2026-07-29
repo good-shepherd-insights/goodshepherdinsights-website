@@ -10,9 +10,10 @@ import SectionTitle from "../global/SectionTitle.astro";
 type faqSectionType = Section & z.infer<typeof faqSectionSchema>;
 
 // Fetching the default content for the this section
-let defaultContent = (
-  await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
-)?.data as faqSectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : ((await getEntryCTM("sections", "faq-section-two", Astro.currentLocale))
+      ?.data as faqSectionType);
 
 // Enables content customization (e.g., title, description) with a fallback to 'defaultContent' if not provided.
 // The 'content' prop should match the structure of 'defaultContent'.

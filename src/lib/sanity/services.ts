@@ -74,7 +74,7 @@ export interface SanityService {
   status?: "draft" | "published";
   order?: number;
   excerpt?: string;
-  serviceType?: string;
+  serviceType: string;
   heroImage?: SanityImageWithAlt;
   body?: SanityServiceBlock[];
   seo?: {
@@ -87,13 +87,123 @@ export interface SanityService {
   };
 }
 
-export const sanityServicesIndexContent = {
-  badge: "Our Services",
-  title: "Strategic Technology Leadership for Churches",
-  metaDescription:
-    "Stop administrative overload from burning out your best people. We design the workflow architecture that turns manual tasks into automated systems, protecting your team's calling.",
-  image: "/images/page-header/default.png",
-};
+export interface SanityServicesIndex {
+  _id: string;
+  badge?: string;
+  title: string;
+  excerpt: string;
+  image?: string;
+  imageAlt?: string;
+  servicesList?: {
+    enable?: boolean;
+    layout?: "horizontal" | "listImage";
+    limit?: number;
+  };
+  featureGrid?: ServiceFeatureGridSection;
+  statsMarquee?: ServiceStatsMarqueeSection;
+  processSection?: ServiceProcessSection;
+  ctaVideoSection?: ServiceCtaVideoSection;
+  ctaSection?: ServiceCtaSection;
+  faqSection?: ServiceFaqSection;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+    canonical?: string;
+    robots?: string;
+    excludeFromSitemap?: boolean;
+  };
+}
+
+export interface ServiceButton {
+  enable: boolean;
+  label: string;
+  url: string;
+  variant?: "fill" | "outline" | "text" | "circle" | "white";
+  hoverEffect?:
+    "text-flip" | "creative-fill" | "magnetic" | "magnetic-text-flip";
+}
+
+export interface ServiceFeatureGridSection {
+  enable?: boolean;
+  badge?: string;
+  title?: string;
+  cardLayout?: "outsideIcon" | "insideIcon" | "outsideIconSquare";
+  features: Array<{
+    enable?: boolean;
+    icon?: string;
+    title: string;
+    description: string;
+  }>;
+}
+
+export interface ServiceStatsMarqueeSection {
+  enable: boolean;
+  backgroundImage?: string;
+  backgroundImageAlt?: string;
+  shapeImage?: string;
+  shapeImageAlt?: string;
+  marquee: {
+    elementWidthAuto: boolean;
+    pauseOnHover: boolean;
+    reverse?: "" | "reverse";
+    duration: string;
+    text?: string;
+  };
+}
+
+export interface ServiceProcessSection {
+  enable: boolean;
+  badge?: string;
+  title: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  services: Array<{
+    title: string;
+    description?: string;
+    icon?: string;
+  }>;
+}
+
+export interface ServiceCtaVideoSection {
+  enable: boolean;
+  badge?: string;
+  title?: string;
+  description?: string;
+  backgroundImage?: string;
+  backgroundImageAlt?: string;
+  scribbleArrow?: string;
+  scribbleArrowAlt?: string;
+  button?: ServiceButton;
+  video?: {
+    src: string;
+    provider?: "youtube" | "vimeo" | "html5";
+    id?: string;
+    autoplay?: boolean;
+  };
+}
+
+export interface ServiceCtaSection {
+  enable: boolean;
+  title?: string;
+  description?: string;
+  backgroundImage?: string;
+  backgroundImageAlt?: string;
+  humanImage?: string;
+  humanImageAlt?: string;
+  button?: ServiceButton;
+}
+
+export interface ServiceFaqSection {
+  enable: boolean;
+  title?: string;
+  list?: Array<{
+    enable?: boolean;
+    title: string;
+    content: string;
+  }>;
+}
 
 const serviceFields = `
   _id,
@@ -125,6 +235,65 @@ export async function getSanityService(slug: string) {
   );
 }
 
+export async function getSanityServicesIndex() {
+  return sanityClient.fetch<SanityServicesIndex | null>(
+    `*[_type == "serviceIndex" && _id == "service-index"][0]{
+      _id,
+      badge,
+      title,
+      excerpt,
+      "image": heroImage.image.asset->url,
+      "imageAlt": heroImage.alt,
+      servicesList,
+      featureGrid,
+      statsMarquee{
+        enable,
+        "backgroundImage": backgroundImage.image.asset->url,
+        "backgroundImageAlt": backgroundImage.alt,
+        "shapeImage": shapeImage.image.asset->url,
+        "shapeImageAlt": shapeImage.alt,
+        marquee
+      },
+      processSection{
+        enable,
+        badge,
+        title,
+        description,
+        "image": image.image.asset->url,
+        "imageAlt": image.alt,
+        services
+      },
+      ctaVideoSection{
+        enable,
+        badge,
+        title,
+        description,
+        "backgroundImage": backgroundImage.image.asset->url,
+        "backgroundImageAlt": backgroundImage.alt,
+        scribbleArrow,
+        scribbleArrowAlt,
+        button,
+        video
+      },
+      ctaSection{
+        enable,
+        title,
+        description,
+        "backgroundImage": backgroundImage.image.asset->url,
+        "backgroundImageAlt": backgroundImage.alt,
+        "humanImage": select(
+          defined(humanImage.image.asset->url) => humanImage.image.asset->url + "?w=180&h=242&fit=max&auto=format",
+          null
+        ),
+        "humanImageAlt": humanImage.alt,
+        button
+      },
+      faqSection,
+      seo
+    }`,
+  );
+}
+
 export async function getSanityServiceSlugs() {
   return sanityClient.fetch<string[]>(
     `*[_type == "service" && status == "published" && defined(slug.current)].slug.current`,
@@ -143,10 +312,11 @@ export const serviceImageUrl = (
   width = 900,
   height?: number,
 ) => {
-  const image =
+  const image = (
     imageOrService && "heroImage" in imageOrService
       ? imageOrService.heroImage
-      : imageOrService;
+      : imageOrService
+  ) as SanityImageWithAlt | undefined;
   const asset = image?.image?.asset;
   if (!asset) return undefined;
 

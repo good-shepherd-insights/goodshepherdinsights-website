@@ -1,13 +1,11 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
 import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
-import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
 import type { Service, FAQPage } from "schema-dts";
@@ -16,6 +14,7 @@ import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 import {
   getSanityService,
   getSanityServices,
+  getSanityServicesIndex,
   serviceImageUrl,
 } from "@/lib/sanity/services";
 import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
@@ -45,16 +44,20 @@ const { service: pathService } = Astro.props;
 const service = pathService?.body
   ? pathService
   : await getSanityService(Astro.params.single || "");
+const servicesIndex = await getSanityServicesIndex();
 
 if (!service) return Astro.redirect("/404");
+if (!servicesIndex) {
+  throw new Error("Missing Sanity serviceIndex document.");
+}
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
 const orgData = config.seo.organization || {};
 
 // Resolve canonical for this service page
-const resolvedCanonical = Astro.props.canonical
-  ? absoluteUrl(Astro.props.canonical, Astro)
+const resolvedCanonical = service.seo?.canonical
+  ? absoluteUrl(service.seo.canonical, Astro)
   : absoluteUrl(Astro.url.pathname, Astro);
 const imageUrl = serviceImageUrl(service, 1200, 630);
 
@@ -67,37 +70,33 @@ const serviceSchema: Service = {
   url: resolvedCanonical,
   ...(imageUrl && { image: imageUrl }),
   provider: { "@id": `${baseUrlClean}/#organization` },
-  serviceType: service.serviceType || "Consulting Service",
+  serviceType: service.serviceType,
   areaServed: {
     "@type": "State",
     name: orgData.addressRegion || "USA",
   },
 };
 
-// Build FAQPage schema from FaqSectionTwo data
-// Fetch the FAQ section data for this service page
-const faqSectionData = (
-  await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
-)?.data;
-
 const faqList =
-  faqSectionData?.list
-    ?.filter((item: any) => item.enable !== false)
-    ?.map((item: any) => ({
-      "@type": "Question",
-      name: item.title,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.content,
-      },
-    })) || [];
+  servicesIndex.faqSection?.enable === true
+    ? servicesIndex.faqSection.list
+        ?.filter((item: any) => item.enable !== false)
+        ?.map((item: any) => ({
+          "@type": "Question",
+          name: item.title,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.content,
+          },
+        })) || []
+    : [];
 
 let faqSchema: FAQPage | undefined;
 if (faqList.length > 0) {
   faqSchema = {
     "@type": "FAQPage",
     "@id": `${resolvedCanonical}#faqpage`,
-    mainEntity: faqList,
+    mainEntity: faqList as any,
   };
 }
 ---
@@ -115,16 +114,35 @@ if (faqList.length > 0) {
       badge: service.title,
       title: service.title,
       image: imageUrl,
+      imageAlt: service.heroImage?.alt,
       imageText: service.title,
     }}
     contentClass="max-w-2xl!"
   />
   <SanityServiceContent value={service.body || []} />
-  <FeaturesGridThree />
-  <StatsMarqueeSection hasLightBackground={false} />
-  <FaqSectionTwo mode="shadow" />
-  <CTAGallerySection />
-  <CTASection />
+  {
+    servicesIndex.featureGrid && (
+      <FeaturesGridThree content={servicesIndex.featureGrid} />
+    )
+  }
+  {
+    servicesIndex.statsMarquee && (
+      <StatsMarqueeSection
+        content={servicesIndex.statsMarquee}
+        hasLightBackground={false}
+      />
+    )
+  }
+  {
+    servicesIndex.faqSection && (
+      <FaqSectionTwo content={servicesIndex.faqSection} mode="shadow" />
+    )
+  }
+  {
+    servicesIndex.ctaSection && (
+      <CTASection content={servicesIndex.ctaSection} />
+    )
+  }
 
   <!-- Page-specific structured data -->
   <Schema

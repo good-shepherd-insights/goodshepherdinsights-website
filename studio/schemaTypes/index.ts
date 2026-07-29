@@ -15,6 +15,7 @@ import {
   vendorProfile,
 } from './articleBlocks'
 import {imageWithAlt, seoFields, simplePortableText} from './shared'
+import {reusableButton, reusableComponents, reusableCtaSection} from './reusableComponents'
 import {
   serviceCta,
   serviceImage,
@@ -23,11 +24,22 @@ import {
   serviceOffering,
   statCallout,
 } from './serviceBlocks'
+import {
+  serviceCtaVideoSection,
+  serviceFaqSection,
+  serviceFeatureGridSection,
+  serviceIndex,
+  serviceProcessSection,
+  serviceStatsMarqueeSection,
+} from './serviceSections'
 
 export const schemaTypes = [
   blogPost,
   service,
   imageWithAlt,
+  reusableButton,
+  reusableComponents,
+  reusableCtaSection,
   seoFields,
   simplePortableText,
   articleSection,
@@ -48,4 +60,10 @@ export const schemaTypes = [
   serviceOffering,
   serviceCta,
   serviceImage,
+  serviceIndex,
+  serviceFeatureGridSection,
+  serviceStatsMarqueeSection,
+  serviceProcessSection,
+  serviceCtaVideoSection,
+  serviceFaqSection,
 ]
