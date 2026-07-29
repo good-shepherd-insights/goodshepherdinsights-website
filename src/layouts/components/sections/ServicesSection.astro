@@ -1,8 +1,7 @@
 ---
 import type { Section } from "@/types";
 import { z } from "astro/zod";
-import config from ".astro/config.generated.json";
-import { getEntryCTM, getCollectionCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { servicesSectionSchema } from "@/sections.schema";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
@@ -12,6 +11,7 @@ import ServiceCard from "@/components/cards/ServiceCard.astro";
 import SectionTitle from "../global/SectionTitle.astro";
 import SectionBadge from "../global/SectionBadge.astro";
 import { markdownify } from "@/lib/utils/textConverter";
+import { getSanityServices } from "@/lib/sanity/services";
 
 // Type
 type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
@@ -44,10 +44,7 @@ const {
 
 if (!enable) return;
 
-let servicesList = await getCollectionCTM(
-  config.settings.serviceFolder as "services",
-  Astro.currentLocale,
-);
+let servicesList = await getSanityServices();
 
 if (limit) {
   servicesList = servicesList.slice(0, limit);

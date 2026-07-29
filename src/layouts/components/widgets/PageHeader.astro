@@ -32,6 +32,8 @@ const {
   imageText,
   postData,
 } = Astro.props.content;
+const isExternalImage =
+  image?.startsWith("http://") || image?.startsWith("https://");
 ---
 
 <section class="relative">
@@ -98,18 +100,31 @@ const {
     {
       image && (
         <div class="relative pt-12 lg:pt-24">
-          <OptimizedImage
-            src={image}
-            alt={title}
-            width={1320}
-            height={550}
-            widths={[480, 640, 768, 1024, 1320]}
-            sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
-            quality={60}
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-          />
+          {isExternalImage ? (
+            <img
+              src={image}
+              alt={title || ""}
+              width="1320"
+              height="550"
+              loading="eager"
+              fetchpriority="high"
+              decoding="sync"
+              class="h-auto w-full object-cover"
+            />
+          ) : (
+            <OptimizedImage
+              src={image}
+              alt={title}
+              width={1320}
+              height={550}
+              widths={[480, 640, 768, 1024, 1320]}
+              sizes="(min-width: 1280px) 1320px, (min-width: 1024px) 1024px, (min-width: 768px) 768px, 100vw"
+              quality={60}
+              loading="eager"
+              fetchpriority="high"
+              decoding="sync"
+            />
+          )}
           {imageText && (
             <div class="bg-light font-secondary text-h3-sm md:text-h2 absolute bottom-0 left-0 px-8 font-bold">
               {imageText}

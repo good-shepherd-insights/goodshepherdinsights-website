@@ -3,13 +3,9 @@ import { defineCollection } from "astro:content";
 import { button, sectionsSchema } from "./sections.schema";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import {
-  CASESTUDIES_CARD_LAYOUT,
-  SERVICE_CARD_LAYOUT,
-} from "@/enum";
+import { CASESTUDIES_CARD_LAYOUT } from "@/enum";
 
 const caseStudiesFolder = config.settings.caseStudiesFolder as "case-studies";
-const serviceFolder = config.settings.serviceFolder || "services";
 const testimonialFolder = config.settings.testimonialFolder || "testimonial";
 
 const contentLoader = (base: string) =>
@@ -46,7 +42,9 @@ const basePage = z.object({
   canonical: z.string().optional(),
   keywords: z.array(z.string()).optional(),
   disableTagline: z.boolean().optional(),
-  faqItems: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
+  faqItems: z
+    .array(z.object({ question: z.string(), answer: z.string() }))
+    .optional(),
   serviceType: z.string().optional(),
 });
 
@@ -72,23 +70,6 @@ export const marqueeConfig = z.object({
 const pagesCollection = defineCollection({
   loader: contentLoader("./src/content/pages"),
   schema: page,
-});
-
-// Services
-const serviceCollection = defineCollection({
-  loader: contentLoader(`./src/content/${serviceFolder}`),
-  schema: page.extend({
-    icon: z.string().optional(),
-    image: z.string().optional(),
-    imagePosition: z.string().optional(),
-    image3: z.string().optional(),
-    options: z
-      .object({
-        layout: z.enum(SERVICE_CARD_LAYOUT).optional(),
-        limit: z.union([z.number().int(), z.literal(false)]).optional(),
-      })
-      .optional(),
-  }),
 });
 
 // CaseStudies
@@ -173,9 +154,6 @@ export const testimonialCollection = defineCollection({
 // Export Collections
 // ------------------------
 export const collections = {
-  [serviceFolder]: serviceCollection,
-  services: serviceCollection,
-
   [caseStudiesFolder]: caseStudyCollection,
 
   pages: pagesCollection,
