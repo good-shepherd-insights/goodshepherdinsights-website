@@ -1,8 +1,7 @@
 ---
-import { getEntrySlugCTM, getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
 import { useTranslations } from "@/lib/utils/i18nUtils.ts";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import { filteredEnabled } from "@/lib/utils/filteredEnabled";
 import Button from "@/layouts/components/Button.astro";
@@ -10,16 +9,14 @@ import { markdownify } from "@/lib/utils/textConverter";
 import Logo from "./Logo.astro";
 import type { NavigationLink } from "@/types";
 import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
+import { getSanityServices, serviceUrl } from "@/lib/sanity/services";
 const t = await useTranslations(Astro.currentLocale as string);
 let footerMenus = filteredEnabled(t("footerPrimary") as NavigationLink[]);
 
-const { contactInfo, serviceFolder } = config.settings;
+const { contactInfo } = config.settings;
 
 // Fetch 6 Services
-let servicesList = await getCollectionCTM(
-  serviceFolder as "services",
-  Astro.currentLocale as string,
-);
+let servicesList = await getSanityServices();
 servicesList = servicesList.slice(0, 6);
 
 const bg = await bgOptimizedImage(
@@ -61,7 +58,7 @@ const bg = await bgOptimizedImage(
       <div
         class="col-span-7 grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8 md:gap-12 lg:pt-2 xl:gap-20">
         {/* Col 2: Our Services */}
-        <div class="sm:col-span-2 flex flex-col gap-2 sm:gap-4 lg:gap-8">
+        <div class="flex flex-col gap-2 sm:col-span-2 sm:gap-4 lg:gap-8">
           <h3 class="sm:text-h5 text-h5-sm">{t("common.ourServices")}</h3>
           <ul class="flex flex-col gap-1 lg:gap-2">
             {
@@ -71,12 +68,12 @@ const bg = await bgOptimizedImage(
                   <Button
                     tag="a"
                     variant="text"
-                    label={svc.data.title}
-                    url={getEntrySlugCTM(svc, Astro.currentLocale)}
-                    aria-label={`${t("button.readMore")} ${svc.data.title}`}
-                    srOnly={`${t("button.readMore")} ${svc.data.title}`}
+                    label={svc.title}
+                    url={serviceUrl(svc, Astro.currentLocale)}
+                    aria-label={`${t("button.readMore")} ${svc.title}`}
+                    srOnly={`${t("button.readMore")} ${svc.title}`}
                     class="text-text-dark/90 hover:text-accent border-none font-normal transition-colors hover:opacity-100">
-                    {svc.data.title}
+                    {svc.title}
                   </Button>
                 </li>
               ))
@@ -84,7 +81,7 @@ const bg = await bgOptimizedImage(
           </ul>
         </div>
         {/* Col 3: Contact Us */}
-        <div class="sm:col-span-1 flex flex-col gap-2 sm:gap-4 lg:gap-8">
+        <div class="flex flex-col gap-2 sm:col-span-1 sm:gap-4 lg:gap-8">
           <h3 class="sm:text-h5 text-h5-sm">{t("common.contactUs")}</h3>
           <div class="text-text-dark/90 flex flex-col gap-1 sm:gap-3">
             <div set:html={markdownify(contactInfo.address, true)} />
@@ -102,7 +99,6 @@ const bg = await bgOptimizedImage(
           </div>
         </div>
       </div>
-
     </div>
 
     {/* Middle Area: Decorations & Giant 'Since 1990' */}

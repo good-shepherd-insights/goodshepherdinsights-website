@@ -1,10 +1,9 @@
 ---
 import type { Section } from "@/types";
 import { z } from "astro/zod";
-import config from ".astro/config.generated.json";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import type { servicesSectionSchema } from "@/sections.schema";
 import ServiceCard from "@/components/cards/ServiceCard.astro";
+import { getSanityServices } from "@/lib/sanity/services";
 
 // Type
 type SectionType = Section & NonNullable<z.infer<typeof servicesSectionSchema>>;
@@ -14,10 +13,7 @@ type Props = {
   hasPaddingBottom?: boolean;
 };
 
-let servicesList = await getCollectionCTM(
-  config.settings.serviceFolder as "services",
-  Astro.currentLocale,
-);
+let servicesList = await getSanityServices();
 
 const { hasPaddingBottom = false } = Astro.props;
 ---
