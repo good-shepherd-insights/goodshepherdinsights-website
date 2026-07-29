@@ -6,15 +6,12 @@ import ServicesListSection from "@/components/sections/ServicesListSection.astro
 import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
 import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
 import ProcessSectionTwo from "@/components/sections/ProcessSectionTwo.astro";
-import PricingSection from "@/components/sections/PricingSection.astro";
 import CTAVideoSectionTwo from "@/components/sections/CTAVideoSectionTwo.astro";
-import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
-import BrandLogos from "@/components/sections/BrandLogos.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import { sanityServicesIndexContent } from "@/lib/sanity/services";
+import { getSanityServicesIndex } from "@/lib/sanity/services";
 
 export function getStaticPaths() {
   return generatePaths();
@@ -23,12 +20,18 @@ export function getStaticPaths() {
 // ISSUE 6: CollectionPage schema for services listing
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const servicesIndex = await getSanityServicesIndex();
+
+if (!servicesIndex) {
+  throw new Error("Missing Sanity serviceIndex document.");
+}
+
 const collectionPageSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": `${selfCanonical}#collectionpage`,
-  name: sanityServicesIndexContent.title,
-  description: sanityServicesIndexContent.metaDescription,
+  name: servicesIndex.seo?.metaTitle || servicesIndex.title,
+  description: servicesIndex.seo?.metaDescription || servicesIndex.excerpt,
   url: selfCanonical,
   isPartOf: {
     "@id": `${baseUrl.replace(/\/$/, "")}/#website`,
@@ -37,22 +40,59 @@ const collectionPageSchema = {
 ---
 
 <Base
-  title={sanityServicesIndexContent.title}
-  metaTitle={sanityServicesIndexContent.title}
-  metaDescription={sanityServicesIndexContent.metaDescription}
-  canonical={selfCanonical}
-  image={sanityServicesIndexContent.image}
+  title={servicesIndex.title}
+  metaTitle={servicesIndex.seo?.metaTitle || servicesIndex.title}
+  metaDescription={servicesIndex.seo?.metaDescription || servicesIndex.excerpt}
+  canonical={servicesIndex.seo?.canonical || selfCanonical}
+  robots={servicesIndex.seo?.robots}
+  keywords={servicesIndex.seo?.keywords}
+  image={servicesIndex.image}
   hideOffcanvas={true}>
-  <PageHeader content={sanityServicesIndexContent} />
-  <ServicesListSection hasPaddingBottom={true} />
-  <FeaturesGridThree />
-  <StatsMarqueeSection hasLightBackground={false} />
-  <ProcessSectionTwo hasPaddingBottom={true} />
-  <PricingSection />
-  <CTAVideoSectionTwo hasLightBackground={false} />
-  <CTAGallerySection />
-  <BrandLogos />
-  <CTASection />
-  <!-- ISSUE 6: CollectionPage schema for services listing -->
+  <PageHeader
+    content={{
+      badge: servicesIndex.badge,
+      title: servicesIndex.title,
+      image: servicesIndex.image,
+      imageAlt: servicesIndex.imageAlt,
+    }}
+  />
+  <ServicesListSection
+    content={servicesIndex.servicesList}
+    hasPaddingBottom={true}
+  />
+  {
+    servicesIndex.featureGrid && (
+      <FeaturesGridThree content={servicesIndex.featureGrid} />
+    )
+  }
+  {
+    servicesIndex.statsMarquee && (
+      <StatsMarqueeSection
+        content={servicesIndex.statsMarquee}
+        hasLightBackground={false}
+      />
+    )
+  }
+  {
+    servicesIndex.processSection && (
+      <ProcessSectionTwo
+        content={servicesIndex.processSection}
+        hasPaddingBottom={true}
+      />
+    )
+  }
+  {
+    servicesIndex.ctaVideoSection && (
+      <CTAVideoSectionTwo
+        content={servicesIndex.ctaVideoSection}
+        hasLightBackground={false}
+      />
+    )
+  }
+  {
+    servicesIndex.ctaSection && (
+      <CTASection content={servicesIndex.ctaSection} />
+    )
+  }
   <Schema item={collectionPageSchema as any} />
 </Base>

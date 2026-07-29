@@ -1,13 +1,13 @@
 ---
 import type { Section } from "@/types";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import SectionTitle from "../global/SectionTitle.astro";
 import type { ctaSectionSchema } from "@/sections.schema";
 import type { z } from "astro/zod";
 import Button from "../Button.astro";
 import OptimizedImage from "../utilities/OptimizedImage.astro";
 import { markdownify } from "@/lib/utils/textConverter";
+import { getReusableCtaSection } from "@/lib/sanity/reusableComponents";
 
 // Type for this section data
 type SectionType = Section & z.infer<typeof ctaSectionSchema>;
@@ -18,9 +18,9 @@ type Props = {
 };
 
 // Fetching the default content for the this section
-let defaultContent = (
-  await getEntryCTM("sections", "cta-section", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : ((await getReusableCtaSection()) as SectionType | undefined);
 
 // Default content fetch from sections collection
 let actualContent = overrideObjects(
@@ -83,7 +83,7 @@ if (!enable) {
           {
             description && (
               <h3
-                class="text-white/80 text-base font-normal leading-relaxed lg:text-lg"
+                class="text-base leading-relaxed font-normal text-white/80 lg:text-lg"
                 set:html={markdownify(description)}
               />
             )

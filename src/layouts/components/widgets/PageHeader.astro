@@ -15,6 +15,7 @@ type Props = {
     badge?: string;
     title?: string;
     image?: string;
+    imageAlt?: string;
     imageText?: string;
     postData?: {
       date?: Date;
@@ -29,6 +30,7 @@ const {
   badge,
   title,
   image = pageHeaderDefaultImage,
+  imageAlt,
   imageText,
   postData,
 } = Astro.props.content;
@@ -103,7 +105,7 @@ const isExternalImage =
           {isExternalImage ? (
             <img
               src={image}
-              alt={title || ""}
+              alt={imageAlt || title || ""}
               width="1320"
               height="550"
               loading="eager"
@@ -114,7 +116,7 @@ const isExternalImage =
           ) : (
             <OptimizedImage
               src={image}
-              alt={title}
+              alt={imageAlt || title}
               width={1320}
               height={550}
               widths={[480, 640, 768, 1024, 1320]}
