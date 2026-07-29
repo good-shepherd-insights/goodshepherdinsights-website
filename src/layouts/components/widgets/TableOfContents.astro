@@ -66,13 +66,13 @@ const toggleId = `toc-toggle-${instanceId}`;
       }
     </ol>
   </nav>
-  <script define:vars={{ marker, tocId }}>
+  <script is:inline define:vars={{ marker, tocId }}>
     import { ScrollMenu } from "@/plugins/scroll-menu.ts";
 
     document.addEventListener("DOMContentLoaded", function () {
       if (!marker) return;
 
-      const toc = document.querySelector(`#${tocId} > ol`) as HTMLElement | null;
+      const toc = document.querySelector(`#${tocId} > ol`);
       if (!toc) return;
 
       new ScrollMenu(`#${tocId} a`, {

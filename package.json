@@ -5,20 +5,12 @@
   "author": "getastrothemes",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "npm run toml:watch -- --watch & npm run dev:studio & astro dev",
-    "dev:studio": "npm --prefix studio run dev -- --host 127.0.0.1 --port 3333",
-    "build": "npm run toml:watch && astro build && npm run build:studio && npm run remove-draft-from-sitemap",
-    "build:studio": "npm --prefix studio ci --ignore-scripts && npm --prefix studio run build -- ../dist/studio",
-    "toml:watch": "node scripts/toml-watcher.mjs",
-    "preview": "npm run toml:watch & astro build && npm run remove-draft-from-sitemap && astro preview",
-    "astro-check": "npm run toml:watch & astro check",
-    "generate-favicons": "node ./scripts/generate-favicons.mjs",
-    "generate-multilingual-content": "node ./scripts/generate-multilingual-content.mjs",
-    "remove-multilingual": "node ./scripts/remove-multilingual.mjs",
-    "remove-draft-from-sitemap": "node ./scripts/remove-draft-from-sitemap.mjs",
+    "dev": "node scripts/toml-watcher.mjs --watch & astro dev",
+    "build": "node scripts/toml-watcher.mjs && astro build && node scripts/remove-draft-from-sitemap.mjs",
+    "preview": "node scripts/toml-watcher.mjs && astro build && node scripts/remove-draft-from-sitemap.mjs && astro preview",
+    "astro-check": "node scripts/toml-watcher.mjs && astro check",
     "format": "prettier -w ./src",
-    "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch",
-    "deploy:cf": "wrangler pages deploy"
+    "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch"
   },
   "engines": {
     "node": "24.18.0"

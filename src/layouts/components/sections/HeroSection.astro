@@ -15,9 +15,10 @@ const t = await useTranslations(Astro.currentLocale as string);
 type SectionType = Section & NonNullable<z.infer<typeof heroSectionSchema>>;
 type Props = { content?: SectionType };
 
-let defaultContent = (
-  await getEntryCTM("sections", "hero-section", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : (((await getEntryCTM("sections", "hero-section", Astro.currentLocale))
+      ?.data as SectionType) ?? undefined);
 
 let actualContent = overrideObjects(
   { ...defaultContent },
@@ -102,7 +103,7 @@ if (!enable) {
           data-aos="reveal-anim-left"
           data-aos-offset="0"
           data-aos-duration="600">
-          <div class="text-dark font-secondary wrap-break-word inline-block text-h6 leading-tight font-bold tracking-wider sm:text-h5-sm md:text-h4-md lg:text-h3">
+          <div class="text-dark font-secondary text-h6 sm:text-h5-sm md:text-h4-md lg:text-h3 inline-block leading-tight font-bold tracking-wider wrap-break-word">
             {markdownify(subTitle)}
             <div class="border-dark/60 h-1 border-y" />
           </div>

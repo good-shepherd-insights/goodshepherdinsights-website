@@ -167,7 +167,7 @@ npm update
 **Run this in your dev command to watch for changes:**
 
 ```sh
-npm run toml:watch -- --watch
+npm run dev
 ```
 
 - Open each section (called a "table") in `config.toml` one by one
