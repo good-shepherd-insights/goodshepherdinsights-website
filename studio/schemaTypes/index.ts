@@ -1,4 +1,11 @@
 import {blogPost} from './blogPost'
+import {
+  homeAboutSection,
+  homeBlogSection,
+  homeHeroSection,
+  homePage,
+  homeServicesSection,
+} from './homePage'
 import {service} from './service'
 import {
   articleList,
@@ -35,6 +42,7 @@ import {
 
 export const schemaTypes = [
   blogPost,
+  homePage,
   service,
   imageWithAlt,
   schemaThing,
@@ -43,6 +51,10 @@ export const schemaTypes = [
   reusableCtaSection,
   seoFields,
   simplePortableText,
+  homeHeroSection,
+  homeServicesSection,
+  homeAboutSection,
+  homeBlogSection,
   articleSection,
   articleList,
   tldr,
