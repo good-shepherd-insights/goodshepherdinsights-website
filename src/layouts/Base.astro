@@ -74,7 +74,9 @@ const resolveFooter = footerLayout || defaultFooter;
 
 <!doctype html>
 <html lang="en">
-  <Head {...props} />
+  <Head {...props}>
+    <slot name="head" />
+  </Head>
   <body class:list={[hasBodyDarkBackground && "bg-body-dark"]}>
     {
       resolveHeader === "header-2" ? (

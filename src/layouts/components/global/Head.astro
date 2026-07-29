@@ -26,7 +26,7 @@ const resolvedCanonical = Astro.props.canonical
   <SEO {...Astro.props} canonical={resolvedCanonical} />
   <meta name="author" content={Astro.props.author || config.seo.author} />
   <meta property="og:site_name" content={config.site.title} />
-  <meta property="og:locale" content={config.opengraph.ogLocale || "en_US"} />
+  <slot />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
