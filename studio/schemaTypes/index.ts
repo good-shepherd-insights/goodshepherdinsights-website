@@ -1,4 +1,5 @@
 import {blogPost} from './blogPost'
+import {service} from './service'
 import {
   articleList,
   articleSection,
@@ -13,9 +14,22 @@ import {
   useCase,
   vendorProfile,
 } from './articleBlocks'
+import {imageWithAlt, seoFields, simplePortableText} from './shared'
+import {
+  serviceCta,
+  serviceImage,
+  serviceIntro,
+  serviceNarrative,
+  serviceOffering,
+  statCallout,
+} from './serviceBlocks'
 
 export const schemaTypes = [
   blogPost,
+  service,
+  imageWithAlt,
+  seoFields,
+  simplePortableText,
   articleSection,
   articleList,
   tldr,
@@ -28,4 +42,10 @@ export const schemaTypes = [
   framework,
   vendorProfile,
   useCase,
+  serviceIntro,
+  serviceNarrative,
+  statCallout,
+  serviceOffering,
+  serviceCta,
+  serviceImage,
 ]

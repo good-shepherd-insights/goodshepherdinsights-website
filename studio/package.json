@@ -13,7 +13,9 @@
     "migrate:blog": "sanity exec scripts/migrate-one-blog.mjs --with-user-token",
     "migrate:blog:dry": "sanity exec scripts/migrate-one-blog.mjs -- --dry-run",
     "migrate:blogs": "sanity exec scripts/migrate-one-blog.mjs --with-user-token -- --all",
-    "migrate:blogs:dry": "sanity exec scripts/migrate-one-blog.mjs -- --all --dry-run"
+    "migrate:blogs:dry": "sanity exec scripts/migrate-one-blog.mjs -- --all --dry-run",
+    "migrate:services": "sanity exec scripts/migrate-services.mjs --with-user-token",
+    "migrate:services:dry": "sanity exec scripts/migrate-services.mjs -- --dry-run"
   },
   "keywords": [
     "sanity"

@@ -1,0 +1,268 @@
+---
+import Icons from "@/helpers/Icons.astro";
+import Button from "@/layouts/components/Button.astro";
+import VideoModal from "@/layouts/components/widgets/VideoModal.astro";
+import { portableTextToHtml } from "@/lib/sanity/portableText";
+import {
+  serviceImageUrl,
+  serviceUrl,
+  type SanityServiceBlock,
+  type SanityServiceTextItem,
+} from "@/lib/sanity/services";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
+import { markdownify } from "@/lib/utils/textConverter";
+
+interface Props {
+  value: SanityServiceBlock[];
+  class?: string;
+}
+
+const { value = [], class: className } = Astro.props as Props;
+
+const textHtml = (text?: SanityServiceTextItem["text"]) =>
+  text ? portableTextToHtml(text as any) : "";
+
+const videoModalId = (
+  block: Extract<SanityServiceBlock, { _type: "serviceImage" }>,
+) =>
+  block.video?.id ||
+  (block.video?.src
+    ? block.video.src
+        .replace(/^[^a-zA-Z0-9]+/, "")
+        .replace(/[^a-zA-Z0-9]/g, "-")
+    : undefined);
+
+const ctaUrl = (href: string) =>
+  href.startsWith("/") || href.startsWith("http")
+    ? getLocaleUrlCTM(href, Astro.currentLocale)
+    : serviceUrl(href, Astro.currentLocale);
+---
+
+<section
+  class:list={[
+    "bg-light section-spacing-bottom overflow-hidden pt-8 lg:pt-12",
+    className,
+  ]}>
+  <div class="container">
+    <div class="w-full space-y-12 md:space-y-20">
+      <div
+        class="prose-styles prose-p:text-text-dark/85 prose-li:text-text-dark/85 content has-video-modal space-y-10">
+        {
+          value.map((block) =>
+            block._type === "serviceIntro" ? (
+              <div class="not-prose border-accent -mt-8 mb-10 border-l-4 pl-6 lg:-mt-12">
+                {block.title && (
+                  <h3
+                    class="text-h3-sm md:text-h3 font-secondary text-dark mb-4 font-medium"
+                    set:html={markdownify(block.title)}
+                  />
+                )}
+                <div
+                  class="prose-styles prose-p:last:mb-0"
+                  set:html={textHtml(block.text)}
+                />
+              </div>
+            ) : block._type === "serviceNarrative" ? (
+              <section class="service-narrative">
+                {block.heading && (
+                  <h2
+                    class="text-h3-sm md:text-h3 font-secondary text-dark font-bold"
+                    set:html={markdownify(block.heading)}
+                  />
+                )}
+                <div set:html={textHtml(block.text)} />
+              </section>
+            ) : block._type === "statCallout" ? (
+              <div class="not-prose mb-10">
+                <div class="border-primary/10 bg-primary/5 rounded-lg border p-6 text-center md:p-8">
+                  <span
+                    class="text-h2-sm md:text-h2 font-secondary text-primary block font-bold"
+                    set:html={markdownify(block.value)}
+                  />
+                  {block.label && (
+                    <span
+                      class="text-dark/70 mt-1 block text-sm font-medium tracking-wider uppercase"
+                      set:html={markdownify(block.label)}
+                    />
+                  )}
+                  {block.description && (
+                    <p
+                      class="text-text-dark/80 m-0 mt-2"
+                      set:html={markdownify(block.description)}
+                    />
+                  )}
+                </div>
+              </div>
+            ) : block._type === "serviceOffering" ? (
+              <div class="sub-service-card not-prose">
+                <div class="bg-body rounded-lg p-6 md:p-8">
+                  <div class="mb-3 flex items-start gap-3">
+                    {block.number && (
+                      <span class="font-secondary text-dark bg-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold">
+                        {block.number}
+                      </span>
+                    )}
+                    <h3
+                      class="text-h3-sm md:text-h3 font-secondary text-dark m-0 font-medium"
+                      set:html={markdownify(block.title)}
+                    />
+                  </div>
+
+                  <div
+                    class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0"
+                    set:html={textHtml(block.description)}
+                  />
+
+                  {block.audience?.length ? (
+                    <div class="my-10 flex flex-wrap gap-3">
+                      {block.audience.map((item) => (
+                        <span
+                          class="border-primary/20 bg-primary/10 text-dark inline-block rounded-full border px-4 py-2 text-sm font-medium"
+                          set:html={markdownify(item)}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {block.statCallouts?.map((stat) => (
+                    <div class="border-primary/10 bg-primary/5 my-10 rounded-lg border p-6 text-center md:p-8">
+                      <span
+                        class="text-h2-sm md:text-h2 font-secondary text-primary block font-bold"
+                        set:html={markdownify(stat.value)}
+                      />
+                      {stat.label && (
+                        <span
+                          class="text-dark/70 mt-1 block text-sm font-medium tracking-wider uppercase"
+                          set:html={markdownify(stat.label)}
+                        />
+                      )}
+                      {stat.description && (
+                        <p
+                          class="text-text-dark/80 m-0 mt-2"
+                          set:html={markdownify(stat.description)}
+                        />
+                      )}
+                    </div>
+                  ))}
+
+                  {block.deliverables?.length ? (
+                    <div class="has-list has-list-check styled-list bg-secondary/30 mb-10 rounded-lg p-6">
+                      <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0">
+                        <ul>
+                          {block.deliverables.map((item) => (
+                            <li set:html={textHtml(item.text)} />
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {block.methodologySteps?.length ? (
+                    <div class="mb-10">
+                      <ol
+                        class="m-0 list-none p-0"
+                        style="counter-reset: methodology-step;">
+                        {block.methodologySteps.map((item) => (
+                          <li class="relative flex items-start gap-3 pb-5 last:pb-0">
+                            <span
+                              class="font-secondary text-dark bg-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                              style="counter-increment: methodology-step;">
+                              <span class="step-number" />
+                            </span>
+                            <div
+                              class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0 pt-1"
+                              set:html={textHtml(item.text)}
+                            />
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  ) : null}
+
+                  {block.outcomes?.length ? (
+                    <div class="mb-10">
+                      <div class="border-accent bg-accent/5 rounded-r-lg border-l-4 p-6 md:p-8">
+                        {block.outcomesTitle && (
+                          <h4
+                            class="text-h4-sm md:text-h4 font-secondary text-dark mb-3 font-medium"
+                            set:html={markdownify(block.outcomesTitle)}
+                          />
+                        )}
+                        <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0">
+                          {block.outcomes.map((item) => (
+                            <div set:html={textHtml(item.text)} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : block._type === "serviceCta" ? (
+              <section class="not-prose bg-border-dark mb-10 rounded-xl p-8 text-center text-white lg:p-14">
+                <h3
+                  class="text-h3-sm md:text-h2 font-secondary m-0 mb-5 font-bold tracking-tight text-white"
+                  set:html={markdownify(block.title)}
+                />
+                {block.text && (
+                  <div
+                    class="space-y-3 text-lg leading-relaxed text-white/80 [&>p]:m-0 [&>p:last-child]:mb-0"
+                    set:html={textHtml(block.text)}
+                  />
+                )}
+                <div class="mt-8">
+                  <Button
+                    url={ctaUrl(block.href)}
+                    variant="text"
+                    label={block.linkText}
+                    class="text-accent text-base font-semibold tracking-wide uppercase hover:text-white"
+                  />
+                </div>
+              </section>
+            ) : block._type === "serviceImage" ? (
+              <div class="not-prose relative mt-8">
+                {serviceImageUrl(block.image, 900, 400) && (
+                  <img
+                    src={serviceImageUrl(block.image, 900, 400)}
+                    alt={block.image.alt || ""}
+                    width="900"
+                    height="400"
+                    class="h-72! w-full max-w-full! object-cover object-top lg:h-112!"
+                    loading="lazy"
+                  />
+                )}
+                {block.video?.src && (
+                  <>
+                    <button
+                      type="button"
+                      title="Play Video"
+                      aria-haspopup="dialog"
+                      aria-expanded="false"
+                      aria-controls={"#" + videoModalId(block)}
+                      data-hs-overlay={"#" + videoModalId(block)}
+                      data-hs-overlay-options={`{"emulateScrollbarSpace" : true}`}
+                      class="video-modal-toggle translate-centered has-animated-waves waves-white absolute flex h-20 w-20 items-center justify-center rounded-full transition-transform duration-300 hover:scale-110 lg:h-24 lg:w-24">
+                      <div class="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-white">
+                        <Icons
+                          icon="Play"
+                          class="text-primary fill-text-dark h-6 w-6 stroke-none"
+                        />
+                      </div>
+                    </button>
+                    <VideoModal
+                      video={{
+                        id: videoModalId(block),
+                        src: block.video.src,
+                        provider: block.video.provider || "youtube",
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            ) : null,
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

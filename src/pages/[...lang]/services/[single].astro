@@ -1,11 +1,8 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import { getEntryCTM } from "@/lib/contentParser.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
-import ServicesSingle from "@/components/ServicesSingle.astro";
-import extractSlug from "@/lib/utils/extractSlug";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
 import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
@@ -16,50 +13,40 @@ import { Schema } from "astro-seo-schema";
 import type { Service, FAQPage } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import {
+  getSanityService,
+  getSanityServices,
+  serviceImageUrl,
+} from "@/lib/sanity/services";
+import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
 
 export async function getStaticPaths() {
-  const paths = await Promise.all(
-    supportedLanguages.map(async (lang) => {
-      const serviceFolder = config.settings.serviceFolder as "services";
-      const { defaultLanguage, showDefaultLangInUrl } =
-        config.settings.multilingual;
+  const services = await getSanityServices();
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
 
-      const serviceIndex = await getEntryCTM(
-        serviceFolder as "services",
-        "-index",
-        lang.languageCode,
-      );
-
-      let services = await getCollectionCTM(
-        serviceFolder as "services",
-        lang.languageCode,
-      );
-
-      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
-      if (serviceIndex?.data.draft && import.meta.env.PROD) {
-        return [];
-      }
-
-      return services.map((service) => ({
-        params: {
-          lang:
-            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
-              ? undefined
-              : lang.languageCode,
-          single: extractSlug(service).split("/").pop(),
-        },
-        props: {
-          service,
-          serviceIndex,
-        },
-      }));
-    }),
+  return services.flatMap((service) =>
+    supportedLanguages.map((lang) => ({
+      params: {
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+        single: service.slug.current,
+      },
+      props: {
+        service,
+      },
+    })),
   );
-
-  return paths.flat();
 }
 
-const { service, serviceIndex } = Astro.props;
+const { service: pathService } = Astro.props;
+const service = pathService?.body
+  ? pathService
+  : await getSanityService(Astro.params.single || "");
+
+if (!service) return Astro.redirect("/404");
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
@@ -69,17 +56,18 @@ const orgData = config.seo.organization || {};
 const resolvedCanonical = Astro.props.canonical
   ? absoluteUrl(Astro.props.canonical, Astro)
   : absoluteUrl(Astro.url.pathname, Astro);
+const imageUrl = serviceImageUrl(service, 1200, 630);
 
 // Build Service schema inline
 const serviceSchema: Service = {
   "@type": "Service",
   "@id": `${resolvedCanonical}#service`,
-  name: service?.data?.title,
-  description: service?.data?.description || service?.data?.metaDescription,
+  name: service.title,
+  description: service.excerpt || service.seo?.metaDescription,
   url: resolvedCanonical,
-  ...(service?.data?.image && { image: absoluteUrl(service.data.image, Astro) }),
+  ...(imageUrl && { image: imageUrl }),
   provider: { "@id": `${baseUrlClean}/#organization` },
-  serviceType: service?.data?.serviceType || "Consulting Service",
+  serviceType: service.serviceType || "Consulting Service",
   areaServed: {
     "@type": "State",
     name: orgData.addressRegion || "USA",
@@ -92,16 +80,17 @@ const faqSectionData = (
   await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
 )?.data;
 
-const faqList = faqSectionData?.list
-  ?.filter((item: any) => item.enable !== false)
-  ?.map((item: any) => ({
-    "@type": "Question",
-    name: item.title,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.content,
-    },
-  })) || [];
+const faqList =
+  faqSectionData?.list
+    ?.filter((item: any) => item.enable !== false)
+    ?.map((item: any) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.content,
+      },
+    })) || [];
 
 let faqSchema: FAQPage | undefined;
 if (faqList.length > 0) {
@@ -113,17 +102,24 @@ if (faqList.length > 0) {
 }
 ---
 
-<Base {...service?.data} hideOffcanvas={true}>
+<Base
+  title={service.title}
+  metaTitle={service.seo?.metaTitle || service.title}
+  metaDescription={service.seo?.metaDescription || service.excerpt}
+  canonical={service.seo?.canonical || resolvedCanonical}
+  robots={service.seo?.robots}
+  image={imageUrl}
+  hideOffcanvas={true}>
   <PageHeader
     content={{
-      badge: service?.data?.title,
-      title: service?.data?.title,
-      image: service?.data?.image,
-      imageText: service?.data?.title,
+      badge: service.title,
+      title: service.title,
+      image: imageUrl,
+      imageText: service.title,
     }}
     contentClass="max-w-2xl!"
   />
-  <ServicesSingle content={service} hasPaddingBottom={true} />
+  <SanityServiceContent value={service.body || []} />
   <FeaturesGridThree />
   <StatsMarqueeSection hasLightBackground={false} />
   <FaqSectionTwo mode="shadow" />
@@ -131,6 +127,14 @@ if (faqList.length > 0) {
   <CTASection />
 
   <!-- Page-specific structured data -->
-  <Schema item={{ "@context": "https://schema.org", ...serviceSchema } as any} />
-  {faqSchema && <Schema item={{ "@context": "https://schema.org", ...faqSchema } as any} />}
+  <Schema
+    item={{ "@context": "https://schema.org", ...serviceSchema } as any}
+  />
+  {
+    faqSchema && (
+      <Schema
+        item={{ "@context": "https://schema.org", ...faqSchema } as any}
+      />
+    )
+  }
 </Base>
