@@ -9,7 +9,7 @@ import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import { getLocaleUrlCTM, useTranslations } from "@/lib/utils/i18nUtils";
 import VideoModal from "@/layouts/components/widgets/VideoModal.astro";
 import Button from "../Button.astro";
-import socialData from "@/config/social.json";
+import { enabledItems, getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const t = await useTranslations(Astro.currentLocale as string);
 type SectionType = Section & NonNullable<z.infer<typeof heroSectionTwoSchema>>;
@@ -43,7 +43,16 @@ const hasSlides = slides && slides.length > 0;
 if (!enable) {
   return null;
 }
-const socialLinks = socialData.main.filter((link) => link.enable).splice(0, 4);
+
+const siteGlobals = await getSiteGlobals();
+
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const socialLinks = enabledItems(siteGlobals.socialLinks).slice(0, 4);
 const hasSectionSpacingTop = Astro.props.hasSectionSpacingTop ?? true;
 ---
 

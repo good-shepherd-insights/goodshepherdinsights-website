@@ -1,5 +1,4 @@
 ---
-import config from ".astro/config.generated.json";
 import type { Section } from "@/types";
 import ContactForm from "../widgets/ContactForm.astro";
 import { getEntryCTM } from "@/lib/contentParser.astro";
@@ -10,10 +9,33 @@ import SectionBadge from "../global/SectionBadge.astro";
 import SectionTitle from "../global/SectionTitle.astro";
 import OptimizedImage from "../utilities/OptimizedImage.astro";
 import { markdownify } from "@/lib/utils/textConverter";
-
-const { contactInfo } = config.settings;
+import { getSiteGlobals, type GlobalContact } from "@/lib/sanity/siteGlobals";
 
 type ContactSection = Section & z.infer<typeof contactSectionSchema>;
+type ContactField = "phone" | "email" | "address";
+
+const resolveContactItem = (
+  contact: GlobalContact,
+  fieldName: string,
+): { label: string; href?: string } => {
+  const field = fieldName as ContactField;
+
+  if (field === "phone") {
+    return { label: contact.phoneLabel, href: contact.phoneHref };
+  }
+
+  if (field === "email") {
+    return { label: contact.emailLabel, href: contact.emailHref };
+  }
+
+  if (field === "address") {
+    return { label: contact.addressText };
+  }
+
+  throw new Error(
+    `Unsupported contact field "${fieldName}" in ContactSectionTwo.`,
+  );
+};
 
 let defaultContent = (
   await getEntryCTM("sections", "contact-section-two", Astro.currentLocale)
@@ -35,6 +57,16 @@ let {
 } = actualContent;
 
 if (!enable) return null;
+
+const siteGlobals = await getSiteGlobals();
+
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const { contact } = siteGlobals;
 ---
 
 <section class="relative">
@@ -75,36 +107,51 @@ if (!enable) return null;
           {title && <SectionTitle title={title} dataAos="reveal-anim-right" />}
           {
             description && (
-              <p class="text-text-dark/85 mt-4" set:html={markdownify(description)} />
+              <p
+                class="text-text-dark/85 mt-4"
+                set:html={markdownify(description)}
+              />
             )
           }
 
           <div class="mt-6 flex flex-col gap-8 lg:mt-12">
             {
               list &&
-                list.map((item) => (
-                  <div class="group flex gap-3 lg:gap-6">
-                    <div class="bg-primary group-hover:bg-accent flex size-14 min-h-14 min-w-14 items-center justify-center transition-colors duration-300 lg:size-16 lg:min-h-16 lg:min-w-16">
-                      <OptimizedImage
-                        src={item.icon}
-                        alt={item.title}
-                        width={48}
-                        height={48}
-                        inlineSvg={true}
-                        class="group-hover:fill-text-dark fill-text-light size-5 md:size-7"
-                      />
-                    </div>
-                    <div class="">
-                      <div class="text-text-dark/80">{item.title}</div>
-                      <div
-                        class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary text-text-dark font-bold break-all"
-                        set:html={markdownify(
-                          (contactInfo as any)[item.settingFieldName],
+                list.map((item) => {
+                  const contactItem = resolveContactItem(
+                    contact,
+                    item.settingFieldName,
+                  );
+
+                  return (
+                    <div class="group flex gap-3 lg:gap-6">
+                      <div class="bg-primary group-hover:bg-accent flex size-14 min-h-14 min-w-14 items-center justify-center transition-colors duration-300 lg:size-16 lg:min-h-16 lg:min-w-16">
+                        <OptimizedImage
+                          src={item.icon}
+                          alt={item.title}
+                          width={48}
+                          height={48}
+                          inlineSvg={true}
+                          class="group-hover:fill-text-dark fill-text-light size-5 md:size-7"
+                        />
+                      </div>
+                      <div class="">
+                        <div class="text-text-dark/80">{item.title}</div>
+                        {contactItem.href ? (
+                          <a
+                            href={contactItem.href}
+                            class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary text-text-dark font-bold break-all">
+                            {contactItem.label}
+                          </a>
+                        ) : (
+                          <div class="text-h6-sm sm:text-h5-sm lg:text-h5 font-secondary text-text-dark font-bold break-all">
+                            {contactItem.label}
+                          </div>
                         )}
-                      />
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
             }
           </div>
         </div>
