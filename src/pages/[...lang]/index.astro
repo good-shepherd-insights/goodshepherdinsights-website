@@ -11,16 +11,20 @@ import { Schema } from "astro-seo-schema";
 import type { LocalBusiness } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import config from ".astro/config.generated.json";
+import { enabledItems, getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
 const page = await getSanityHomePage();
+const siteGlobals = await getSiteGlobals();
 
 if (!page) {
   throw new Error('Missing Sanity homepage document with id "home-page".');
+}
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
 }
 
 const pageData = Object.fromEntries(
@@ -29,14 +33,14 @@ const pageData = Object.fromEntries(
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
-const orgData = config.seo.organization || {};
+const orgData = siteGlobals.organization || {};
 
 // Build LocalBusiness schema inline
 const localBusinessSchema: LocalBusiness = {
   "@type": "LocalBusiness",
   "@id": `${baseUrlClean}/#localbusiness`,
-  name: config.seo.author,
-  description: page.metaDescription || config.site.description,
+  name: orgData.name || siteGlobals.brand.title,
+  description: page.metaDescription || siteGlobals.seoDefaults?.description,
   url: baseUrl,
   ...(page.image && { image: absoluteUrl(page.image, Astro) }),
   ...(orgData.telephone && { telephone: orgData.telephone }),
@@ -54,8 +58,7 @@ const localBusinessSchema: LocalBusiness = {
     },
   }),
   sameAs:
-    (config as any).social?.main
-      ?.filter((item: any) => item.enable)
+    enabledItems(siteGlobals.socialLinks)
       .map((item: any) => item.url) || [],
 };
 ---

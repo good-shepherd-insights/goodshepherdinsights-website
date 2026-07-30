@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import { parseStringPromise, Builder } from "xml2js";
+import { createClient } from "@sanity/client";
 
 // --------- Cross-platform root ----------
 const __filename = fileURLToPath(import.meta.url);
@@ -160,11 +161,18 @@ function generateUrl(filePathPosix, metadata, settings) {
   return urlPath.replace(/\/+/g, "/");
 }
 
-function buildExcludedFolders(config) {
-  const fromConfig = Array.isArray(config?.seo?.sitemap?.exclude)
-    ? config.seo.sitemap.exclude
-    : [];
-  return ["widgets", "sections", "author", ...fromConfig];
+async function buildExcludedFolders() {
+  const client = createClient({
+    projectId: "8yy9mp89",
+    dataset: "production",
+    apiVersion: "2026-01-01",
+    useCdn: true,
+  });
+  const fromCms =
+    (await client.fetch(
+      '*[_type == "siteGlobals" && _id == "site-globals"][0].indexing.sitemap.exclude',
+    )) || [];
+  return ["widgets", "sections", "author", ...(Array.isArray(fromCms) ? fromCms : [])];
 }
 
 async function getSitemapFiles() {
@@ -194,7 +202,7 @@ async function processSitemaps() {
       languages: Array.isArray(languagesJSON) ? [...languagesJSON] : [],
     };
 
-    const EXCLUDE_FOLDERS = buildExcludedFolders(config);
+    const EXCLUDE_FOLDERS = await buildExcludedFolders();
 
     const sitemapFiles = await getSitemapFiles();
     const contentFrontmatter = await getContentFrontmatter();

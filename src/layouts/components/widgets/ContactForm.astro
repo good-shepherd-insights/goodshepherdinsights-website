@@ -5,7 +5,7 @@ import type { z } from "astro/zod";
 import type { contactFormSchema } from "@/sections.schema";
 import type { inputFieldSchema } from "@/sections.schema";
 import { getPrelineSelectConfig } from "@/lib/utils/preline";
-import config from ".astro/config.generated.json";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 interface Props {
   form: z.infer<typeof contactFormSchema>;
@@ -13,9 +13,36 @@ interface Props {
   layout?: "default" | "section-two";
 }
 
-const {
-  settings: { contactFormAction, contactFormProvider },
-} = config;
+const siteGlobals = await getSiteGlobals();
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+
+const contactFormAction = siteGlobals.forms?.contactFormAction;
+const contactFormProvider = siteGlobals.forms?.contactFormProvider;
+const uiCopy = siteGlobals.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
+const formCopy = uiCopy.forms || {};
+const requiredFormCopyKeys = [
+  "chooseOption",
+  "missingLabel",
+  "missingName",
+  "missingPlaceholder",
+  "invalidSelect",
+  "validSelect",
+  "exampleId",
+  "exampleLabel",
+  "submitting",
+];
+
+if (!contactFormAction || !contactFormProvider) {
+  throw new Error("Missing required Sanity contact form action or provider");
+}
+
+for (const key of requiredFormCopyKeys) {
+  if (!formCopy[key]) {
+    throw new Error(`Missing required Sanity uiCopy.forms.${key} value.`);
+  }
+}
 
 // Generate ID from label (Required for Input Radio and Checkbox)
 const genIdFromLabel = (label: string) => toLowerCase(label).replace(" ", "-");
@@ -84,6 +111,7 @@ const noteStyles = {
   {...{
     "data-action": contactFormAction,
     "data-provider": contactFormProvider,
+    "data-submitting-message": formCopy.submitting,
     "data-netlify": contactFormProvider === "netlify" ? "true" : undefined,
     action: contactFormProvider === "netlify" ? contactFormAction : undefined,
   }}
@@ -128,7 +156,7 @@ const noteStyles = {
           input.type !== "radio" &&
           (input.groupLabel || input.label) && (
             <label for="name" class="form-label">
-              {input.groupLabel || input.label || "Please set label"}
+              {input.groupLabel || input.label || formCopy.missingLabel}
               {input.required && <span class="text-primary">*</span>}
             </label>
           )}
@@ -136,16 +164,16 @@ const noteStyles = {
           <div id="validation-target">
             <select
               {...(input.id && { id: input.id })}
-              data-name={input.name || input.label || "Please set name value"}
+              data-name={input.name || input.label || formCopy.missingName}
               data-hs-select={JSON.stringify(
                 getPrelineSelectConfig({
-                  placeholder: input.placeholder || "Please set placeholder",
+                  placeholder: input.placeholder || formCopy.missingPlaceholder,
                   searchPlaceholder: input.dropdown?.search?.placeholder,
                   hasSearch: input.dropdown?.type === "search",
                 }),
               )}
               class="hidden">
-              <option value="">Choose</option>
+              <option value="">{formCopy.chooseOption}</option>
               {input.dropdown?.items?.map((option) => (
                 <option
                   {...(option.selected && { selected: true })}
@@ -155,17 +183,17 @@ const noteStyles = {
               ))}
             </select>
             <p class="hs-error:block mt-2 hidden text-sm text-red-600">
-              Please select a valid state.
+              {formCopy.invalidSelect}
             </p>
             <p class="hs-success:flex text-dark mt-2 hidden text-sm">
-              Perfect!
+              {formCopy.validSelect}
             </p>
           </div>
         ) : input.tag === "textarea" ? (
           <textarea
             rows={input.rows || "4"}
-            name={input.name || input.label || "Please set name value"}
-            placeholder={input.placeholder || "Please set placeholder"}
+            name={input.name || input.label || formCopy.missingName}
+            placeholder={input.placeholder || formCopy.missingPlaceholder}
             class="form-input"
             {...(input.required && { required: true })}
             set:html={input.defaultValue || ""}
@@ -184,18 +212,18 @@ const noteStyles = {
                   }}
                   type={input.type || "text"}
                   name={
-                    input.name || input.groupLabel || "Please set name value"
+                    input.name || input.groupLabel || formCopy.missingName
                   }
-                  id={input.id || genIdFromLabel(input.label || "example-id")}
+                  id={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
                   class:list={[
                     input.type === "radio" ? "form-radio" : "form-checkbox",
                   ]}
                   {...(input.required && { required: true })}
                 />
                 <label
-                  for={input.id || genIdFromLabel(input.label || "example-id")}
+                  for={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
                   class="form-check-label"
-                  set:html={markdownify(input.label) || "Example Label"}
+                  set:html={markdownify(input.label) || formCopy.exampleLabel}
                 />
               </div>
             ))}
@@ -211,21 +239,21 @@ const noteStyles = {
                 checked: input.checked ? true : undefined,
               }}
               type={input.type || "text"}
-              name={input.name || "Please set name value"}
-              id={input.id || genIdFromLabel(input.label || "example-id")}
-              placeholder={input.placeholder || "Please set placeholder"}
+              name={input.name || formCopy.missingName}
+              id={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
+              placeholder={input.placeholder || formCopy.missingPlaceholder}
               class:list={[
                 input.type === "radio" ? "form-radio" : "form-checkbox",
               ]}
               {...(input.required && { required: true })}
             />
             <label
-              for={input.id || genIdFromLabel(input.label || "example-id")}
+              for={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
               class="form-check-label"
               set:html={
                 (input.label && markdownify(input.label)) ||
                 input.label ||
-                "Example Label"
+                formCopy.exampleLabel
               }
             />
           </div>
@@ -244,8 +272,8 @@ const noteStyles = {
               value: input.defaultValue,
             })}
             type={input.type || "text"}
-            name={input.name || input.label || "Please set name value"}
-            placeholder={input.placeholder || "Please set placeholder"}
+            name={input.name || input.label || formCopy.missingName}
+            placeholder={input.placeholder || formCopy.missingPlaceholder}
             class="form-input"
             {...(input.required && { required: true })}
           />
@@ -344,7 +372,7 @@ const noteStyles = {
             .join("\n\n"),
         );
 
-        setMessage("Form Submitting!...", true, true, form);
+        setMessage(form.getAttribute("data-submitting-message") || "", true, true, form);
 
         try {
           switch (provider) {

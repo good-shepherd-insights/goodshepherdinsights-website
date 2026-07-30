@@ -9,16 +9,6 @@ export type SanitySeoImage = {
   alt?: string;
 };
 
-export const sanityBlogIndexContent = {
-  badge: "Insights & Updates",
-  title: "Practical guidance on ministry technology",
-  metaDescription: "Strategic technology insights for ministries and churches.",
-  searchSection: {
-    title: "Check our inside News",
-    searchPlaceholder: "Search in blog",
-  },
-};
-
 export const sanityBlogPlaceholder: SanityBlogPost = {
   _id: "sanity-blog-placeholder",
   title: "",

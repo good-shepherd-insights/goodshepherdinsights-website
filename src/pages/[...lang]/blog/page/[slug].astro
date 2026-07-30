@@ -6,10 +6,8 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import {
-  sanityBlogIndexContent,
-  sanityBlogPlaceholder,
-} from "@/lib/sanity/blog";
+import { sanityBlogPlaceholder } from "@/lib/sanity/blog";
+import { getSanityBlogIndexPage } from "@/lib/sanity/pages";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import config from ".astro/config.generated.json";
 import { Schema } from "astro-seo-schema";
@@ -33,8 +31,12 @@ export async function getStaticPaths() {
   );
 }
 const posts = await getSanityBlogPosts();
+const blogIndex = await getSanityBlogIndexPage();
+if (!blogIndex) {
+  throw new Error('Missing Sanity blogIndexPage document with id "blog-index-page".');
+}
 const currentPage = Number(Astro.params.slug) || 1;
-const pageTitle = `Blog - Page ${currentPage}`;
+const pageTitle = `${blogIndex.taxonomyCopy?.paginationTitlePrefix || blogIndex.title} ${currentPage}`;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const collectionPageSchema = {
   "@context": "https://schema.org",
@@ -52,9 +54,9 @@ const collectionPageSchema = {
   title={pageTitle}
   canonical={selfCanonical}
   robots="noindex, follow"
-  metaDescription="Ministry technology articles from Good Shepherd Insights.">
+  metaDescription={blogIndex.metaDescription || blogIndex.description}>
   <PageHeader
-    content={sanityBlogIndexContent}
+    content={blogIndex}
     contentClass="max-w-3xl! xl:px-6"
   />
   <BlogsHeroSection />
@@ -66,13 +68,13 @@ const collectionPageSchema = {
     }}
     contentList={{
       options: { layout: "grid", columns: 2, search: true },
-      searchSection: sanityBlogIndexContent.searchSection,
+      searchSection: blogIndex.searchSection,
       pagination: { enable: true, currentPage },
     }}
     content={{
       ...sanityBlogPlaceholder,
       ...posts[0],
-      title: "Blog",
+      title: blogIndex.title,
       slug: { current: "" },
       publishedAt: "",
     }}

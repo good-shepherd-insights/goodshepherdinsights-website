@@ -7,8 +7,9 @@ const {
   formAction,
   mailchimpTagValue,
   title,
-  emailPlaceholder = "Email Address",
-  submitLabel = "Send Request",
+  emailPlaceholder,
+  submitLabel,
+  messages = {},
 } = Astro.props;
 
 if (!enable) return;
@@ -60,38 +61,30 @@ if (!enable) return;
     }
     <span class="sr-only">gats-fo-lex</span>
   </form>
-  <script>
-    // Define the expected response structure
-    interface JsonpResponse {
-      result: "success" | "error";
-      msg: string;
-      type?: string;
-      webEngagementCookieValue?: string | null;
-    }
-
+  <script is:inline define:vars={{ messages }}>
     // Main function to handle form submission
     document
-      .querySelector<HTMLFormElement>("#mc-embedded-subscribe-form")
+      .querySelector("#mc-embedded-subscribe-form")
       ?.addEventListener("submit", async (event) => {
         event.preventDefault(); // Prevent default form submission behavior
 
-        const form = event.target as HTMLFormElement;
+        const form = event.target;
         const formData = new FormData(form);
         const actionUrl = form.getAttribute("action"); // Get the form's action URL
 
         if (!actionUrl) {
-          console.error("Form action URL is missing.");
+          console.error(messages.missingAction);
           return;
         }
 
         // Serialize form data to a query string
-        const queryString = new URLSearchParams(formData as any).toString();
+        const queryString = new URLSearchParams(formData).toString();
 
         // Select response containers
-        const errorContainer = document.querySelector<HTMLElement>(
+        const errorContainer = document.querySelector(
           "#mce-error-response",
         );
-        const successContainer = document.querySelector<HTMLElement>(
+        const successContainer = document.querySelector(
           "#mce-success-response",
         );
 
@@ -110,19 +103,19 @@ if (!enable) return;
           const callbackName = `jsonpCallback_${Date.now()}`;
 
           // Add the JSONP callback function to the global scope
-          (window as any)[callbackName] = (data: JsonpResponse) => {
+          window[callbackName] = (data) => {
             if (data.result === "success") {
               successContainer.textContent =
-                data.msg || "Thank you for subscribing!";
+                data.msg || messages.subscribeSuccess;
               successContainer.style.display = "block";
             } else {
               errorContainer.textContent =
-                data.msg || "An error occurred. Please try again.";
+                data.msg || messages.subscribeError;
               errorContainer.style.display = "block";
             }
 
             // Clean up after the callback is executed
-            delete (window as any)[callbackName];
+            delete window[callbackName];
             script.remove();
           };
 
@@ -130,7 +123,7 @@ if (!enable) return;
           script.src = `${actionUrl}&c=${callbackName}&${queryString}`;
           script.onerror = () => {
             errorContainer.textContent =
-              "There was an error processing your request. Please try again later.";
+              messages.subscribeNetworkError;
             errorContainer.style.display = "block";
             console.error("Error loading JSONP script.");
           };
@@ -140,7 +133,7 @@ if (!enable) return;
         } catch (error) {
           // Handle any unexpected errors
           errorContainer.textContent =
-            "There was an error processing your request. Please try again later.";
+            messages.subscribeNetworkError;
           errorContainer.style.display = "block";
           console.error("Error:", error);
         }

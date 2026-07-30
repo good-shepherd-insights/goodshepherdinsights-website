@@ -6,9 +6,9 @@ import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { testimonialSectionSchema } from "@/sections.schema";
 import SectionTitle from "../global/SectionTitle.astro";
 import TestimonialCard from "@/layouts/components/cards/TestimonialCard.astro";
-import config from ".astro/config.generated.json";
 import SectionBadge from "../global/SectionBadge.astro";
 import { markdownify } from "@/lib/utils/textConverter";
+import { getSanityTestimonials } from "@/lib/sanity/people";
 
 // Type
 export type TestimonialSectionType = z.infer<typeof testimonialSectionSchema>;
@@ -33,14 +33,7 @@ let {
 } = (actualContent as TestimonialSectionType) || {};
 if (!enable) return;
 
-let pageData = (
-  await getEntryCTM(
-    config.settings.testimonialFolder as "testimonial",
-    "-index",
-    Astro.currentLocale,
-  )
-)?.data;
-const list = pageData.list?.filter((item) => item.enable !== false) ?? [];
+const list = await getSanityTestimonials(false);
 ---
 
 <section>

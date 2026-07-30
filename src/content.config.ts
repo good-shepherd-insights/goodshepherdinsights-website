@@ -1,15 +1,12 @@
 import config from ".astro/config.generated.json";
 import { defineCollection } from "astro:content";
 import { button, sectionsSchema } from "./sections.schema";
-import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { CASESTUDIES_CARD_LAYOUT } from "@/enum";
 
 const caseStudiesFolder = config.settings.caseStudiesFolder as "case-studies";
-const testimonialFolder = config.settings.testimonialFolder || "testimonial";
 
-const contentLoader = (base: string) =>
-  glob({ pattern: "**/[^_]*.{md,mdx}", base });
+const emptyContentLoader = () => [];
 
 // ------------------------
 // Base Page Schema
@@ -68,13 +65,13 @@ export const marqueeConfig = z.object({
 
 // Pages
 const pagesCollection = defineCollection({
-  loader: contentLoader("./src/content/pages"),
+  loader: emptyContentLoader,
   schema: page,
 });
 
 // CaseStudies
 const caseStudyCollection = defineCollection({
-  loader: contentLoader(`./src/content/${caseStudiesFolder}`),
+  loader: emptyContentLoader,
   schema: page.extend({
     images: z.array(z.string()).min(1).optional(),
     options: z
@@ -115,7 +112,7 @@ const teamItem = z.object({
     .optional(),
 });
 export const teamCollection = defineCollection({
-  loader: contentLoader("./src/content/team"),
+  loader: emptyContentLoader,
   schema: page.extend({
     list: z.array(teamItem).optional(),
   }),
@@ -140,10 +137,7 @@ const testimonialItem = z.object({
   }),
 });
 export const testimonialCollection = defineCollection({
-  loader: glob({
-    pattern: "**/[^_]*.{md,mdx}",
-    base: `./src/content/${testimonialFolder}`,
-  }),
+  loader: emptyContentLoader,
   schema: page.extend({
     list: z.array(testimonialItem).optional(),
     listHome2: z.array(testimonialItem).optional(),
@@ -160,31 +154,31 @@ export const collections = {
   team: teamCollection,
 
   sections: defineCollection({
-    loader: contentLoader("./src/content/sections"),
+    loader: emptyContentLoader,
   }),
 
   homepage: defineCollection({
-    loader: contentLoader("./src/content/homepage"),
+    loader: emptyContentLoader,
   }),
 
   "about-us": defineCollection({
-    loader: contentLoader("./src/content/about-us"),
+    loader: emptyContentLoader,
   }),
 
   contact: defineCollection({
-    loader: contentLoader("./src/content/contact"),
+    loader: emptyContentLoader,
   }),
 
   faq: defineCollection({
-    loader: contentLoader("./src/content/faq"),
+    loader: emptyContentLoader,
   }),
 
   pricing: defineCollection({
-    loader: contentLoader("./src/content/pricing"),
+    loader: emptyContentLoader,
   }),
 
   author: defineCollection({
-    loader: contentLoader("./src/content/author"),
+    loader: emptyContentLoader,
   }),
 
   testimonial: testimonialCollection,
