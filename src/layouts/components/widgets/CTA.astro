@@ -1,11 +1,18 @@
 ---
-import config from ".astro/config.generated.json";
 import Icons from "@/helpers/Icons.astro";
-import { markdownify } from "@/lib/utils/textConverter";
 import { useTranslations } from "@/lib/utils/i18nUtils";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
-const { contactInfo } = config.settings;
 const t = await useTranslations(Astro.currentLocale as string);
+const siteGlobals = await getSiteGlobals();
+
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const { contact } = siteGlobals;
 ---
 
 <div class="bg-primary rounded-lg p-6 lg:p-8">
@@ -22,10 +29,11 @@ const t = await useTranslations(Astro.currentLocale as string);
         class="bg-accent flex size-12 shrink-0 items-center justify-center rounded-full text-black">
         <Icons icon="Phone" class="size-5 fill-black font-bold" />
       </div>
-      <div
-        class="text-text-light text-lg font-bold tracking-wide lg:text-xl"
-        set:html={markdownify(contactInfo.phone, true)}
-      />
+      <a
+        href={contact.phoneHref}
+        class="text-text-light text-lg font-bold tracking-wide lg:text-xl">
+        {contact.phoneLabel}
+      </a>
     </div>
 
     <div class="flex items-center gap-4">
@@ -33,10 +41,11 @@ const t = await useTranslations(Astro.currentLocale as string);
         class="bg-accent flex size-12 shrink-0 items-center justify-center rounded-full text-black">
         <Icons icon="Mail" class="size-5 fill-black font-bold" />
       </div>
-      <div
-        class="text-text-light min-w-0 text-sm font-bold leading-tight tracking-normal break-all"
-        set:html={markdownify(contactInfo.email, true)}
-      />
+      <a
+        href={contact.emailHref}
+        class="text-text-light min-w-0 text-sm leading-tight font-bold tracking-normal break-all">
+        {contact.emailLabel}
+      </a>
     </div>
   </div>
 </div>

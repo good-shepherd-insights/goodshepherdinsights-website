@@ -4,15 +4,11 @@ import { z } from "astro/zod";
 import { getEntryCTM } from "@/lib/contentParser.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { ctaBarSectionSchema } from "@/sections.schema";
-import socialData from "@/config/social.json";
 import Button from "../Button.astro";
 import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import OptimizedImage from "../utilities/OptimizedImage.astro";
 import { markdownify } from "@/lib/utils/textConverter";
-
-const socialLinks = socialData.main.filter(
-  (link) => link.enable && link.label !== "Dribbble",
-);
+import { enabledItems, getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 // Type
 type SectionType = Section & NonNullable<z.infer<typeof ctaBarSectionSchema>>;
@@ -36,6 +32,18 @@ const {
 } = actualContent ?? {};
 
 if (!enable) return;
+
+const siteGlobals = await getSiteGlobals();
+
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const socialLinks = enabledItems(siteGlobals.socialLinks).filter(
+  (link) => link.label !== "Dribbble",
+);
 const hasSectionSpacingTop = Astro.props.hasSectionSpacingTop ?? true;
 ---
 
