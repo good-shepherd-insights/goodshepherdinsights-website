@@ -2,18 +2,21 @@
 import { Schema } from "astro-seo-schema";
 import type { WebSite, Organization, BreadcrumbList } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 import config from ".astro/config.generated.json";
-import social from "@/config/social.json";
+import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
-const { title = "", canonical = "" } = Astro.props;
+const { title = "", canonical = "", siteGlobals } = Astro.props as {
+  title?: string;
+  canonical?: string;
+  siteGlobals?: SiteGlobals;
+};
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
 
 const siteTitle =
-  config.site.title +
+  (siteGlobals?.brand?.title || config.site.title) +
   (config.site.tagline &&
     (config.site.taglineSeparator || " - ") + config.site.tagline);
 
@@ -43,14 +46,14 @@ const websiteSchema: WebSite = {
 const organizationSchema: Organization = {
   "@type": "Organization",
   "@id": `${baseUrlClean}/#organization`,
-  name: config.seo.author,
+  name: siteGlobals?.brand?.title || config.seo.author,
   url: baseUrl,
-  sameAs: social.main
+  sameAs: (siteGlobals?.socialLinks || [])
     .filter((item: any) => item.enable)
     .map((item: any) => item.url),
   logo: {
     "@type": "ImageObject",
-    url: absoluteUrl(config.site.logo, Astro),
+    url: absoluteUrl(siteGlobals?.brand?.logoPath || config.site.logo, Astro),
   },
   ...((orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) && {
     address: {
@@ -62,8 +65,12 @@ const organizationSchema: Organization = {
       ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
     },
   }),
-  ...(orgData.email && { email: orgData.email }),
-  ...(orgData.telephone && { telephone: orgData.telephone }),
+  ...(siteGlobals?.contact?.emailLabel
+    ? { email: siteGlobals.contact.emailLabel }
+    : orgData.email && { email: orgData.email }),
+  ...(siteGlobals?.contact?.phoneLabel
+    ? { telephone: siteGlobals.contact.phoneLabel }
+    : orgData.telephone && { telephone: orgData.telephone }),
 };
 
 // 3. BreadcrumbList schema

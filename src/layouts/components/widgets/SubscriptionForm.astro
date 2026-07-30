@@ -1,19 +1,24 @@
 ---
-import { useTranslations } from "@/lib/utils/i18nUtils.ts";
 import SectionTitle from "../global/SectionTitle.astro";
 import Button from "../Button.astro";
 
-const t = await useTranslations(Astro.currentLocale as string);
-const { enable, formAction, mailchimpTagValue, title } = Astro.props;
+const {
+  enable,
+  formAction,
+  mailchimpTagValue,
+  title,
+  emailPlaceholder = "Email Address",
+  submitLabel = "Send Request",
+} = Astro.props;
 
 if (!enable) return;
 ---
 
 <>
   {
-    (title || t("subscription.title")) && (
+    title && (
       <div class="mx-auto max-w-6xl text-center">
-        <SectionTitle title={t("subscription.title")} variant="dark" />
+        <SectionTitle title={title} variant="dark" />
       </div>
     )
   }
@@ -26,7 +31,7 @@ if (!enable) return;
         name="EMAIL"
         id="mce-EMAIL"
         aria-required="true"
-        placeholder={t("common.emailPlaceholder")}
+        placeholder={emailPlaceholder}
         class="bg-body-dark h-full w-full rounded-lg border-none px-4 py-4 outline-0 [--tw-ring-offset-shadow:none] placeholder:opacity-90 sm:px-8 sm:py-6"
       />
       <Button
@@ -34,10 +39,10 @@ if (!enable) return;
         buttonType="submit"
         tag="button"
         id="mc-embedded-subscribe"
-        label={t("common.sendRequest")}
+        label={submitLabel}
         variant="fill"
         class="btn-accent effect-color-dark border-b-none text-text-dark absolute! top-2 right-2 flex w-fit items-center justify-center rounded-md px-2 py-1 sm:px-6 sm:py-3">
-        <span class="sr-only">{t("common.sendRequest")}</span>
+        <span class="sr-only">{submitLabel}</span>
       </Button>
     </div>
     <div id="mce-responses" class="w-full text-sm opacity-60">

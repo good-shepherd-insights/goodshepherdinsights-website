@@ -24,6 +24,17 @@ import {
 import {imageWithAlt, schemaThing, seoFields, simplePortableText} from './shared'
 import {reusableButton, reusableComponents, reusableCtaSection} from './reusableComponents'
 import {
+  globalBrand,
+  globalButton,
+  globalContact,
+  globalFooter,
+  globalHeader,
+  navigationChildItem,
+  navigationItem,
+  siteGlobals,
+  socialLink,
+} from './siteGlobals'
+import {
   serviceCta,
   serviceImage,
   serviceIntro,
@@ -49,6 +60,15 @@ export const schemaTypes = [
   reusableButton,
   reusableComponents,
   reusableCtaSection,
+  siteGlobals,
+  globalBrand,
+  globalContact,
+  globalHeader,
+  globalFooter,
+  globalButton,
+  socialLink,
+  navigationItem,
+  navigationChildItem,
   seoFields,
   simplePortableText,
   homeHeroSection,
