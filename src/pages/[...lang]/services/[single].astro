@@ -78,7 +78,7 @@ const serviceSchema: Service = {
   serviceType: service.serviceType,
   areaServed: {
     "@type": "State",
-    name: orgData.addressRegion,
+    name: orgData.address?.addressRegion,
   },
 };
 

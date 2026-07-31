@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {buttonHoverEffectOptions, buttonVariantOptions} from './shared'
 
 const buttonFields = [
   defineField({
@@ -83,28 +84,13 @@ const buttonFields = [
     name: 'variant',
     title: 'Variant',
     type: 'string',
-    options: {
-      list: [
-        {title: 'Fill', value: 'fill'},
-        {title: 'Outline', value: 'outline'},
-        {title: 'Text', value: 'text'},
-        {title: 'Circle', value: 'circle'},
-        {title: 'White', value: 'white'},
-      ],
-    },
+    options: {list: buttonVariantOptions},
   }),
   defineField({
     name: 'hoverEffect',
     title: 'Hover effect',
     type: 'string',
-    options: {
-      list: [
-        {title: 'Text flip', value: 'text-flip'},
-        {title: 'Creative fill', value: 'creative-fill'},
-        {title: 'Magnetic', value: 'magnetic'},
-        {title: 'Magnetic text flip', value: 'magnetic-text-flip'},
-      ],
-    },
+    options: {list: buttonHoverEffectOptions},
   }),
 ]
 
@@ -117,7 +103,7 @@ export const reusableButton = defineType({
 
 export const reusableCtaSection = defineType({
   name: 'reusableCtaSection',
-  title: 'CTA section',
+  title: 'CTA Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -134,42 +120,153 @@ export const reusableCtaSection = defineType({
   ],
 })
 
-export const reusableComponents = defineType({
-  name: 'reusableComponents',
-  title: 'Reusable components',
-  type: 'document',
-  fields: [
-    defineField({
-      name: 'ctaSection',
-      title: 'Default CTA section',
-      type: 'reusableCtaSection',
-    }),
-    defineField({name: 'aboutSectionTwo', title: 'About section two', type: 'aboutContentSection'}),
-    defineField({name: 'aboutMetricsSection', title: 'About metrics section', type: 'aboutContentSection'}),
-    defineField({name: 'statsSection', title: 'Stats section', type: 'statsSection'}),
-    defineField({name: 'statsMarqueeSection', title: 'Stats marquee section', type: 'statsMarqueeSection'}),
-    defineField({name: 'teamSection', title: 'Team section', type: 'teamSection'}),
-    defineField({name: 'testimonialSection', title: 'Testimonial section', type: 'testimonialSection'}),
-    defineField({name: 'testimonialSectionTwo', title: 'Testimonial section two', type: 'testimonialSection'}),
-    defineField({name: 'faqSection', title: 'FAQ section', type: 'faqSection'}),
-    defineField({name: 'faqSectionTwo', title: 'FAQ section two', type: 'faqSection'}),
-    defineField({name: 'contactSection', title: 'Contact section', type: 'contactSection'}),
-    defineField({name: 'contactSectionTwo', title: 'Contact section two', type: 'contactSection'}),
-    defineField({name: 'ctaGallerySection', title: 'CTA gallery section', type: 'ctaGallerySection'}),
-    defineField({name: 'ctaVideoSection', title: 'CTA video section', type: 'ctaVideoSection'}),
-    defineField({name: 'ctaVideoSectionTwo', title: 'CTA video section two', type: 'ctaVideoSection'}),
-    defineField({name: 'ctaBarSection', title: 'CTA bar section', type: 'ctaBarSection'}),
-    defineField({name: 'heroSectionTwo', title: 'Hero section two', type: 'heroSectionTwo'}),
-    defineField({name: 'socialBarSection', title: 'Social bar section', type: 'socialBarSection'}),
-    defineField({name: 'brandLogos', title: 'Brand logos', type: 'brandLogosSection'}),
-    defineField({name: 'pricingSection', title: 'Pricing section', type: 'pricingSection'}),
-    defineField({name: 'caseStudiesSection', title: 'Case studies section', type: 'caseStudiesSection'}),
-    defineField({name: 'blogSection', title: 'Blog section', type: 'blogSection'}),
-    defineField({name: 'blogSectionTwo', title: 'Blog section two', type: 'blogSection'}),
-  ],
-  preview: {
-    prepare() {
-      return {title: 'Reusable components'}
+const defaultDocument = (name: string, title: string, contentType: string) =>
+  defineType({
+    name,
+    title,
+    type: 'document',
+    fields: [defineField({name: 'content', title: 'Content', type: contentType})],
+    preview: {
+      prepare() {
+        return {title}
+      },
     },
-  },
-})
+  })
+
+export const defaultAboutSectionTwo = defaultDocument(
+  'defaultAboutSectionTwo',
+  'About Section Two (Default)',
+  'aboutContentSection',
+)
+
+export const defaultAboutMetricsSection = defaultDocument(
+  'defaultAboutMetricsSection',
+  'About Metrics Section (Default)',
+  'aboutContentSection',
+)
+
+export const defaultStatsSection = defaultDocument(
+  'defaultStatsSection',
+  'Stats Section (Default)',
+  'statsSection',
+)
+
+export const defaultStatsMarqueeSection = defaultDocument(
+  'defaultStatsMarqueeSection',
+  'Stats Marquee Section (Default)',
+  'statsMarqueeSection',
+)
+
+export const defaultTeamSection = defaultDocument(
+  'defaultTeamSection',
+  'Team Section (Default)',
+  'teamSection',
+)
+
+export const defaultTestimonialSection = defaultDocument(
+  'defaultTestimonialSection',
+  'Testimonial Section (Default)',
+  'testimonialSection',
+)
+
+export const defaultTestimonialSectionTwo = defaultDocument(
+  'defaultTestimonialSectionTwo',
+  'Testimonial Section Two (Default)',
+  'testimonialSection',
+)
+
+export const defaultFaqSection = defaultDocument(
+  'defaultFaqSection',
+  'FAQ Section (Default)',
+  'faqSection',
+)
+
+export const defaultFaqSectionTwo = defaultDocument(
+  'defaultFaqSectionTwo',
+  'FAQ Section Two (Default)',
+  'faqSection',
+)
+
+export const defaultContactSection = defaultDocument(
+  'defaultContactSection',
+  'Contact Section (Default)',
+  'contactSection',
+)
+
+export const defaultContactSectionTwo = defaultDocument(
+  'defaultContactSectionTwo',
+  'Contact Section Two (Default)',
+  'contactSection',
+)
+
+export const defaultCtaGallerySection = defaultDocument(
+  'defaultCtaGallerySection',
+  'CTA Gallery Section (Default)',
+  'ctaGallerySection',
+)
+
+export const defaultCtaVideoSection = defaultDocument(
+  'defaultCtaVideoSection',
+  'CTA Video Section (Default)',
+  'ctaVideoSection',
+)
+
+export const defaultCtaVideoSectionTwo = defaultDocument(
+  'defaultCtaVideoSectionTwo',
+  'CTA Video Section Two (Default)',
+  'ctaVideoSection',
+)
+
+export const defaultCtaBarSection = defaultDocument(
+  'defaultCtaBarSection',
+  'CTA Bar Section (Default)',
+  'ctaBarSection',
+)
+
+export const defaultHeroSectionTwo = defaultDocument(
+  'defaultHeroSectionTwo',
+  'Hero Section Two (Default)',
+  'heroSectionTwo',
+)
+
+export const defaultSocialBarSection = defaultDocument(
+  'defaultSocialBarSection',
+  'Social Bar Section (Default)',
+  'socialBarSection',
+)
+
+export const defaultBrandLogos = defaultDocument(
+  'defaultBrandLogos',
+  'Brand Logos (Default)',
+  'brandLogosSection',
+)
+
+export const defaultPricingSection = defaultDocument(
+  'defaultPricingSection',
+  'Pricing Section (Default)',
+  'pricingSection',
+)
+
+export const defaultCaseStudiesSection = defaultDocument(
+  'defaultCaseStudiesSection',
+  'Case Studies Section (Default)',
+  'caseStudiesSection',
+)
+
+export const defaultBlogSection = defaultDocument(
+  'defaultBlogSection',
+  'Blog Section (Default)',
+  'blogSection',
+)
+
+export const defaultBlogSectionTwo = defaultDocument(
+  'defaultBlogSectionTwo',
+  'Blog Section Two (Default)',
+  'blogSection',
+)
+
+export const defaultCtaSection = defaultDocument(
+  'defaultCtaSection',
+  'CTA Section (Default)',
+  'reusableCtaSection',
+)

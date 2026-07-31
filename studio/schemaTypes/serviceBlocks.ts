@@ -23,7 +23,7 @@ const textItem = defineArrayMember({
 
 export const serviceIntro = defineType({
   name: 'serviceIntro',
-  title: 'Service intro',
+  title: 'Service Intro',
   type: 'object',
   fields: [
     defineField({
@@ -55,7 +55,7 @@ export const serviceIntro = defineType({
 
 export const serviceNarrative = defineType({
   name: 'serviceNarrative',
-  title: 'Service narrative',
+  title: 'Service Narrative',
   type: 'object',
   fields: [
     defineField({
@@ -87,7 +87,7 @@ export const serviceNarrative = defineType({
 
 export const statCallout = defineType({
   name: 'statCallout',
-  title: 'Stat callout',
+  title: 'Stat Callout',
   type: 'object',
   fields: [
     defineField({
@@ -120,7 +120,7 @@ export const statCallout = defineType({
 
 export const serviceOffering = defineType({
   name: 'serviceOffering',
-  title: 'Service offering',
+  title: 'Service Offering',
   type: 'object',
   fields: [
     defineField({
@@ -232,7 +232,7 @@ export const serviceCta = defineType({
 
 export const serviceImage = defineType({
   name: 'serviceImage',
-  title: 'Service image',
+  title: 'Service Image',
   type: 'object',
   fields: [
     defineField({

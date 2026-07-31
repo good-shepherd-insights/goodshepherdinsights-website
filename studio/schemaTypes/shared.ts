@@ -1,5 +1,20 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+export const buttonVariantOptions = [
+  {title: 'Fill', value: 'fill'},
+  {title: 'Outline', value: 'outline'},
+  {title: 'Text', value: 'text'},
+  {title: 'Circle', value: 'circle'},
+  {title: 'White', value: 'white'},
+]
+
+export const buttonHoverEffectOptions = [
+  {title: 'Text flip', value: 'text-flip'},
+  {title: 'Creative fill', value: 'creative-fill'},
+  {title: 'Magnetic', value: 'magnetic'},
+  {title: 'Magnetic text flip', value: 'magnetic-text-flip'},
+]
+
 const linkAnnotation = defineArrayMember({
   name: 'link',
   title: 'Link',
@@ -22,7 +37,7 @@ const linkAnnotation = defineArrayMember({
 
 export const simplePortableText = defineType({
   name: 'simplePortableText',
-  title: 'Simple rich text',
+  title: 'Simple Rich Text',
   type: 'array',
   of: [
     defineArrayMember({

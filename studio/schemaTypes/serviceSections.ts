@@ -11,7 +11,7 @@ const serviceIconOptions = [
 
 export const serviceFeatureGridSection = defineType({
   name: 'serviceFeatureGridSection',
-  title: 'Service feature grid section',
+  title: 'Service Feature Grid Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -77,7 +77,7 @@ export const serviceFeatureGridSection = defineType({
 
 export const serviceStatsMarqueeSection = defineType({
   name: 'serviceStatsMarqueeSection',
-  title: 'Service stats marquee section',
+  title: 'Service Stats Marquee Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -125,7 +125,7 @@ export const serviceStatsMarqueeSection = defineType({
 
 export const serviceProcessSection = defineType({
   name: 'serviceProcessSection',
-  title: 'Service process section',
+  title: 'Service Process Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -173,7 +173,7 @@ export const serviceProcessSection = defineType({
 
 export const serviceCtaVideoSection = defineType({
   name: 'serviceCtaVideoSection',
-  title: 'Service CTA video section',
+  title: 'Service CTA Video Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -227,7 +227,7 @@ export const serviceCtaVideoSection = defineType({
 
 export const serviceFaqSection = defineType({
   name: 'serviceFaqSection',
-  title: 'Service FAQ section',
+  title: 'Service FAQ Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: false}),
@@ -268,7 +268,7 @@ export const serviceFaqSection = defineType({
 
 export const serviceIndex = defineType({
   name: 'serviceIndex',
-  title: 'Services page',
+  title: 'Services Page',
   type: 'document',
   groups: [
     {name: 'index', title: 'Services index', default: true},
@@ -361,7 +361,7 @@ export const serviceIndex = defineType({
   preview: {
     select: {title: 'title', media: 'heroImage.image'},
     prepare({title, media}) {
-      return {title: title || 'Services page', media}
+      return {title: title || 'Services Page', media}
     },
   },
 })

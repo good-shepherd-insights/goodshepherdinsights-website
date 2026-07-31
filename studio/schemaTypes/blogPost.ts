@@ -3,7 +3,7 @@ import {characterCount} from '../components/CharacterCountInput'
 
 export const blogPost = defineType({
   name: 'blogPost',
-  title: 'Blog post',
+  title: 'Blog Post',
   type: 'document',
   fields: [
     defineField({

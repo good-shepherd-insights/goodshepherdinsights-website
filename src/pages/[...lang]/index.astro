@@ -34,6 +34,7 @@ const pageData = Object.fromEntries(
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
 const orgData = siteGlobals.organization || {};
+const orgAddress = orgData.address || {};
 
 // Build LocalBusiness schema inline
 const localBusinessSchema: LocalBusiness = {
@@ -45,16 +46,16 @@ const localBusinessSchema: LocalBusiness = {
   ...(page.image && { image: absoluteUrl(page.image, Astro) }),
   ...(orgData.telephone && { telephone: orgData.telephone }),
   ...(orgData.email && { email: orgData.email }),
-  ...((orgData.streetAddress ||
-    orgData.addressLocality ||
-    orgData.addressRegion) && {
+  ...((orgAddress.streetAddress ||
+    orgAddress.addressLocality ||
+    orgAddress.addressRegion) && {
     address: {
       "@type": "PostalAddress",
-      ...(orgData.streetAddress && { streetAddress: orgData.streetAddress }),
-      ...(orgData.addressLocality && {
-        addressLocality: orgData.addressLocality,
+      ...(orgAddress.streetAddress && { streetAddress: orgAddress.streetAddress }),
+      ...(orgAddress.addressLocality && {
+        addressLocality: orgAddress.addressLocality,
       }),
-      ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
+      ...(orgAddress.addressRegion && { addressRegion: orgAddress.addressRegion }),
     },
   }),
   sameAs:

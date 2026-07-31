@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {previewPortableText} from './shared'
 
 const inlineText = () =>
   defineArrayMember({
@@ -42,12 +43,6 @@ const inlineTextField = (name: string, title: string) =>
     of: [inlineText()],
     validation: (Rule) => Rule.required().min(1),
   })
-
-const previewInlineText = (value?: Array<{children?: Array<{text?: string}>}>) =>
-  (value || [])
-    .flatMap((block) => (block.children || []).map((child) => child.text || ''))
-    .join(' ')
-    .trim()
 
 const constrainedText = () =>
   defineArrayMember({
@@ -95,7 +90,7 @@ export const tldr = defineType({
 
 export const articleSection = defineType({
   name: 'articleSection',
-  title: 'Article section',
+  title: 'Article Section',
   type: 'object',
   fields: [
     defineField({
@@ -140,7 +135,7 @@ export const articleSection = defineType({
     prepare({title, paragraphs}) {
       return {
         title: title || 'Article section',
-        subtitle: previewInlineText(paragraphs).slice(0, 100) || 'Paragraph section',
+        subtitle: previewPortableText(paragraphs).slice(0, 100) || 'Paragraph section',
       }
     },
   },
@@ -148,7 +143,7 @@ export const articleSection = defineType({
 
 export const articleList = defineType({
   name: 'articleList',
-  title: 'Article list',
+  title: 'Article List',
   type: 'object',
   fields: [
     defineField({
@@ -214,7 +209,7 @@ export const articleList = defineType({
             select: {text: 'text'},
             prepare({text}) {
               return {
-                title: previewInlineText(text).slice(0, 100) || 'List item',
+                title: previewPortableText(text).slice(0, 100) || 'List item',
               }
             },
           },
@@ -240,7 +235,7 @@ export const articleList = defineType({
 
 export const insightList = defineType({
   name: 'insightList',
-  title: 'Insight list',
+  title: 'Insight List',
   type: 'object',
   fields: [
     defineField({
@@ -481,7 +476,7 @@ export const framework = defineType({
 
 export const vendorProfile = defineType({
   name: 'vendorProfile',
-  title: 'Vendor profile',
+  title: 'Vendor Profile',
   type: 'object',
   fields: [
     defineField({
@@ -559,7 +554,7 @@ export const vendorProfile = defineType({
 
 export const useCase = defineType({
   name: 'useCase',
-  title: 'Use case',
+  title: 'Use Case',
   type: 'object',
   fields: [
     defineField({
