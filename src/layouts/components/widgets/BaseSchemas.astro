@@ -15,6 +15,7 @@ const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
 const seoDefaults = siteGlobals?.seoDefaults;
 const orgData = siteGlobals?.organization || {};
+const orgAddress = orgData.address || {};
 const uiCopy = siteGlobals?.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
 const homeLabel = uiCopy?.common?.home;
 if (!homeLabel) {
@@ -59,14 +60,14 @@ const organizationSchema: Organization = {
     "@type": "ImageObject",
     url: absoluteUrl(orgData.logo || siteGlobals?.brand?.logoPath || "", Astro),
   },
-  ...((orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) && {
+  ...((orgAddress.streetAddress || orgAddress.addressLocality || orgAddress.addressRegion) && {
     address: {
       "@type": "PostalAddress",
-      ...(orgData.streetAddress && { streetAddress: orgData.streetAddress }),
-      ...(orgData.addressLocality && {
-        addressLocality: orgData.addressLocality,
+      ...(orgAddress.streetAddress && { streetAddress: orgAddress.streetAddress }),
+      ...(orgAddress.addressLocality && {
+        addressLocality: orgAddress.addressLocality,
       }),
-      ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
+      ...(orgAddress.addressRegion && { addressRegion: orgAddress.addressRegion }),
     },
   }),
   ...(siteGlobals?.contact?.emailLabel

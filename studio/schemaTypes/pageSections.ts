@@ -27,7 +27,7 @@ export const statsItem = defineType({
 
 export const faqItem = defineType({
   name: 'faqItem',
-  title: 'FAQ item',
+  title: 'FAQ Item',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -64,7 +64,7 @@ export const videoConfig = defineType({
 
 export const aboutContentSection = defineType({
   name: 'aboutContentSection',
-  title: 'About content section',
+  title: 'About Content Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -75,15 +75,22 @@ export const aboutContentSection = defineType({
       of: [
         defineArrayMember({
           type: 'object',
+          fieldsets: [
+            {name: 'content', title: 'Content'},
+            {name: 'image', title: 'Image'},
+            {name: 'decorative', title: 'Decorative'},
+            {name: 'extras', title: 'Button & Testimonial'},
+          ],
           fields: [
             defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-            defineField({name: 'badge', title: 'Badge', type: 'string'}),
-            defineField({name: 'title', title: 'Title', type: 'string'}),
-            defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
+            defineField({name: 'badge', title: 'Badge', type: 'string', fieldset: 'content'}),
+            defineField({name: 'title', title: 'Title', type: 'string', fieldset: 'content'}),
+            defineField({name: 'description', title: 'Description', type: 'text', rows: 3, fieldset: 'content'}),
             defineField({
               name: 'services',
               title: 'Services or metrics',
               type: 'array',
+              fieldset: 'content',
               of: [
                 defineArrayMember({
                   type: 'object',
@@ -94,19 +101,20 @@ export const aboutContentSection = defineType({
                 }),
               ],
             }),
-            imagePathField('image', 'Image path'),
-            altField('imageAlt', 'Image alt'),
-            imagePathField('imageSecondary', 'Secondary image path'),
-            altField('imageSecondaryAlt', 'Secondary image alt'),
-            defineField({name: 'imageVerticalTitle', title: 'Image vertical title', type: 'string'}),
-            defineField({name: 'leftImagePostion', title: 'Show image before text', type: 'boolean'}),
-            buttonField,
-            imagePathField('deocrativeScribble', 'Decorative scribble path'),
-            altField('deocrativeScribbleAlt', 'Decorative scribble alt'),
+            {...imagePathField('image', 'Image path'), fieldset: 'image'},
+            {...altField('imageAlt', 'Image alt'), fieldset: 'image'},
+            {...imagePathField('imageSecondary', 'Secondary image path'), fieldset: 'image'},
+            {...altField('imageSecondaryAlt', 'Secondary image alt'), fieldset: 'image'},
+            defineField({name: 'imageVerticalTitle', title: 'Image vertical title', type: 'string', fieldset: 'image'}),
+            defineField({name: 'leftImagePosition', title: 'Show image before text', type: 'boolean', fieldset: 'image'}),
+            {...buttonField, fieldset: 'extras'},
+            {...imagePathField('decorativeScribble', 'Decorative scribble path'), fieldset: 'decorative'},
+            {...altField('decorativeScribbleAlt', 'Decorative scribble alt'), fieldset: 'decorative'},
             defineField({
               name: 'testimonial',
               title: 'Inline testimonial',
               type: 'object',
+              fieldset: 'extras',
               fields: [
                 defineField({name: 'name', title: 'Name', type: 'string'}),
                 defineField({name: 'designation', title: 'Designation', type: 'string'}),
@@ -123,7 +131,7 @@ export const aboutContentSection = defineType({
 
 export const aboutHeroSection = defineType({
   name: 'aboutHeroSection',
-  title: 'About hero section',
+  title: 'About Hero Section',
   type: 'object',
   fields: [
     ...sectionBaseFields,
@@ -139,7 +147,7 @@ export const aboutHeroSection = defineType({
 
 export const statsSection = defineType({
   name: 'statsSection',
-  title: 'Stats section',
+  title: 'Stats Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -151,7 +159,7 @@ export const statsSection = defineType({
 
 export const statsMarqueeSection = defineType({
   name: 'statsMarqueeSection',
-  title: 'Stats marquee section',
+  title: 'Stats Marquee Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -178,7 +186,7 @@ export const statsMarqueeSection = defineType({
 
 export const teamSection = defineType({
   name: 'teamSection',
-  title: 'Team section',
+  title: 'Team Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -190,7 +198,7 @@ export const teamSection = defineType({
 
 export const featuresGridSection = defineType({
   name: 'featuresGridSection',
-  title: 'Features grid section',
+  title: 'Features Grid Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -230,7 +238,7 @@ export const featuresGridSection = defineType({
 
 export const testimonialSection = defineType({
   name: 'testimonialSection',
-  title: 'Testimonial section',
+  title: 'Testimonial Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -244,7 +252,7 @@ export const testimonialSection = defineType({
 
 export const faqSection = defineType({
   name: 'faqSection',
-  title: 'FAQ section',
+  title: 'FAQ Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -280,7 +288,7 @@ export const faqSection = defineType({
 
 export const contactInputField = defineType({
   name: 'contactInputField',
-  title: 'Contact form input',
+  title: 'Contact Form Input',
   type: 'object',
   fields: [
     defineField({name: 'label', title: 'Label', type: 'string'}),
@@ -335,7 +343,7 @@ export const contactInputField = defineType({
 
 export const contactForm = defineType({
   name: 'contactForm',
-  title: 'Contact form',
+  title: 'Contact Form',
   type: 'object',
   fields: [
     defineField({name: 'action', title: 'Action override', type: 'string'}),
@@ -348,21 +356,26 @@ export const contactForm = defineType({
 
 export const contactSection = defineType({
   name: 'contactSection',
-  title: 'Contact section',
+  title: 'Contact Section',
   type: 'object',
+  fieldsets: [
+    {name: 'images', title: 'Images'},
+    {name: 'contactContent', title: 'Contact Content'},
+  ],
   fields: [
     ...sectionBaseFields,
-    imagePathField('backgroundImage', 'Background image path'),
-    altField('backgroundImageAlt', 'Background image alt'),
-    imagePathField('decorativeImage', 'Decorative image path'),
-    altField('decorativeImageAlt', 'Decorative image alt'),
-    defineField({name: 'faqList', title: 'FAQ list', type: 'array', of: [defineArrayMember({type: 'faqItem'})]}),
-    defineField({name: 'contactBadge', title: 'Contact badge', type: 'string'}),
-    defineField({name: 'contactTitle', title: 'Contact title', type: 'string'}),
+    {...imagePathField('backgroundImage', 'Background image path'), fieldset: 'images'},
+    {...altField('backgroundImageAlt', 'Background image alt'), fieldset: 'images'},
+    {...imagePathField('decorativeImage', 'Decorative image path'), fieldset: 'images'},
+    {...altField('decorativeImageAlt', 'Decorative image alt'), fieldset: 'images'},
+    defineField({name: 'faqList', title: 'FAQ list', type: 'array', fieldset: 'contactContent', of: [defineArrayMember({type: 'faqItem'})]}),
+    defineField({name: 'contactBadge', title: 'Contact badge', type: 'string', fieldset: 'contactContent'}),
+    defineField({name: 'contactTitle', title: 'Contact title', type: 'string', fieldset: 'contactContent'}),
     defineField({
       name: 'list',
       title: 'Contact methods',
       type: 'array',
+      fieldset: 'contactContent',
       of: [
         defineArrayMember({
           type: 'object',
@@ -374,13 +387,13 @@ export const contactSection = defineType({
         }),
       ],
     }),
-    defineField({name: 'form', title: 'Form', type: 'contactForm'}),
+    defineField({name: 'form', title: 'Form', type: 'contactForm', fieldset: 'contactContent'}),
   ],
 })
 
 export const ctaVideoSection = defineType({
   name: 'ctaVideoSection',
-  title: 'CTA video section',
+  title: 'CTA Video Section',
   type: 'object',
   fields: [
     ...sectionBaseFields,
@@ -395,7 +408,7 @@ export const ctaVideoSection = defineType({
 
 export const ctaGallerySection = defineType({
   name: 'ctaGallerySection',
-  title: 'CTA gallery section',
+  title: 'CTA Gallery Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -422,7 +435,7 @@ export const ctaGallerySection = defineType({
 
 export const ctaBarSection = defineType({
   name: 'ctaBarSection',
-  title: 'CTA bar section',
+  title: 'CTA Bar Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -436,7 +449,7 @@ export const ctaBarSection = defineType({
 
 export const heroSectionTwo = defineType({
   name: 'heroSectionTwo',
-  title: 'Hero section two',
+  title: 'Hero Section Two',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -466,7 +479,7 @@ export const heroSectionTwo = defineType({
 
 export const socialBarSection = defineType({
   name: 'socialBarSection',
-  title: 'Social bar section',
+  title: 'Social Bar Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -478,7 +491,7 @@ export const socialBarSection = defineType({
 
 export const brandLogosSection = defineType({
   name: 'brandLogosSection',
-  title: 'Brand logos section',
+  title: 'Brand Logos Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -498,7 +511,7 @@ export const brandLogosSection = defineType({
 
 export const pricingSection = defineType({
   name: 'pricingSection',
-  title: 'Pricing section',
+  title: 'Pricing Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -538,7 +551,7 @@ export const pricingSection = defineType({
 
 export const caseStudiesSection = defineType({
   name: 'caseStudiesSection',
-  title: 'Case studies section',
+  title: 'Case Studies Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
@@ -554,7 +567,7 @@ export const caseStudiesSection = defineType({
 
 export const blogSection = defineType({
   name: 'blogSection',
-  title: 'Blog section',
+  title: 'Blog Section',
   type: 'object',
   fields: [
     defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),

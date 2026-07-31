@@ -51,8 +51,8 @@ const hasLightBackground = Astro.props.hasLightBackground;
           imageAlt,
           imageSecondary,
           imageSecondaryAlt,
-          deocrativeScribble,
-          deocrativeScribbleAlt,
+          decorativeScribble,
+          decorativeScribbleAlt,
         } = item;
 
         return (
@@ -67,18 +67,18 @@ const hasLightBackground = Astro.props.hasLightBackground;
             data-aos-duration="600">
             {isEven ? (
               <>
-                {deocrativeScribble && (
+                {decorativeScribble && (
                   <div
                     class:list={[
                       "pointer-events-none absolute top-10 right-0 left-0 mx-auto mix-blend-multiply",
                       "h-60 w-52 md:h-78 md:w-70 lg:h-96 lg:w-88 xl:h-auto xl:w-auto",
                     ]}>
                     <OptimizedImage
-                      src={deocrativeScribble}
+                      src={decorativeScribble}
                       width={469}
                       height={512}
                       class="object-cover object-top-right"
-                      alt={deocrativeScribbleAlt}
+                      alt={decorativeScribbleAlt}
                       aria-hidden="true"
                     />
                   </div>

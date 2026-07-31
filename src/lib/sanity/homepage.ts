@@ -66,7 +66,7 @@ export interface HomeAboutSection {
     image?: string;
     imageAlt?: string;
     imageVerticalTitle?: string;
-    leftImagePostion?: boolean;
+    leftImagePosition?: boolean;
   }>;
 }
 
@@ -169,7 +169,7 @@ export async function getSanityHomePage() {
           "image": image.image.asset->url,
           "imageAlt": image.alt,
           imageVerticalTitle,
-          leftImagePostion
+          leftImagePosition
         }
       },
       blogSection
