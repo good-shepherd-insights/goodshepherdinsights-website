@@ -1,19 +1,12 @@
 import config from ".astro/config.generated.json";
 import { defineCollection } from "astro:content";
 import { button, sectionsSchema } from "./sections.schema";
-import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import {
-  CASESTUDIES_CARD_LAYOUT,
-  SERVICE_CARD_LAYOUT,
-} from "@/enum";
+import { CASESTUDIES_CARD_LAYOUT } from "@/enum";
 
 const caseStudiesFolder = config.settings.caseStudiesFolder as "case-studies";
-const serviceFolder = config.settings.serviceFolder || "services";
-const testimonialFolder = config.settings.testimonialFolder || "testimonial";
 
-const contentLoader = (base: string) =>
-  glob({ pattern: "**/[^_]*.{md,mdx}", base });
+const emptyContentLoader = () => [];
 
 // ------------------------
 // Base Page Schema
@@ -46,7 +39,9 @@ const basePage = z.object({
   canonical: z.string().optional(),
   keywords: z.array(z.string()).optional(),
   disableTagline: z.boolean().optional(),
-  faqItems: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
+  faqItems: z
+    .array(z.object({ question: z.string(), answer: z.string() }))
+    .optional(),
   serviceType: z.string().optional(),
 });
 
@@ -70,30 +65,13 @@ export const marqueeConfig = z.object({
 
 // Pages
 const pagesCollection = defineCollection({
-  loader: contentLoader("./src/content/pages"),
+  loader: emptyContentLoader,
   schema: page,
-});
-
-// Services
-const serviceCollection = defineCollection({
-  loader: contentLoader(`./src/content/${serviceFolder}`),
-  schema: page.extend({
-    icon: z.string().optional(),
-    image: z.string().optional(),
-    imagePosition: z.string().optional(),
-    image3: z.string().optional(),
-    options: z
-      .object({
-        layout: z.enum(SERVICE_CARD_LAYOUT).optional(),
-        limit: z.union([z.number().int(), z.literal(false)]).optional(),
-      })
-      .optional(),
-  }),
 });
 
 // CaseStudies
 const caseStudyCollection = defineCollection({
-  loader: contentLoader(`./src/content/${caseStudiesFolder}`),
+  loader: emptyContentLoader,
   schema: page.extend({
     images: z.array(z.string()).min(1).optional(),
     options: z
@@ -134,7 +112,7 @@ const teamItem = z.object({
     .optional(),
 });
 export const teamCollection = defineCollection({
-  loader: contentLoader("./src/content/team"),
+  loader: emptyContentLoader,
   schema: page.extend({
     list: z.array(teamItem).optional(),
   }),
@@ -159,10 +137,7 @@ const testimonialItem = z.object({
   }),
 });
 export const testimonialCollection = defineCollection({
-  loader: glob({
-    pattern: "**/[^_]*.{md,mdx}",
-    base: `./src/content/${testimonialFolder}`,
-  }),
+  loader: emptyContentLoader,
   schema: page.extend({
     list: z.array(testimonialItem).optional(),
     listHome2: z.array(testimonialItem).optional(),
@@ -173,40 +148,37 @@ export const testimonialCollection = defineCollection({
 // Export Collections
 // ------------------------
 export const collections = {
-  [serviceFolder]: serviceCollection,
-  services: serviceCollection,
-
   [caseStudiesFolder]: caseStudyCollection,
 
   pages: pagesCollection,
   team: teamCollection,
 
   sections: defineCollection({
-    loader: contentLoader("./src/content/sections"),
+    loader: emptyContentLoader,
   }),
 
   homepage: defineCollection({
-    loader: contentLoader("./src/content/homepage"),
+    loader: emptyContentLoader,
   }),
 
   "about-us": defineCollection({
-    loader: contentLoader("./src/content/about-us"),
+    loader: emptyContentLoader,
   }),
 
   contact: defineCollection({
-    loader: contentLoader("./src/content/contact"),
+    loader: emptyContentLoader,
   }),
 
   faq: defineCollection({
-    loader: contentLoader("./src/content/faq"),
+    loader: emptyContentLoader,
   }),
 
   pricing: defineCollection({
-    loader: contentLoader("./src/content/pricing"),
+    loader: emptyContentLoader,
   }),
 
   author: defineCollection({
-    loader: contentLoader("./src/content/author"),
+    loader: emptyContentLoader,
   }),
 
   testimonial: testimonialCollection,

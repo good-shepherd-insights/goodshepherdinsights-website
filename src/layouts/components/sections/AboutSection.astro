@@ -18,9 +18,10 @@ type Props = {
 };
 
 // Default content fetch from sections collection
-let defaultContent = (
-  await getEntryCTM("sections", "about-section", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : (((await getEntryCTM("sections", "about-section", Astro.currentLocale))
+      ?.data as SectionType) ?? undefined);
 
 // Merge with prop overrides
 let actualContent = overrideObjects(

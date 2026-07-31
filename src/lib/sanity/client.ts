@@ -1,5 +1,8 @@
 import { createClient } from "@sanity/client";
-import { createImageUrlBuilder, type SanityImageSource } from "@sanity/image-url";
+import {
+  createImageUrlBuilder,
+  type SanityImageSource,
+} from "@sanity/image-url";
 
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID || "8yy9mp89";
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET || "production";
@@ -8,7 +11,7 @@ export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: "2026-01-01",
-  useCdn: true,
+  useCdn: false,
 });
 
 const builder = createImageUrlBuilder(sanityClient);
@@ -19,13 +22,46 @@ export function sanityImageUrl(source: SanityImageSource) {
 
 export interface SanityBlogPost {
   _id: string;
+  _updatedAt?: string;
   title: string;
   slug: { current: string };
   publishedAt: string;
   excerpt?: string;
+  author?: {
+    name: string;
+    url?: string;
+    sameAs?: string[];
+  };
   coverImage?: {
     asset: { _ref: string };
     alt?: string;
+  };
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    canonical?: string;
+    robots?: string;
+    snippetFocus?: string;
+    keywords?: string[];
+    articleSection?: string;
+    about?: Array<{
+      name: string;
+      url?: string;
+    }>;
+    mentions?: Array<{
+      name: string;
+      url?: string;
+    }>;
+    dateModified?: string;
+    social?: {
+      title?: string;
+      description?: string;
+      imageAlt?: string;
+      image?: {
+        asset: { _ref: string };
+        alt?: string;
+      };
+    };
   };
   body?: SanityBody[];
   categories?: string[];
@@ -37,42 +73,91 @@ export interface SanityBlogPost {
 export type SanityInlineText = Array<{
   _type: "block";
   _key: string;
-  style?: "normal";
-  children: Array<{_type: "span"; _key: string; text: string; marks?: string[]}>;
-  markDefs?: Array<{_key: string; _type: string; href?: string; openInNewTab?: boolean}>;
+  style?: "normal" | "h2" | "h3" | "blockquote";
+  listItem?: "bullet" | "number";
+  level?: number;
+  children: Array<{
+    _type: "span";
+    _key: string;
+    text: string;
+    marks?: string[];
+  }>;
+  markDefs?: Array<{
+    _key: string;
+    _type: string;
+    href?: string;
+    openInNewTab?: boolean;
+  }>;
 }>;
 
+export type SanityLegacyBodyBlock = SanityInlineText[number];
+
 export type SanityBody =
-  | SanityInlineText[number]
+  | SanityLegacyBodyBlock
+  | {
+      _type: "articleSection";
+      _key: string;
+      header?: string;
+      headerLevel?: "h2" | "h3";
+      paragraphs: SanityInlineText;
+    }
+  | {
+      _type: "articleList";
+      _key: string;
+      header?: string;
+      headerLevel?: "h2" | "h3";
+      style: "bullet" | "number";
+      items: Array<{ text: SanityInlineText }>;
+    }
   | { _type: "bodyImage"; _key: string; asset?: unknown; alt?: string }
   | { _type: "divider"; _key: string; style?: string }
   | { _type: "tldr"; _key: string; text: SanityInlineText }
-  | { _type: "insightList"; _key: string; heading: string; items: Array<{text: SanityInlineText}> }
+  | {
+      _type: "insightList";
+      _key: string;
+      heading: string;
+      items: Array<{ text: SanityInlineText }>;
+    }
   | { _type: "callout"; _key: string; label: string; text: SanityInlineText }
-  | { _type: "takeaways"; _key: string; heading: string; items: Array<{text: SanityInlineText}> }
+  | {
+      _type: "takeaways";
+      _key: string;
+      heading: string;
+      items: Array<{ text: SanityInlineText }>;
+    }
+  | { _type: "tableOfContents"; _key: string; title?: string }
   | {
       _type: "faq";
       _key: string;
       heading: string;
-      items: Array<{question: string; answer: SanityBody[]}>;
+      items: Array<{ question: string; answer: SanityBody[] }>;
     }
   | {
       _type: "sources";
       _key: string;
       heading: string;
-      items: Array<{title: string; url?: string; publisher?: string; publishedAt?: string}>;
+      items: Array<{
+        title: string;
+        url?: string;
+        publisher?: string;
+        publishedAt?: string;
+      }>;
     }
   | {
       _type: "framework";
       _key: string;
       heading: string;
-      steps: Array<{number: number; title: string; explanation: SanityBody[]}>;
+      steps: Array<{
+        number: number;
+        title: string;
+        explanation: SanityBody[];
+      }>;
     }
   | {
       _type: "vendorProfile";
       _key: string;
       name: string;
-      officialLinks: Array<{label: string; url: string}>;
+      officialLinks: Array<{ label: string; url: string }>;
       marketPosition: string;
       bestFor: string;
       coreStrengths: string[];
@@ -94,11 +179,18 @@ export async function getSanityBlogPost(slug: string) {
   return sanityClient.fetch<SanityBlogPost | null>(
     `*[_type == "blogPost" && slug.current == $slug && !draft][0]{
       _id,
+      _updatedAt,
       title,
       slug,
       publishedAt,
       excerpt,
+      "author": select(
+        defined(author.name) => author,
+        defined(author) => {"name": author},
+        null
+      ),
       coverImage,
+      seo,
       body,
       categories,
       tags,
@@ -113,11 +205,18 @@ export async function getSanityBlogPosts() {
   return sanityClient.fetch<SanityBlogPost[]>(
     `*[_type == "blogPost" && !draft && defined(slug.current)] | order(publishedAt desc){
       _id,
+      _updatedAt,
       title,
       slug,
       publishedAt,
       excerpt,
+      "author": select(
+        defined(author.name) => author,
+        defined(author) => {"name": author},
+        null
+      ),
       coverImage,
+      seo,
       categories,
       tags,
       draft,
@@ -133,7 +232,23 @@ export async function getSanityBlogPostsByTaxonomy(
   const field = kind === "category" ? "categories" : "tags";
   return sanityClient.fetch<SanityBlogPost[]>(
     `*[_type == "blogPost" && !draft && defined(slug.current) && $value in ${field}] | order(publishedAt desc){
-      _id, title, slug, publishedAt, excerpt, coverImage, categories, tags, draft, excludeFromSitemap
+      _id,
+      _updatedAt,
+      title,
+      slug,
+      publishedAt,
+      excerpt,
+      "author": select(
+        defined(author.name) => author,
+        defined(author) => {"name": author},
+        null
+      ),
+      coverImage,
+      seo,
+      categories,
+      tags,
+      draft,
+      excludeFromSitemap
     }`,
     { value },
   );

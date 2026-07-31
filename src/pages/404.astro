@@ -1,20 +1,30 @@
 ---
 import Base from "@/layouts/Base.astro";
 import Button from "@/components/Button.astro";
+import { getSanityNotFoundPage } from "@/lib/sanity/pages";
+
+const page = await getSanityNotFoundPage();
+if (!page) {
+  throw new Error('Missing Sanity notFoundPage document with id "not-found-page".');
+}
 ---
 
-<Base title="Page Not Found" disableTagline={true} fitToScreen={false} robots="noindex, nofollow">
+<Base title={page.title} disableTagline={true} fitToScreen={false} robots={page.robots || "noindex, nofollow"}>
   <section>
     <div class="container">
       <div class="flex flex-col items-center gap-y-10">
         <div class="space-y-4 text-center text-lg">
           <h1 class="text-8xl sm:text-9xl md:text-[16rem]">404</h1>
-          <h2 class="text-h1-sm md:text-h1">Look Like You're Lost</h2>
+          <h2 class="text-h1-sm md:text-h1">{page.heading}</h2>
           <p>
-            The link you followed probably broken or the page has been removed
+            {page.message}
           </p>
         </div>
-        <Button class="uppercase" label="Back to Home" url="/" variant="text" />
+        {
+          page.button?.enable !== false && page.button?.label && (
+            <Button class="uppercase" {...page.button} label={page.button.label} />
+          )
+        }
       </div>
     </div>
   </section>

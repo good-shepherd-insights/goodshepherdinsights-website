@@ -3,8 +3,14 @@ import Icons from "@/helpers/Icons.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import uniqueIdGenerator from "@/lib/utils/uniqueIdGenerator";
 
+type AccordionItem = {
+  title: string;
+  content: string;
+  contentIsHtml?: boolean;
+};
+
 interface Props {
-  content: any;
+  content: AccordionItem[];
   class?: string;
   mode?: "light" | "dark" | "transparent" | "shadow";
   [key: string]: any;
@@ -19,85 +25,69 @@ const instanceId = Math.random().toString(36).substring(2, 9);
   {...rest}
   data-hs-accordion-always-open={rest["data-hs-accordion-always-open"]}>
   {
-    list.map((item: { title: string; content: string }, index: number) => {
+    list.map((item, index: number) => {
       const id = uniqueIdGenerator(item.title);
       const accordionId = `accordion-${instanceId}-${id}`;
       const contentId = `content-${instanceId}-${id}`;
+      const toggleId = `${accordionId}-toggle`;
 
       return (
-        <div
+        <details
           class:list={[
-            "hs-accordion relative px-4 py-1 text-start transition-all lg:px-6",
-            index === 0 && "active",
+            "hs-accordion group relative px-4 py-1 text-start transition-all lg:px-6",
             mode === "dark"
               ? "bg-light"
               : mode === "transparent"
                 ? "border-primary/40 text-text-light border bg-transparent"
                 : mode === "shadow"
                   ? "bg-light shadow-lg"
-                  : "bg-body hs-accordion-active:bg-accent",
+                  : "bg-body open:bg-accent",
           ]}
-          id={accordionId}>
-          <button
-            aria-expanded={index === 0 ? "true" : "false"}
+          id={accordionId}
+          open={index === 0}>
+          <summary
+            id={toggleId}
             class:list={[
-              "hs-accordion-toggle font-secondary text-h6 flex w-full items-center justify-between border-b border-transparent py-5.5 text-start font-medium",
+              "hs-accordion-toggle font-secondary text-h6 flex w-full list-none items-center justify-between border-b border-transparent py-5.5 text-start font-medium select-none [&::-webkit-details-marker]:hidden",
               mode === "transparent"
-                ? "hs-accordion-active:border-primary/40 hs-accordion-active:text-accent"
+                ? "group-open:border-primary/40 group-open:text-accent"
                 : mode === "shadow"
-                  ? "hs-accordion-active:border-border-dark/10"
-                  : "hs-accordion-active:border-border-light",
+                  ? "group-open:border-border-dark/10"
+                  : "group-open:border-border-light",
             ]}
             aria-controls={contentId}>
-            <h3
+            <span
+              data-accordion-title
               set:html={markdownify(item.title)}
               class="text-h6 sm:text-h6-sm text-inherit"
             />
-            <div class="hs-accordion-active:-rotate-90 pointer-events-none flex text-inherit transition duration-300">
+            <div class="pointer-events-none flex text-inherit transition duration-300 group-open:-rotate-90">
               <Icons icon="ArrowDownRight" class="text-xl" />
             </div>
-          </button>
+          </summary>
           <div
             role="region"
             id={contentId}
-            aria-labelledby={accordionId}
-            class:list={[
-              "hs-accordion-content hs-accordion-active:opacity-100 w-full overflow-hidden opacity-0 transition-all duration-300 ease-linear",
-              index !== 0 && "hidden",
-            ]}>
+            aria-labelledby={toggleId}
+            class="hs-accordion-content w-full overflow-hidden">
             <div class="py-4">
-              <div
-                set:html={markdownify(item.content, false)}
-                class:list={["text-inherit opacity-90"]}
-              />
+              {
+                item.contentIsHtml ? (
+                  <div
+                    set:html={item.content}
+                    class:list={["text-inherit opacity-90"]}
+                  />
+                ) : (
+                  <div
+                    set:html={markdownify(item.content, false)}
+                    class:list={["text-inherit opacity-90"]}
+                  />
+                )
+              }
             </div>
           </div>
-        </div>
+        </details>
       );
     })
   }
 </div>
-
-<script>
-  // Recalculate AOS Elements positions after accordion is opened
-  // @ts-nocheck
-  import AOS from "aos";
-  import { HSAccordion } from "preline";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const accordions = document.querySelectorAll(".hs-accordion");
-
-    accordions.forEach((accordion) => {
-      setTimeout(() => {
-        const { element } = HSAccordion.getInstance(
-          `#${accordion.getAttribute("id")}`,
-          true,
-        );
-
-        element.on("open", () => {
-          AOS.refresh();
-        });
-      }, 2000);
-    });
-  });
-</script>

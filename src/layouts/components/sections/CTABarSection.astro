@@ -5,10 +5,8 @@ import { getEntryCTM } from "@/lib/contentParser.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { ctaBarSectionSchema } from "@/sections.schema";
 import Button from "../Button.astro";
-import config from ".astro/config.generated.json";
 import { markdownify } from "@/lib/utils/textConverter";
-
-const { contactInfo } = config.settings;
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 // Type
 type SectionType = Section & NonNullable<z.infer<typeof ctaBarSectionSchema>>;
@@ -30,6 +28,16 @@ let actualContent = overrideObjects(
 const { enable = true, title, subTitle, button } = actualContent ?? {};
 
 if (!enable) return;
+
+const siteGlobals = await getSiteGlobals();
+
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const { contact } = siteGlobals;
 ---
 
 <section class="container">
@@ -56,7 +64,7 @@ if (!enable) return;
                 tag="a"
                 variant="fill"
                 {...button}
-                aria-label={`Call ${contactInfo.phone}`}
+                aria-label={`Call ${contact.phoneLabel}`}
                 icon={{
                   enable: true,
                   name: "Phone",
@@ -72,12 +80,12 @@ if (!enable) return;
         {/* Phone (right) */}
         {
           subTitle && (
-            <div
-              class="lg:text-h6 xl:text-h4 sm:text-h6-sm prose-strong:text-white prose-strong:font-secondary prose-strong:font-bold text-white/85 flex items-center gap-2 text-sm font-normal whitespace-nowrap sm:text-base lg:flex-1 lg:justify-end"
-              set:html={markdownify(
-                subTitle + `<strong>` + contactInfo.phone + `</strong>`,
-              )}
-            />
+            <div class="lg:text-h6 xl:text-h4 sm:text-h6-sm prose-strong:text-white prose-strong:font-secondary prose-strong:font-bold flex items-center gap-2 text-sm font-normal whitespace-nowrap text-white/85 sm:text-base lg:flex-1 lg:justify-end">
+              <span set:html={markdownify(subTitle)} />
+              <strong>
+                <a href={contact.phoneHref}>{contact.phoneLabel}</a>
+              </strong>
+            </div>
           )
         }
       </div>
@@ -89,7 +97,7 @@ if (!enable) return;
               tag="a"
               variant="fill"
               {...button}
-              aria-label={`Call ${contactInfo.phone}`}
+              aria-label={`Call ${contact.phoneLabel}`}
               icon={{
                 enable: true,
                 name: "Phone",

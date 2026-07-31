@@ -1,14 +1,20 @@
 ---
 import { markdownify } from "@/lib/utils/textConverter";
-import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils";
+import { useTranslations } from "@/lib/utils/i18nUtils";
 import Icons from "@/helpers/Icons.astro";
-import type { CollectionEntry } from "astro:content";
+import {
+  serviceImageUrl,
+  serviceUrl,
+  type SanityService,
+} from "@/lib/sanity/services";
 
 const t = await useTranslations(Astro.currentLocale as string);
 
 interface Props {
-  content: CollectionEntry<"services">;
-  options?: CollectionEntry<"services">["data"]["options"];
+  content: SanityService;
+  options?: {
+    layout?: "horizontal" | "listImage";
+  };
   index?: number;
   class?: string;
   tag?: string;
@@ -25,13 +31,12 @@ let {
 
 const layout = options?.layout || "horizontal";
 
-let { title, description, image, image3, imagePosition } = content.data || {};
+let { title } = content || {};
+const description = content.excerpt;
+const image = serviceImageUrl(content, 640, 300);
 
 // Resolve URL from content id/collection
-let slug =
-  content.id && content.collection
-    ? getEntrySlugCTM(content, Astro.currentLocale)
-    : "#";
+let slug = serviceUrl(content, Astro.currentLocale);
 const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
 ---
 
@@ -106,7 +111,6 @@ const HeadingTag = `${tag}` as keyof HTMLElementTagNameMap;
           </a>
         </div>
       </div>
-
     </div>
   ) : null
 }

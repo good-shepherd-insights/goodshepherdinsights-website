@@ -174,19 +174,67 @@
 }
 
 .sanity-article-content {
-  @apply flex flex-col gap-8;
+  @apply flex flex-col gap-6 md:gap-7;
 
-  > * {
+  > *,
+  > .content > * {
     @apply my-0!;
   }
 
-  > section {
+  > .content {
+    display: contents;
+  }
+
+  :is(
+    .article-section,
+    .article-list,
+    .article-sources,
+    .article-framework,
+    .article-vendor-profile,
+    .article-use-case,
+    .article-toc-block,
+    .article-faq-block
+  ) {
     @apply pt-0!;
   }
 
-  > .article-insights,
-  > .article-takeaways {
-    @apply p-6!;
+  :is(
+    .article-section,
+    .article-list,
+    .article-insights,
+    .article-takeaways,
+    .article-tldr,
+    .article-callout,
+    .article-sources,
+    .article-framework,
+    .article-vendor-profile,
+    .article-use-case
+  )
+    > :first-child {
+    @apply mt-0!;
+  }
+
+  :is(
+    .article-section,
+    .article-list,
+    .article-insights,
+    .article-takeaways,
+    .article-tldr,
+    .article-callout,
+    .article-sources,
+    .article-framework,
+    .article-vendor-profile,
+    .article-use-case
+  )
+    > :last-child {
+    @apply mb-0!;
+  }
+
+  > .content > .article-section h2,
+  > .content > .article-section h3,
+  > .content > .article-list h2,
+  > .content > .article-list h3 {
+    @apply mt-0;
   }
 }
 

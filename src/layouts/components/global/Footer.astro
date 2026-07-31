@@ -1,25 +1,27 @@
 ---
-import { getEntrySlugCTM, getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
-import config from ".astro/config.generated.json";
-import { useTranslations } from "@/lib/utils/i18nUtils.ts";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
-import { filteredEnabled } from "@/lib/utils/filteredEnabled";
 import Button from "@/layouts/components/Button.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import Logo from "./Logo.astro";
-import type { NavigationLink } from "@/types";
 import bgOptimizedImage from "@/lib/utils/bgOptimizedImage";
-const t = await useTranslations(Astro.currentLocale as string);
-let footerMenus = filteredEnabled(t("footerPrimary") as NavigationLink[]);
+import { getSanityServices, serviceUrl } from "@/lib/sanity/services";
+import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
-const { contactInfo, serviceFolder } = config.settings;
+const { siteGlobals } = Astro.props as { siteGlobals: SiteGlobals };
+const { brand, contact, footer } = siteGlobals;
+const primaryFooter = footer.primary;
+const footerMenus = primaryFooter?.navigation || [];
+const copyrightText = footer.copyright?.text || "";
+const phoneMarkdown = contact.phoneHref
+  ? `[${contact.phoneLabel}](${contact.phoneHref})`
+  : contact.phoneLabel;
+const emailMarkdown = contact.emailHref
+  ? `[${contact.emailLabel}](${contact.emailHref})`
+  : contact.emailLabel;
 
 // Fetch 6 Services
-let servicesList = await getCollectionCTM(
-  serviceFolder as "services",
-  Astro.currentLocale as string,
-);
+let servicesList = await getSanityServices();
 servicesList = servicesList.slice(0, 6);
 
 const bg = await bgOptimizedImage(
@@ -33,9 +35,9 @@ const bg = await bgOptimizedImage(
       class="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-10 lg:gap-12 xl:gap-20">
       {/* Col 1: Brand & Contact Strip */}
       <div class="col-span-3 flex flex-col gap-2 sm:gap-6 lg:px-6">
-        <Logo />
+        <Logo brand={brand} />
         <p class="text-text-dark/90 leading-relaxed">
-          {t("footer.description")}
+          {primaryFooter?.description}
         </p>
         <hr class="border-border-dark/20 w-full border-t" />
         <div class="flex items-center gap-4">
@@ -48,11 +50,11 @@ const bg = await bgOptimizedImage(
           />
           <div class="flex flex-col">
             <span class="font-medium">
-              {t("footer.freeSupport")}
+              {primaryFooter?.supportLabel}
             </span>
             <span
               class="sm:text-h6-sm text-h6 font-secondary font-bold tracking-wide"
-              set:html={markdownify(contactInfo.phone, true)}
+              set:html={markdownify(phoneMarkdown, true)}
             />
           </div>
         </div>
@@ -61,8 +63,8 @@ const bg = await bgOptimizedImage(
       <div
         class="col-span-7 grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8 md:gap-12 lg:pt-2 xl:gap-20">
         {/* Col 2: Our Services */}
-        <div class="sm:col-span-2 flex flex-col gap-2 sm:gap-4 lg:gap-8">
-          <h3 class="sm:text-h5 text-h5-sm">{t("common.ourServices")}</h3>
+        <div class="flex flex-col gap-2 sm:col-span-2 sm:gap-4 lg:gap-8">
+          <h3 class="sm:text-h5 text-h5-sm">{primaryFooter?.servicesHeading}</h3>
           <ul class="flex flex-col gap-1 lg:gap-2">
             {
               servicesList.map((svc) => (
@@ -71,12 +73,12 @@ const bg = await bgOptimizedImage(
                   <Button
                     tag="a"
                     variant="text"
-                    label={svc.data.title}
-                    url={getEntrySlugCTM(svc, Astro.currentLocale)}
-                    aria-label={`${t("button.readMore")} ${svc.data.title}`}
-                    srOnly={`${t("button.readMore")} ${svc.data.title}`}
+                    label={svc.title}
+                    url={serviceUrl(svc, Astro.currentLocale)}
+                    aria-label={`Read more ${svc.title}`}
+                    srOnly={`Read more ${svc.title}`}
                     class="text-text-dark/90 hover:text-accent border-none font-normal transition-colors hover:opacity-100">
-                    {svc.data.title}
+                    {svc.title}
                   </Button>
                 </li>
               ))
@@ -84,25 +86,24 @@ const bg = await bgOptimizedImage(
           </ul>
         </div>
         {/* Col 3: Contact Us */}
-        <div class="sm:col-span-1 flex flex-col gap-2 sm:gap-4 lg:gap-8">
-          <h3 class="sm:text-h5 text-h5-sm">{t("common.contactUs")}</h3>
+        <div class="flex flex-col gap-2 sm:col-span-1 sm:gap-4 lg:gap-8">
+          <h3 class="sm:text-h5 text-h5-sm">{primaryFooter?.contactHeading}</h3>
           <div class="text-text-dark/90 flex flex-col gap-1 sm:gap-3">
-            <div set:html={markdownify(contactInfo.address, true)} />
-            <div set:html={markdownify(contactInfo.phone, true)} />
-            <div set:html={markdownify(contactInfo.email, true)} />
+            <div>{contact.addressText}</div>
+            <div set:html={markdownify(phoneMarkdown, true)} />
+            <div set:html={markdownify(emailMarkdown, true)} />
             <div class="font-medium">
-              {t("common.workHour")}
+              {primaryFooter?.workHourLabel}
             </div>
             <div class="text-text-dark/90 flex flex-col gap-2">
               <div
                 class="leading-relaxed"
-                set:html={markdownify(t("common.workHourValue"), true)}
+                set:html={markdownify(primaryFooter?.workHourValue || "", true)}
               />
             </div>
           </div>
         </div>
       </div>
-
     </div>
 
     {/* Middle Area: Decorations & Giant 'Since 1990' */}
@@ -135,7 +136,7 @@ const bg = await bgOptimizedImage(
       <div
         style={`background-image: url(${bg})`}
         class="font-secondary mx-auto bg-cover bg-clip-text bg-position-[30%_70%] text-center text-[clamp(3rem,5vw,3.5rem)] leading-none font-bold text-transparent">
-        {t("footer.since")}
+        {primaryFooter?.sinceText}
       </div>
     </div>
 
@@ -164,7 +165,7 @@ const bg = await bgOptimizedImage(
     <div
       class="font-secondary font-bold"
       set:html={markdownify(
-        t("footer.copyright")?.replace(
+        copyrightText.replace(
           "{{ year }}",
           String(new Date().getFullYear()),
         ),

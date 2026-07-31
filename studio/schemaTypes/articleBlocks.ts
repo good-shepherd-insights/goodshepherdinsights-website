@@ -11,7 +11,7 @@ const inlineText = () =>
         {title: 'Emphasis', value: 'em'},
       ],
       annotations: [
-        defineType({
+        defineArrayMember({
           name: 'link',
           title: 'Link',
           type: 'object',
@@ -43,6 +43,12 @@ const inlineTextField = (name: string, title: string) =>
     validation: (Rule) => Rule.required().min(1),
   })
 
+const previewInlineText = (value?: Array<{children?: Array<{text?: string}>}>) =>
+  (value || [])
+    .flatMap((block) => (block.children || []).map((child) => child.text || ''))
+    .join(' ')
+    .trim()
+
 const constrainedText = () =>
   defineArrayMember({
     type: 'block',
@@ -57,7 +63,7 @@ const constrainedText = () =>
         {title: 'Emphasis', value: 'em'},
       ],
       annotations: [
-        defineType({
+        defineArrayMember({
           name: 'link',
           title: 'Link',
           type: 'object',
@@ -87,6 +93,151 @@ export const tldr = defineType({
   fields: [inlineTextField('text', 'Summary')],
 })
 
+export const articleSection = defineType({
+  name: 'articleSection',
+  title: 'Article section',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'header',
+      title: 'Header',
+      type: 'string',
+      validation: (Rule) => Rule.max(180),
+    }),
+    defineField({
+      name: 'headerLevel',
+      title: 'Header level',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Heading 2', value: 'h2'},
+          {title: 'Heading 3', value: 'h3'},
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'h2',
+      hidden: ({parent}) => !parent?.header,
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {header?: string} | undefined
+          return !parent?.header || value ? true : 'Required when header is set'
+        }),
+    }),
+    defineField({
+      name: 'paragraphs',
+      title: 'Paragraphs',
+      type: 'array',
+      of: [inlineText()],
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'header',
+      paragraphs: 'paragraphs',
+    },
+    prepare({title, paragraphs}) {
+      return {
+        title: title || 'Article section',
+        subtitle: previewInlineText(paragraphs).slice(0, 100) || 'Paragraph section',
+      }
+    },
+  },
+})
+
+export const articleList = defineType({
+  name: 'articleList',
+  title: 'Article list',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'header',
+      title: 'Header',
+      type: 'string',
+      validation: (Rule) => Rule.max(180),
+    }),
+    defineField({
+      name: 'headerLevel',
+      title: 'Header level',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Heading 2', value: 'h2'},
+          {title: 'Heading 3', value: 'h3'},
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'h2',
+      hidden: ({parent}) => !parent?.header,
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {header?: string} | undefined
+          return !parent?.header || value ? true : 'Required when header is set'
+        }),
+    }),
+    defineField({
+      name: 'style',
+      title: 'List style',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Bulleted', value: 'bullet'},
+          {title: 'Numbered', value: 'number'},
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'bullet',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'items',
+      title: 'Items',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          name: 'articleListItem',
+          title: 'List item',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'text',
+              title: 'Text',
+              type: 'array',
+              of: [inlineText()],
+              validation: (Rule) => Rule.required().min(1),
+            }),
+          ],
+          preview: {
+            select: {text: 'text'},
+            prepare({text}) {
+              return {
+                title: previewInlineText(text).slice(0, 100) || 'List item',
+              }
+            },
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'header',
+      style: 'style',
+      items: 'items',
+    },
+    prepare({title, style, items}) {
+      return {
+        title: title || (style === 'number' ? 'Numbered list' : 'Bulleted list'),
+        subtitle: `${items?.length || 0} items`,
+      }
+    },
+  },
+})
+
 export const insightList = defineType({
   name: 'insightList',
   title: 'Insight list',
@@ -104,6 +255,8 @@ export const insightList = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'insightItem',
+          title: 'Insight item',
           type: 'object',
           fields: [
             defineField({
@@ -154,6 +307,8 @@ export const takeaways = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'takeawayItem',
+          title: 'Takeaway item',
           type: 'object',
           fields: [
             defineField({
@@ -188,6 +343,8 @@ export const faq = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'source',
+          title: 'Source',
           type: 'object',
           fields: [
             defineField({
@@ -212,6 +369,30 @@ export const faq = defineType({
   ],
 })
 
+export const tableOfContents = defineType({
+  name: 'tableOfContents',
+  title: 'Table of Contents',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      initialValue: 'Table of Contents',
+      validation: (Rule) => Rule.required().max(80),
+    }),
+  ],
+  preview: {
+    select: {title: 'title'},
+    prepare({title}) {
+      return {
+        title: title || 'Table of Contents',
+        subtitle: 'Auto-generated from article headings',
+      }
+    },
+  },
+})
+
 export const sources = defineType({
   name: 'sources',
   title: 'Sources',
@@ -229,6 +410,8 @@ export const sources = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'source',
+          title: 'Source',
           type: 'object',
           fields: [
             defineField({

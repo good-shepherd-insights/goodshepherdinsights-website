@@ -6,10 +6,8 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import {
-  sanityBlogIndexContent,
-  sanityBlogPlaceholder,
-} from "@/lib/sanity/blog";
+import { sanityBlogPlaceholder } from "@/lib/sanity/blog";
+import { getSanityBlogIndexPage } from "@/lib/sanity/pages";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
 import { slugifyyy, titleify } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
@@ -34,15 +32,23 @@ export async function getStaticPaths() {
   );
 }
 const allPosts = await getSanityBlogPosts();
+const blogIndex = await getSanityBlogIndexPage();
+if (!blogIndex) {
+  throw new Error('Missing Sanity blogIndexPage document with id "blog-index-page".');
+}
 const tags = [...new Set(allPosts.flatMap((post) => post.tags || []))];
 const tag =
   (Astro.props.tag as string) ||
   tags.find((name) => slugifyyy(name) === Astro.params.tag);
+const taxonomyCopy = blogIndex.taxonomyCopy;
+if (!tag || !taxonomyCopy?.categoryTitleSuffix || !taxonomyCopy?.tagDescriptionPrefix) {
+  throw new Error('Missing required Sanity blogIndexPage taxonomy copy for tag page.');
+}
 const posts = allPosts.filter((post) =>
   post.tags?.some((name) => slugifyyy(name) === Astro.params.tag),
 );
-const title = titleify(`${tag || "Tag"} posts`);
-const description = `Ministry technology articles tagged ${tag || "tag"}, from Good Shepherd Insights.`;
+const title = titleify(`${tag} ${taxonomyCopy.categoryTitleSuffix}`);
+const description = `${taxonomyCopy.tagDescriptionPrefix} ${tag}.`;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const collectionPageSchema = {
   "@context": "https://schema.org",
@@ -60,7 +66,7 @@ const collectionPageSchema = {
   robots="noindex, follow"
   canonical={selfCanonical}>
   <PageHeader
-    content={sanityBlogIndexContent}
+    content={blogIndex}
     contentClass="max-w-3xl! xl:px-6"
   />
   <BlogsHeroSection />
@@ -72,7 +78,7 @@ const collectionPageSchema = {
     }}
     contentList={{
       options: { layout: "grid", columns: 2, search: true },
-      searchSection: sanityBlogIndexContent.searchSection,
+      searchSection: blogIndex.searchSection,
       filter: { tag: { name: tag || "" } },
       breadcrumbExcludedPaths: ["Tag"],
     }}

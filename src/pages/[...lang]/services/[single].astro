@@ -1,136 +1,163 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
-import ServicesSingle from "@/components/ServicesSingle.astro";
-import extractSlug from "@/lib/utils/extractSlug";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
 import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
-import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
 import type { Service, FAQPage } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import {
+  getSanityService,
+  getSanityServices,
+  getSanityServicesIndex,
+  serviceImageUrl,
+} from "@/lib/sanity/services";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
+import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
 
 export async function getStaticPaths() {
-  const paths = await Promise.all(
-    supportedLanguages.map(async (lang) => {
-      const serviceFolder = config.settings.serviceFolder as "services";
-      const { defaultLanguage, showDefaultLangInUrl } =
-        config.settings.multilingual;
+  const services = await getSanityServices();
+  const { defaultLanguage, showDefaultLangInUrl } =
+    config.settings.multilingual;
 
-      const serviceIndex = await getEntryCTM(
-        serviceFolder as "services",
-        "-index",
-        lang.languageCode,
-      );
-
-      let services = await getCollectionCTM(
-        serviceFolder as "services",
-        lang.languageCode,
-      );
-
-      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
-      if (serviceIndex?.data.draft && import.meta.env.PROD) {
-        return [];
-      }
-
-      return services.map((service) => ({
-        params: {
-          lang:
-            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
-              ? undefined
-              : lang.languageCode,
-          single: extractSlug(service).split("/").pop(),
-        },
-        props: {
-          service,
-          serviceIndex,
-        },
-      }));
-    }),
+  return services.flatMap((service) =>
+    supportedLanguages.map((lang) => ({
+      params: {
+        lang:
+          lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+            ? undefined
+            : lang.languageCode,
+        single: service.slug.current,
+      },
+      props: {
+        service,
+      },
+    })),
   );
-
-  return paths.flat();
 }
 
-const { service, serviceIndex } = Astro.props;
+const { service: pathService } = Astro.props;
+const service = pathService?.body
+  ? pathService
+  : await getSanityService(Astro.params.single || "");
+const servicesIndex = await getSanityServicesIndex();
+const siteGlobals = await getSiteGlobals();
+
+if (!service) return Astro.redirect("/404");
+if (!servicesIndex) {
+  throw new Error("Missing Sanity serviceIndex document.");
+}
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
-const orgData = config.seo.organization || {};
+const orgData = siteGlobals.organization || {};
 
 // Resolve canonical for this service page
-const resolvedCanonical = Astro.props.canonical
-  ? absoluteUrl(Astro.props.canonical, Astro)
+const resolvedCanonical = service.seo?.canonical
+  ? absoluteUrl(service.seo.canonical, Astro)
   : absoluteUrl(Astro.url.pathname, Astro);
+const imageUrl = serviceImageUrl(service, 1200, 630);
 
 // Build Service schema inline
 const serviceSchema: Service = {
   "@type": "Service",
   "@id": `${resolvedCanonical}#service`,
-  name: service?.data?.title,
-  description: service?.data?.description || service?.data?.metaDescription,
+  name: service.title,
+  description: service.excerpt || service.seo?.metaDescription,
   url: resolvedCanonical,
-  ...(service?.data?.image && { image: absoluteUrl(service.data.image, Astro) }),
+  ...(imageUrl && { image: imageUrl }),
   provider: { "@id": `${baseUrlClean}/#organization` },
-  serviceType: service?.data?.serviceType || "Consulting Service",
+  serviceType: service.serviceType,
   areaServed: {
     "@type": "State",
-    name: orgData.addressRegion || "USA",
+    name: orgData.addressRegion,
   },
 };
 
-// Build FAQPage schema from FaqSectionTwo data
-// Fetch the FAQ section data for this service page
-const faqSectionData = (
-  await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
-)?.data;
-
-const faqList = faqSectionData?.list
-  ?.filter((item: any) => item.enable !== false)
-  ?.map((item: any) => ({
-    "@type": "Question",
-    name: item.title,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.content,
-    },
-  })) || [];
+const faqList =
+  servicesIndex.faqSection?.enable === true
+    ? servicesIndex.faqSection.list
+        ?.filter((item: any) => item.enable !== false)
+        ?.map((item: any) => ({
+          "@type": "Question",
+          name: item.title,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.content,
+          },
+        })) || []
+    : [];
 
 let faqSchema: FAQPage | undefined;
 if (faqList.length > 0) {
   faqSchema = {
     "@type": "FAQPage",
     "@id": `${resolvedCanonical}#faqpage`,
-    mainEntity: faqList,
+    mainEntity: faqList as any,
   };
 }
 ---
 
-<Base {...service?.data} hideOffcanvas={true}>
+<Base
+  title={service.title}
+  metaTitle={service.seo?.metaTitle || service.title}
+  metaDescription={service.seo?.metaDescription || service.excerpt}
+  canonical={service.seo?.canonical || resolvedCanonical}
+  robots={service.seo?.robots}
+  image={imageUrl}
+  hideOffcanvas={true}>
   <PageHeader
     content={{
-      badge: service?.data?.title,
-      title: service?.data?.title,
-      image: service?.data?.image,
-      imageText: service?.data?.title,
+      badge: service.title,
+      title: service.title,
+      image: imageUrl,
+      imageAlt: service.heroImage?.alt,
+      imageText: service.title,
     }}
     contentClass="max-w-2xl!"
   />
-  <ServicesSingle content={service} hasPaddingBottom={true} />
-  <FeaturesGridThree />
-  <StatsMarqueeSection hasLightBackground={false} />
-  <FaqSectionTwo mode="shadow" />
-  <CTAGallerySection />
-  <CTASection />
+  <SanityServiceContent value={service.body || []} />
+  {
+    servicesIndex.featureGrid && (
+      <FeaturesGridThree content={servicesIndex.featureGrid} />
+    )
+  }
+  {
+    servicesIndex.statsMarquee && (
+      <StatsMarqueeSection
+        content={servicesIndex.statsMarquee}
+        hasLightBackground={false}
+      />
+    )
+  }
+  {
+    servicesIndex.faqSection && (
+      <FaqSectionTwo content={servicesIndex.faqSection} mode="shadow" />
+    )
+  }
+  {
+    servicesIndex.ctaSection && (
+      <CTASection content={servicesIndex.ctaSection} />
+    )
+  }
 
   <!-- Page-specific structured data -->
-  <Schema item={{ "@context": "https://schema.org", ...serviceSchema } as any} />
-  {faqSchema && <Schema item={{ "@context": "https://schema.org", ...faqSchema } as any} />}
+  <Schema
+    item={{ "@context": "https://schema.org", ...serviceSchema } as any}
+  />
+  {
+    faqSchema && (
+      <Schema
+        item={{ "@context": "https://schema.org", ...faqSchema } as any}
+      />
+    )
+  }
 </Base>

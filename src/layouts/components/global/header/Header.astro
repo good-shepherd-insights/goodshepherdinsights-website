@@ -2,24 +2,33 @@
 import Logo from "@/components/global/Logo.astro";
 import Offcanvas from "../../widgets/Offcanvas.astro";
 import config from ".astro/config.generated.json";
-import { useTranslations } from "@/lib/utils/i18nUtils.ts";
 import NavbarToggler from "@/layouts/components/global/header/NavbarToggler.astro";
 import HeaderOffcanvasContent from "@/components/widgets/HeaderOffcanvasContent.astro";
 import Navbar from "./Navbar.astro";
 import Button from "@/components/Button.astro";
 import TopBar from "./TopBar.astro";
-
-const t = await useTranslations(Astro.currentLocale as string);
+import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const {
-  site: { logoAlternate },
-  settings: { stickyHeader, navigationButton, headerOffcanvas },
+  settings: { stickyHeader },
 } = config;
 
-const { position, hideOffcanvas, class: ClassName } = Astro.props;
+const { position, hideOffcanvas, class: ClassName, siteGlobals } = Astro.props as {
+  position?: "fixed" | "static" | "sticky";
+  hideOffcanvas?: boolean;
+  class?: string;
+  siteGlobals: SiteGlobals;
+};
+const { brand, header, contact, socialLinks } = siteGlobals;
+const navigationButton = header.navigationButton;
+const headerOffcanvas = header.offcanvas;
 ---
 
-<TopBar />
+<TopBar
+  topBar={header.topBar}
+  contact={contact}
+  socialLinks={socialLinks}
+/>
 
 <header
   class:list={[
@@ -32,20 +41,22 @@ const { position, hideOffcanvas, class: ClassName } = Astro.props;
   <div class="container">
     <div
       class="bg-light hs-dropdown relative flex flex-wrap items-stretch justify-between rounded-b-2xl px-6 py-2 [--auto-close:inside] [--gpu-acceleration:false] [--strategy:absolute] lg:justify-center lg:px-7.5 lg:[--strategy:static]">
-      <Logo />
+      <Logo brand={brand} />
 
       {/* Navbar For Header */}
-      <Navbar />
+      <Navbar
+        items={header.primaryNavigation}
+        navigationButton={navigationButton}
+      />
 
       {/* Navigation Actions - Search + CTA Button */}
       {
-        (navigationButton.enable || config.settings.multilingual.enable) && (
+        (navigationButton?.enable || config.settings.multilingual.enable) && (
           <div class="hidden gap-3.5 justify-self-end max-lg:ms-auto max-lg:me-4 lg:flex lg:items-center">
-            {navigationButton.enable && (
+            {navigationButton?.enable && navigationButton?.label && (
               <Button
                 variant="text"
                 {...navigationButton}
-                label={navigationButton.label || t("navigation.buttonLabel")}
                 icon={{
                   enable: true,
                   name: "ArrowRight",
@@ -88,7 +99,13 @@ const { position, hideOffcanvas, class: ClassName } = Astro.props;
       id="offcanvas-main"
       direction="right"
       size="md">
-      <HeaderOffcanvasContent offcanvas={"offcanvas-main"} />
+      <HeaderOffcanvasContent
+        offcanvas={"offcanvas-main"}
+        brand={brand}
+        header={header}
+        contact={contact}
+        socialLinks={socialLinks}
+      />
     </Offcanvas>
   )
 }

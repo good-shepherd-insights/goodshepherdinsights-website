@@ -13,6 +13,7 @@ interface Props {
 
 const { posts, currentSlug } = Astro.props;
 const t = await useTranslations(Astro.currentLocale as string);
+const noPostsFoundFor = t("widgets.noPostsFoundFor");
 
 const categoryCounts = new Map<string, number>();
 for (const post of posts) {
@@ -180,7 +181,7 @@ const searchPosts = posts.map((post) => ({
   <CTA />
 </aside>
 
-<script is:inline define:vars={{ searchPosts }}>
+<script is:inline define:vars={{ searchPosts, noPostsFoundFor }}>
   const form = document.getElementById("sanity-blog-search-form");
   const input = form?.querySelector("input[name=search]");
   const results = document.getElementById("sanity-blog-search-results");
@@ -225,7 +226,7 @@ const searchPosts = posts.map((post) => ({
             `,
           )
           .join("")
-      : `<p class="text-text-dark/70 text-sm">No posts found for “${escapeHtml(term)}”.</p>`;
+      : `<p class="text-text-dark/70 text-sm">${escapeHtml(noPostsFoundFor)} “${escapeHtml(term)}”.</p>`;
   };
 
   form?.addEventListener("submit", (event) => {

@@ -13,17 +13,23 @@
     "migrate:blog": "sanity exec scripts/migrate-one-blog.mjs --with-user-token",
     "migrate:blog:dry": "sanity exec scripts/migrate-one-blog.mjs -- --dry-run",
     "migrate:blogs": "sanity exec scripts/migrate-one-blog.mjs --with-user-token -- --all",
-    "migrate:blogs:dry": "sanity exec scripts/migrate-one-blog.mjs -- --all --dry-run"
+    "migrate:blogs:dry": "sanity exec scripts/migrate-one-blog.mjs -- --all --dry-run",
+    "migrate:services": "sanity exec scripts/migrate-services.mjs --with-user-token",
+    "migrate:services:dry": "sanity exec scripts/migrate-services.mjs -- --dry-run",
+    "migrate:site-globals": "npm run migrate:final-cms-owned",
+    "migrate:site-globals:dry": "npm run migrate:final-cms-owned:dry",
+    "migrate:final-cms-owned": "sanity exec scripts/migrate-final-cms-owned.mjs --with-user-token",
+    "migrate:final-cms-owned:dry": "sanity exec scripts/migrate-final-cms-owned.mjs -- --dry-run"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^6.6.0",
+    "@sanity/vision": "^6.7.0",
     "marked": "^18.0.7",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "sanity": "^6.6.0",
+    "sanity": "^6.7.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {

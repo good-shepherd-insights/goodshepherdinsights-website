@@ -1,20 +1,21 @@
 ---
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import CaseStudyCard from "../cards/CaseStudyCard.astro";
-import config from ".astro/config.generated.json";
-import type { CollectionEntry } from "astro:content";
+import { getSanityCaseStudies, toCollectionEntry } from "@/lib/sanity/pages";
 
 type Props = {
   content?: {
-    options?: CollectionEntry<"case-studies">["data"]["options"];
+    options?: {
+      layout?: "card" | "grid" | "slider";
+      appearance?: "dark" | "light";
+      limit?: number | false;
+    };
   };
 };
 
 const content = Astro.props?.content;
 
-let list = await getCollectionCTM(
-  config.settings.caseStudiesFolder as "case-studies",
-  Astro.currentLocale,
+let list = (await getSanityCaseStudies()).map((item) =>
+  toCollectionEntry(item, "case-studies"),
 );
 list.sort((a, b) => (a.data.weight || 0) - (b.data.weight || 0));
 list = content?.options?.limit ? list.slice(0, content?.options?.limit) : list;

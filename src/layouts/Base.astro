@@ -9,6 +9,7 @@ import Header from "@/components/global/header/Header.astro";
 import GlobalScripts from "./components/widgets/GlobalScripts.astro";
 import BackToTop from "./components/widgets/BackToTop.astro";
 import HeaderTwo from "./components/global/header/HeaderTwo.astro";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 import BreakpointIndicator from "./components/widgets/BreakpointIndicator.astro";
 import KeepAstroSourceLoc from "./components/widgets/KeepAstroSourceLoc.astro";
@@ -58,8 +59,13 @@ let {
   fitToScreen = true,
 } = Astro.props;
 
+const siteGlobals = await getSiteGlobals();
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+
 // Exclude empty key value weather it may empty string, object or array from Astro.props
-let props = removeEmptyKeys(Astro.props);
+let props = removeEmptyKeys({ ...Astro.props, siteGlobals });
 
 // Conditionally add min-h-[102vh] class to prevent FOUC (flash of unstyled content) while fast navigation
 className = fitToScreen
@@ -74,20 +80,22 @@ const resolveFooter = footerLayout || defaultFooter;
 
 <!doctype html>
 <html lang="en">
-  <Head {...props} />
+  <Head {...props}>
+    <slot name="head" />
+  </Head>
   <body class:list={[hasBodyDarkBackground && "bg-body-dark"]}>
     {
       resolveHeader === "header-2" ? (
         <HeaderTwo
-          {...props}
           position={headerPosition}
           hideOffcanvas={hideOffcanvas}
+          siteGlobals={siteGlobals}
         />
       ) : (
         <Header
-          {...props}
           position={headerPosition}
           hideOffcanvas={hideOffcanvas}
+          siteGlobals={siteGlobals}
         />
       )
     }
@@ -97,9 +105,9 @@ const resolveFooter = footerLayout || defaultFooter;
     </main>
     {
       resolveFooter === "footer-2" ? (
-        <FooterTwo footerSpaceTop={footerSpaceTop} />
+        <FooterTwo footerSpaceTop={footerSpaceTop} siteGlobals={siteGlobals} />
       ) : (
-        <Footer footerSpaceTop={footerSpaceTop} />
+        <Footer footerSpaceTop={footerSpaceTop} siteGlobals={siteGlobals} />
       )
     }
 
