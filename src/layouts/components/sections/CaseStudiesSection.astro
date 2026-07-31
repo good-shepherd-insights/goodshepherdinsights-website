@@ -1,14 +1,14 @@
 ---
 import { z } from "astro/zod";
-import { getCollectionCTM, getEntryCTM } from "@/lib/contentParser.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { caseStudiesSectionSchema } from "@/sections.schema";
 import SectionTitle from "../global/SectionTitle.astro";
-import config from ".astro/config.generated.json";
 import SectionBadge from "../global/SectionBadge.astro";
 import Button from "../Button.astro";
 import CaseStudyCard from "@/layouts/components/cards/CaseStudyCard.astro";
+import { getSanityCaseStudies, toCollectionEntry } from "@/lib/sanity/pages";
 
 // Type
 export type TestimonialSectionType = z.infer<typeof caseStudiesSectionSchema>;
@@ -34,9 +34,8 @@ let {
 } = (actualContent as TestimonialSectionType) || {};
 if (!enable) return;
 
-let list = await getCollectionCTM(
-  config.settings.caseStudiesFolder as "case-studies",
-  Astro.currentLocale,
+let list = (await getSanityCaseStudies()).map((item) =>
+  toCollectionEntry(item, "case-studies"),
 );
 list.sort((a, b) => (b.data.weight || 0) - (a.data.weight || 0));
 list = list.slice(0, limit);

@@ -58,11 +58,93 @@ export interface NavigationItem {
   children?: NavigationChildItem[];
 }
 
+export interface ImageWithAlt {
+  image: { asset: { _ref: string; _type: "reference" }; _type: "image" };
+  alt: string;
+  caption?: string;
+}
+
+export interface GlobalFaviconItem {
+  rel: string;
+  type?: string;
+  sizes?: string;
+  purpose?: string;
+  color?: string;
+  image: ImageWithAlt;
+}
+
 export interface SiteGlobals {
   _id: string;
   brand: GlobalBrand;
   contact: GlobalContact;
   socialLinks: SocialLink[];
+  seoDefaults?: {
+    author?: string;
+    title?: string;
+    description?: string;
+    tagline?: string;
+    taglineSeparator?: string;
+    baseUrl?: string;
+    defaultImage?: string;
+    pageHeaderDefaultImage?: string;
+    faviconSet?: GlobalFaviconItem[];
+    keywords?: string[];
+    robots?: string;
+    ogLocale?: string;
+    ogType?: string;
+    twitter?: string;
+    twitterCard?: string;
+    themeColorLight?: string;
+    themeColorDark?: string;
+    headContent?: string;
+  };
+  organization?: {
+    name?: string;
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    email?: string;
+    telephone?: string;
+    logo?: string;
+  };
+  indexing?: {
+    robotsTxt?: {
+      enable?: boolean;
+      disallow?: string[];
+    };
+    sitemap?: {
+      enable?: boolean;
+      exclude?: string[];
+    };
+  };
+  forms?: {
+    contactFormProvider?: string;
+    contactFormAction?: string;
+    subscriptionFormAction?: string;
+    mailchimpTagValue?: string;
+    messages?: {
+      missingAction?: string;
+      subscribeSuccess?: string;
+      subscribeError?: string;
+      subscribeNetworkError?: string;
+    };
+  };
+  uiCopy?: {
+    copy?: string;
+  };
+  appManifest?: {
+    name?: string;
+    shortName?: string;
+    themeColor?: string;
+    backgroundColor?: string;
+    display?: string;
+    icons?: Array<{
+      sizes?: string;
+      type?: string;
+      purpose?: string;
+      image: ImageWithAlt;
+    }>;
+  };
   header: {
     primaryNavigation: NavigationItem[];
     navigationButton?: GlobalButton;
@@ -115,6 +197,8 @@ export interface SiteGlobals {
   };
 }
 
+let siteGlobalsPromise: Promise<SiteGlobals | null> | null = null;
+
 const navigationFields = `
   enable,
   name,
@@ -125,11 +209,17 @@ const navigationFields = `
 `;
 
 export async function getSiteGlobals() {
-  return sanityClient.fetch<SiteGlobals | null>(
+  siteGlobalsPromise ??= sanityClient.fetch<SiteGlobals | null>(
     `*[_type == "siteGlobals" && _id == "site-globals"][0]{
       _id,
       brand,
       contact,
+      seoDefaults,
+      organization,
+      indexing,
+      forms,
+      uiCopy,
+      appManifest,
       socialLinks[]{
         enable,
         label,
@@ -173,6 +263,8 @@ export async function getSiteGlobals() {
       }
     }`,
   );
+
+  return siteGlobalsPromise;
 }
 
 export const enabledItems = <T extends { enable?: boolean }>(

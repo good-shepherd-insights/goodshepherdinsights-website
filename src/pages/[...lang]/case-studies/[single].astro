@@ -1,0 +1,106 @@
+---
+import "@/components/widgets/VideoModal.astro";
+import Base from "@/layouts/Base.astro";
+import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
+import config from ".astro/config.generated.json";
+import CaseStudiesSingle from "@/components/CaseStudiesSingle.astro";
+import PageHeader from "@/components/widgets/PageHeader.astro";
+import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
+import CTASection from "@/components/sections/CTASection.astro";
+import { Schema } from "astro-seo-schema";
+import type { Article } from "schema-dts";
+import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import {
+  getSanityCaseStudies,
+  getSanityCaseStudiesIndex,
+  getSanityCaseStudy,
+  toCollectionEntry,
+} from "@/lib/sanity/pages";
+
+export async function getStaticPaths() {
+  const caseStudies = await getSanityCaseStudies();
+  const caseStudiesIndex = await getSanityCaseStudiesIndex();
+  const paths = await Promise.all(
+    supportedLanguages.map(async (lang) => {
+      const { defaultLanguage, showDefaultLangInUrl } =
+        config.settings.multilingual;
+
+      // If draft true in index.md file frontmatter don't include any page related to this page collection in production
+      if (caseStudiesIndex?.draft && import.meta.env.PROD) {
+        return [];
+      }
+
+      return caseStudies.map((caseStudy) => ({
+        params: {
+          lang:
+            lang.languageCode === defaultLanguage && !showDefaultLangInUrl
+              ? undefined
+              : lang.languageCode,
+          single: caseStudy.slug.current,
+        },
+        props: {
+          caseStudies: toCollectionEntry(caseStudy, "case-studies"),
+          caseStudiesIndex,
+        },
+      }));
+    }),
+  );
+
+  return paths.flat();
+}
+
+const { caseStudies, caseStudiesIndex } = Astro.props;
+const fetchedCaseStudy = caseStudies?.data?.bodyMarkdown
+  ? null
+  : await getSanityCaseStudy(Astro.params.single || "");
+const caseStudy =
+  caseStudies?.data?.bodyMarkdown
+    ? caseStudies
+    : fetchedCaseStudy
+      ? toCollectionEntry(fetchedCaseStudy, "case-studies")
+      : null;
+if (!caseStudy?.data) return Astro.redirect("/404");
+const { bodyMarkdown: _bodyMarkdown, date: _date, ...baseCaseStudyData } =
+  caseStudy.data;
+
+const baseUrl = trailingSlashChecker(Astro.url.origin);
+const baseUrlClean = baseUrl.replace(/\/$/, "");
+const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+
+// Derive datePublished
+const datePublished = caseStudy?.data?.datePublished
+  ? caseStudy.data.datePublished
+  : caseStudy?.data?.date
+    ? new Date(caseStudy.data.date).toISOString().split("T")[0]
+    : undefined;
+
+// Build Article schema inline
+const articleSchema: Article = {
+  "@type": "Article",
+  "@id": `${resolvedCanonical}#article`,
+  headline: caseStudy?.data?.title,
+  description: caseStudy?.data?.description,
+  url: resolvedCanonical,
+  ...(caseStudy?.data?.image && { image: absoluteUrl(caseStudy.data.image, Astro) }),
+  ...(datePublished && { datePublished }),
+  ...(caseStudy?.data?.dateModified && { dateModified: caseStudy.data.dateModified }),
+  author: { "@id": `${baseUrlClean}/#organization` },
+  publisher: { "@id": `${baseUrlClean}/#organization` },
+};
+---
+
+<Base {...baseCaseStudyData}>
+  <PageHeader
+    content={{
+      badge: caseStudiesIndex?.badgeSecondary,
+      title: caseStudy?.data?.title,
+    }}
+  />
+  <CaseStudiesSingle content={caseStudy} />
+  <CTAGallerySection content={(caseStudiesIndex as any)?.ctaGallerySection} />
+  <CTASection />
+
+  <!-- Page-specific structured data -->
+  <Schema item={{ "@context": "https://schema.org", ...articleSchema } as any} />
+</Base>

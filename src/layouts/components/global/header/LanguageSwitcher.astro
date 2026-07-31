@@ -2,15 +2,24 @@
 import Icons from "@/helpers/Icons.astro";
 import { getLocaleUrlCTM, supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const currentLocale = Astro.currentLocale;
-const currentLanguageLabel =
-  currentLocale === "en"
-    ? "US - English"
-    : currentLocale === "fr"
-      ? "FR - Français"
-      : currentLocale;
+const siteGlobals = await getSiteGlobals();
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+const uiCopy = siteGlobals.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
+const languageLabels = uiCopy.languages || {};
+const currentLanguageLabel = languageLabels[currentLocale as string];
+if (!currentLanguageLabel) {
+  throw new Error(`Missing required Sanity language label for "${currentLocale}".`);
+}
 const languages = supportedLanguages.map((lang) => {
+  const label = languageLabels[lang.languageCode];
+  if (!label) {
+    throw new Error(`Missing required Sanity language label for "${lang.languageCode}".`);
+  }
   const href = getLocaleUrlCTM(Astro.url.pathname, lang.languageCode as string);
 
   // Don't include current locale in url
@@ -20,6 +29,7 @@ const languages = supportedLanguages.map((lang) => {
 
   return {
     slug: href,
+    label,
     ...lang,
   };
 });
@@ -60,7 +70,7 @@ const languages = supportedLanguages.map((lang) => {
                   "text-base font-normal capitalize",
                 ]}
                 href={language.slug}
-                set:html={language.contentDir}
+                set:html={language.label}
               />
             </li>
           ),

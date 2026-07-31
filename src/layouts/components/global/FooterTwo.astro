@@ -12,7 +12,7 @@ const { siteGlobals } = Astro.props as {
   footerSpaceTop?: boolean;
   siteGlobals: SiteGlobals;
 };
-const { contact, footer } = siteGlobals;
+const { contact, footer, forms } = siteGlobals;
 const secondaryFooter = footer.secondary;
 const footerMenus = secondaryFooter?.navigation || [];
 const subscription = secondaryFooter?.subscription;
@@ -40,7 +40,7 @@ const emailMarkdown = contact.emailHref
     <div
       class="has-footer-padding border-border-light/10 flex flex-col gap-8 border-b py-8 md:gap-10 md:py-10 xl:gap-14 xl:py-14">
       <div class="flex flex-col gap-8 md:gap-10 xl:gap-14">
-        <SubscriptionForm {...subscription} />
+        <SubscriptionForm {...subscription} messages={forms?.messages} />
       </div>
 
       <div

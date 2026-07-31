@@ -4,6 +4,7 @@ import * as toml from "toml";
 import { promises as fs } from "node:fs";
 import { watch } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { createClient } from "@sanity/client";
 
 // ---------- Cross-platform root ----------
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +21,13 @@ const configFilePath = path.resolve(
 
 const outputDir = path.resolve(PROJECT_ROOT, ".astro");
 const outputFilePath = path.join(outputDir, "config.generated.json");
+
+const sanityClient = createClient({
+  projectId: process.env.PUBLIC_SANITY_PROJECT_ID || "8yy9mp89",
+  dataset: process.env.PUBLIC_SANITY_DATASET || "production",
+  apiVersion: "2026-01-01",
+  useCdn: false,
+});
 
 // ---------- Helpers ----------
 async function pathExists(p) {
@@ -45,6 +53,34 @@ async function convertTomlToJson() {
   try {
     const content = await fs.readFile(configFilePath, "utf8");
     const parsed = toml.parse(content);
+    const siteGlobals = await sanityClient.fetch(
+      `*[_type == "siteGlobals" && _id == "site-globals"][0]{
+        seoDefaults{baseUrl},
+        indexing{
+          robotsTxt{enable, disallow},
+          sitemap{enable, exclude}
+        }
+      }`,
+    );
+
+    if (!siteGlobals?.seoDefaults?.baseUrl) {
+      throw new Error("Missing required Sanity siteGlobals.seoDefaults.baseUrl");
+    }
+
+    parsed.site.baseUrl = siteGlobals.seoDefaults.baseUrl;
+    if (siteGlobals.indexing?.robotsTxt) {
+      parsed.seo.robotsTxt = {
+        ...parsed.seo.robotsTxt,
+        ...siteGlobals.indexing.robotsTxt,
+      };
+    }
+    if (siteGlobals.indexing?.sitemap) {
+      parsed.seo.sitemap = {
+        ...parsed.seo.sitemap,
+        ...siteGlobals.indexing.sitemap,
+      };
+    }
+
     const output = JSON.stringify(parsed, null, 2);
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -69,6 +105,7 @@ async function convertTomlToJson() {
     console.log(`[toml-watcher] ✓ Generated ${outputFilePath}`);
   } catch (err) {
     console.error("[toml-watcher] ✖ Conversion failed:", err?.message ?? err);
+    throw err;
   }
 }
 

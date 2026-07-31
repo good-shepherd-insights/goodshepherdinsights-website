@@ -17,6 +17,7 @@ import {
   getSanityServicesIndex,
   serviceImageUrl,
 } from "@/lib/sanity/services";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
 
 export async function getStaticPaths() {
@@ -45,15 +46,19 @@ const service = pathService?.body
   ? pathService
   : await getSanityService(Astro.params.single || "");
 const servicesIndex = await getSanityServicesIndex();
+const siteGlobals = await getSiteGlobals();
 
 if (!service) return Astro.redirect("/404");
 if (!servicesIndex) {
   throw new Error("Missing Sanity serviceIndex document.");
 }
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
-const orgData = config.seo.organization || {};
+const orgData = siteGlobals.organization || {};
 
 // Resolve canonical for this service page
 const resolvedCanonical = service.seo?.canonical
@@ -73,7 +78,7 @@ const serviceSchema: Service = {
   serviceType: service.serviceType,
   areaServed: {
     "@type": "State",
-    name: orgData.addressRegion || "USA",
+    name: orgData.addressRegion,
   },
 };
 

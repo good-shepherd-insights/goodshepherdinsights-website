@@ -1,7 +1,6 @@
 ---
 import type { Section } from "@/types";
 import { z } from "astro/zod";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { featuresGridSchema } from "@/sections.schema";
 import FeaturesGridCard from "../cards/FeaturesGridCard.astro";
@@ -10,12 +9,8 @@ import { markdownify } from "@/lib/utils/textConverter";
 type SectionType = Section & NonNullable<z.infer<typeof featuresGridSchema>>;
 type Props = { content?: SectionType; hasLightBackground?: boolean };
 
-let defaultContent = (
-  await getEntryCTM("sections", "features-grid", Astro.currentLocale)
-)?.data as SectionType;
-
 let actualContent = overrideObjects(
-  { ...defaultContent },
+  {},
   Astro.props.content,
 ) as SectionType;
 

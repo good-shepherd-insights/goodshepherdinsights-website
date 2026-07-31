@@ -2,7 +2,6 @@
 import SEO from "@/components/SEO.astro";
 import Favicons from "@/components/seo/Favicons.astro";
 import BaseSchemas from "@/components/widgets/BaseSchemas.astro";
-import config from ".astro/config.generated.json";
 import { Font } from "astro:assets";
 import fontsJson from "@/config/fonts.json";
 import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
@@ -19,28 +18,28 @@ const resolvedCanonical = Astro.props.canonical
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Language" content={Astro.currentLocale} />
-  <meta name="theme" content="taxo" />
+  {siteGlobals?.brand?.title && <meta name="theme" content={siteGlobals.brand.title} />}
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=5"
   />
   <SEO {...Astro.props} canonical={resolvedCanonical} />
-  <meta name="author" content={Astro.props.author || config.seo.author} />
-  <meta property="og:site_name" content={siteGlobals?.brand?.title || config.site.title} />
+  <meta name="author" content={Astro.props.author || siteGlobals?.seoDefaults?.author || siteGlobals?.brand?.title} />
+  <meta property="og:site_name" content={siteGlobals?.brand?.title} />
   <slot />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
-    content={"#fff"}
+    content={siteGlobals?.seoDefaults?.themeColorLight || "#ffffff"}
   />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: dark)"
-    content="#000"
+    content={siteGlobals?.seoDefaults?.themeColorDark || "#000000"}
   />
   <meta name="generator" content={Astro.generator} />
-  {config.head?.content && <Fragment set:html={config.head?.content} />}
-  <Favicons />
+  {siteGlobals?.seoDefaults?.headContent && <Fragment set:html={siteGlobals.seoDefaults.headContent} />}
+  <Favicons siteGlobals={siteGlobals} />
   <BaseSchemas {...Astro.props} canonical={resolvedCanonical} />
 
   <!------------------

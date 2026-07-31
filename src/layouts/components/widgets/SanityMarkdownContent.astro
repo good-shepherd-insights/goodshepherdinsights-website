@@ -1,0 +1,13 @@
+---
+import { marked } from "marked";
+
+interface Props {
+  value?: string;
+  class?: string;
+}
+
+const { value = "", class: className } = Astro.props as Props;
+const html = value ? await marked.parse(value) : "";
+---
+
+{html && <div class:list={["prose-styles content has-video-modal", className]} set:html={html} />}

@@ -7,7 +7,7 @@ import SectionBadge from "../global/SectionBadge.astro";
 import SectionTitle from "../global/SectionTitle.astro";
 import type { teamSectionSchema } from "@/sections.schema";
 import type { z } from "astro/zod";
-import config from ".astro/config.generated.json";
+import { getSanityTeamMembers } from "@/lib/sanity/people";
 
 // Type for this section data
 type SectionType = Section & z.infer<typeof teamSectionSchema>;
@@ -26,17 +26,7 @@ let actualContent = overrideObjects(
 // Extracting required values from 'content' object
 const { enable = true, badge, title, limit } = actualContent as SectionType;
 
-let pageData = (
-  await getEntryCTM(
-    config.settings.teamFolder as "team",
-    "-index",
-    Astro.currentLocale,
-  )
-)?.data;
-const members = pageData?.list?.filter((item) => item.enable !== false) ?? [];
-// Limit the number of team members to be displayed
-const slicedMembers =
-  limit && members ? members.slice(0, limit as number) : members;
+const slicedMembers = await getSanityTeamMembers(limit as number | false);
 
 if (!enable) {
   return null;

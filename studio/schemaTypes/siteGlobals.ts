@@ -311,6 +311,169 @@ export const globalFooter = defineType({
   ],
 })
 
+export const globalFaviconItem = defineType({
+  name: 'globalFaviconItem',
+  title: 'Favicon entry',
+  type: 'object',
+  fields: [
+    defineField({name: 'rel', title: 'Rel', type: 'string', validation: (Rule) => Rule.required()}),
+    defineField({name: 'type', title: 'MIME type', type: 'string'}),
+    defineField({name: 'sizes', title: 'Sizes', type: 'string'}),
+    defineField({name: 'purpose', title: 'Purpose', type: 'string'}),
+    defineField({name: 'color', title: 'Color (Safari pinned)', type: 'string'}),
+    defineField({name: 'image', title: 'Image', type: 'imageWithAlt', validation: (Rule) => Rule.required()}),
+  ],
+  preview: {
+    select: {
+      rel: 'rel',
+      sizes: 'sizes',
+      alt: 'image.alt',
+      media: 'image.image',
+    },
+    prepare({rel, sizes, alt, media}) {
+      return {
+        title: `${rel || 'icon'}${sizes ? ` (${sizes})` : ''}`,
+        subtitle: alt,
+        media,
+      }
+    },
+  },
+})
+
+export const globalSeoDefaults = defineType({
+  name: 'globalSeoDefaults',
+  title: 'SEO defaults',
+  type: 'object',
+  fields: [
+    defineField({name: 'author', title: 'Author', type: 'string'}),
+    defineField({name: 'title', title: 'Fallback title', type: 'string'}),
+    defineField({name: 'description', title: 'Fallback description', type: 'text', rows: 3}),
+    defineField({name: 'tagline', title: 'Tagline', type: 'string'}),
+    defineField({name: 'taglineSeparator', title: 'Tagline separator', type: 'string'}),
+    defineField({name: 'baseUrl', title: 'Base URL', type: 'url'}),
+    defineField({name: 'defaultImage', title: 'Default social image path', type: 'string'}),
+    defineField({name: 'pageHeaderDefaultImage', title: 'Default page header image path', type: 'string'}),
+    defineField({
+      name: 'faviconSet',
+      title: 'Favicon set',
+      type: 'array',
+      of: [defineArrayMember({type: 'globalFaviconItem'})],
+      description: 'Browser/app favicons. Each entry renders a <link rel="..."> tag.',
+    }),
+    defineField({name: 'keywords', title: 'Default keywords', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'robots', title: 'Default robots directive', type: 'string'}),
+    defineField({name: 'ogLocale', title: 'Open Graph locale', type: 'string'}),
+    defineField({name: 'ogType', title: 'Open Graph type', type: 'string'}),
+    defineField({name: 'twitter', title: 'Twitter handle', type: 'string'}),
+    defineField({name: 'twitterCard', title: 'Twitter card', type: 'string'}),
+    defineField({name: 'themeColorLight', title: 'Theme color light', type: 'string'}),
+    defineField({name: 'themeColorDark', title: 'Theme color dark', type: 'string'}),
+    defineField({name: 'headContent', title: 'Custom head content', type: 'text', rows: 6}),
+  ],
+})
+
+export const globalOrganization = defineType({
+  name: 'globalOrganization',
+  title: 'Organization',
+  type: 'object',
+  fields: [
+    defineField({name: 'name', title: 'Name', type: 'string'}),
+    defineField({name: 'streetAddress', title: 'Street address', type: 'string'}),
+    defineField({name: 'addressLocality', title: 'Address locality', type: 'string'}),
+    defineField({name: 'addressRegion', title: 'Address region', type: 'string'}),
+    defineField({name: 'email', title: 'Email', type: 'string'}),
+    defineField({name: 'telephone', title: 'Telephone', type: 'string'}),
+    defineField({name: 'logo', title: 'Logo path', type: 'string'}),
+  ],
+})
+
+export const globalIndexing = defineType({
+  name: 'globalIndexing',
+  title: 'Indexing',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'robotsTxt',
+      title: 'Robots.txt',
+      type: 'object',
+      fields: [
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+        defineField({name: 'disallow', title: 'Disallow paths', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+      ],
+    }),
+    defineField({
+      name: 'sitemap',
+      title: 'Sitemap',
+      type: 'object',
+      fields: [
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+        defineField({name: 'exclude', title: 'Excluded path fragments', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+      ],
+    }),
+  ],
+})
+
+export const globalForms = defineType({
+  name: 'globalForms',
+  title: 'Forms',
+  type: 'object',
+  fields: [
+    defineField({name: 'contactFormProvider', title: 'Contact form provider', type: 'string'}),
+    defineField({name: 'contactFormAction', title: 'Contact form action', type: 'string'}),
+    defineField({name: 'subscriptionFormAction', title: 'Subscription form action', type: 'string'}),
+    defineField({name: 'mailchimpTagValue', title: 'Mailchimp tag value', type: 'string'}),
+    defineField({
+      name: 'messages',
+      title: 'Form messages',
+      type: 'object',
+      fields: [
+        defineField({name: 'missingAction', title: 'Missing action message', type: 'string'}),
+        defineField({name: 'subscribeSuccess', title: 'Subscribe success fallback', type: 'string'}),
+        defineField({name: 'subscribeError', title: 'Subscribe error fallback', type: 'string'}),
+        defineField({name: 'subscribeNetworkError', title: 'Subscribe network error fallback', type: 'string'}),
+      ],
+    }),
+  ],
+})
+
+export const globalAppManifest = defineType({
+  name: 'globalAppManifest',
+  title: 'App manifest',
+  type: 'object',
+  fields: [
+    defineField({name: 'name', title: 'Name', type: 'string'}),
+    defineField({name: 'shortName', title: 'Short name', type: 'string'}),
+    defineField({name: 'themeColor', title: 'Theme color', type: 'string'}),
+    defineField({name: 'backgroundColor', title: 'Background color', type: 'string'}),
+    defineField({name: 'display', title: 'Display', type: 'string'}),
+    defineField({
+      name: 'icons',
+      title: 'Icons',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({name: 'sizes', title: 'Sizes', type: 'string'}),
+            defineField({name: 'type', title: 'Type', type: 'string'}),
+            defineField({name: 'purpose', title: 'Purpose', type: 'string'}),
+            defineField({name: 'image', title: 'Image', type: 'imageWithAlt', validation: (Rule) => Rule.required()}),
+          ],
+        }),
+      ],
+    }),
+  ],
+})
+
+export const globalUiCopy = defineType({
+  name: 'globalUiCopy',
+  title: 'UI copy',
+  type: 'object',
+  fields: [
+    defineField({name: 'copy', title: 'Copy JSON', type: 'text', rows: 30}),
+  ],
+})
+
 export const siteGlobals = defineType({
   name: 'siteGlobals',
   title: 'Site globals',
@@ -320,6 +483,12 @@ export const siteGlobals = defineType({
     defineField({name: 'contact', title: 'Contact', type: 'globalContact'}),
     defineField({name: 'header', title: 'Header', type: 'globalHeader'}),
     defineField({name: 'footer', title: 'Footer', type: 'globalFooter'}),
+    defineField({name: 'seoDefaults', title: 'SEO defaults', type: 'globalSeoDefaults'}),
+    defineField({name: 'organization', title: 'Organization', type: 'globalOrganization'}),
+    defineField({name: 'indexing', title: 'Indexing', type: 'globalIndexing'}),
+    defineField({name: 'forms', title: 'Forms', type: 'globalForms'}),
+    defineField({name: 'uiCopy', title: 'UI copy', type: 'globalUiCopy'}),
+    defineField({name: 'appManifest', title: 'App manifest', type: 'globalAppManifest'}),
     defineField({
       name: 'socialLinks',
       title: 'Social links',

@@ -1,20 +1,19 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getCollectionCTM } from "@/lib/contentParser.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
-import extractSlug from "@/lib/utils/extractSlug";
-import SinglePageLayout from "@/components/SinglePageLayout.astro";
 import CTASection from "@/components/sections/CTASection.astro";
+import SanityMarkdownContent from "@/components/widgets/SanityMarkdownContent.astro";
+import { getSanityGenericPages, toCollectionEntry } from "@/lib/sanity/pages";
+import { markdownify } from "@/lib/utils/textConverter";
 
 // get static paths for all pages
 export async function getStaticPaths() {
+  const pages = await getSanityGenericPages();
   const paths = await Promise.all(
     supportedLanguages.map(async (lang) => {
       const { defaultLanguage, showDefaultLangInUrl } =
         config.settings.multilingual;
-
-      let pages = await getCollectionCTM("pages", lang.languageCode);
 
       // Generate static path entry
       return pages.map((page) => ({
@@ -23,10 +22,10 @@ export async function getStaticPaths() {
             !showDefaultLangInUrl && lang.languageCode === defaultLanguage
               ? undefined
               : lang.languageCode,
-          page: extractSlug(page).split("/").pop(),
+          page: page.slug.current,
         },
         props: {
-          page,
+          page: toCollectionEntry(page, "pages"),
         },
       }));
     }),
@@ -36,9 +35,25 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props;
+const { bodyMarkdown: _bodyMarkdown, date: _date, ...basePageData } =
+  page?.data || {};
 ---
 
-<Base {...page?.data}>
-  <SinglePageLayout content={{ ...page?.data, ...page }} class="py-8 md:py-16" />
+<Base {...basePageData}>
+  <section class="py-8 md:py-16">
+    <div class="container">
+      <div class="has-video-modal bg-light max-w-full space-y-10 rounded-lg p-5 md:p-8">
+        {
+          page?.data?.title && (
+            <h1
+              class="text-h2-sm md:text-h2"
+              set:html={markdownify(page.data.title)}
+            />
+          )
+        }
+        <SanityMarkdownContent value={page?.data?.bodyMarkdown} />
+      </div>
+    </div>
+  </section>
   <CTASection hasNoLightBackground={true} />
 </Base>
