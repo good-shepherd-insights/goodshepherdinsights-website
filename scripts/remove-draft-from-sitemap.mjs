@@ -2,7 +2,6 @@
 import path from "node:path";
 import { promises as fs } from "node:fs";
 import { fileURLToPath } from "node:url";
-import matter from "gray-matter";
 import { parseStringPromise, Builder } from "xml2js";
 import { createClient } from "@sanity/client";
 
@@ -14,7 +13,6 @@ const PROJECT_ROOT = path.resolve(__dirname, "..");
 
 // --------- Paths (absolute) ----------
 const DIST_FOLDER = path.resolve(PROJECT_ROOT, "dist");
-const CONTENT_FOLDER = path.resolve(PROJECT_ROOT, "src", "content");
 const LANG_FILE = path.resolve(PROJECT_ROOT, "src", "config", "language.json");
 const ASTRO_CONFIG_FILE = path.resolve(
   PROJECT_ROOT,
@@ -50,11 +48,6 @@ async function pathExists(p) {
   }
 }
 
-// Always return POSIX-style paths for keys/URLs
-function toPosix(p) {
-  return p.split(path.sep).join(path.posix.sep);
-}
-
 // Safe URL pathname extraction (handles absolute + relative)
 function safePathname(loc) {
   if (!loc || typeof loc !== "string") return null;
@@ -71,94 +64,51 @@ function safePathname(loc) {
   }
 }
 
-// Recursively walk content and read frontmatter
-async function getContentFrontmatter(folder = CONTENT_FOLDER) {
-  const frontmatterMap = {};
+// Build every localized URL variant for a section/slug pair
+function buildUrls(section, slug, settings) {
+  const base = section ? `${section}/${slug}` : slug;
+  return settings.languages.map((lang) => {
+    const isDefault = lang.languageCode === settings.defaultLanguage;
+    const urlPath =
+      isDefault && !settings.showDefaultLangInUrl
+        ? `/${base}`
+        : `/${lang.languageCode}/${base}`;
+    return urlPath.replace(/\/+/g, "/");
+  });
+}
 
-  async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        await walk(full);
-        continue;
-      }
-      if (!entry.isFile() || !/\.(md|mdx)$/i.test(entry.name)) continue;
+// Query Sanity for documents flagged excludeFromSitemap, per content type
+async function getExcludedUrls(settings) {
+  const client = createClient({
+    projectId: "8yy9mp89",
+    dataset: "production",
+    apiVersion: "2026-01-01",
+    useCdn: true,
+  });
 
-      try {
-        const content = await fs.readFile(full, "utf8");
-        const { data } = matter(content);
+  const sectionQueries = [
+    { type: "blogPost", section: "blog", flagPath: "excludeFromSitemap" },
+    { type: "caseStudy", section: "case-studies", flagPath: "seo.excludeFromSitemap" },
+    { type: "service", section: "services", flagPath: "seo.excludeFromSitemap" },
+    { type: "genericPage", section: "", flagPath: "seo.excludeFromSitemap" },
+  ];
 
-        const key = toPosix(full); // consistent key regardless of OS
+  const excludedUrlSet = new Set();
 
-        frontmatterMap[key] = {
-          excludeFromSitemap: Boolean(data?.excludeFromSitemap),
-          draft: Boolean(data?.draft),
-          originalSlug: typeof data?.id === "string" ? data.id : null,
-          customSlug:
-            typeof data?.customSlug === "string" ? data.customSlug : null,
-        };
-      } catch (err) {
-        console.error(`Error reading file ${full}:`, err);
+  for (const { type, section, flagPath } of sectionQueries) {
+    const docs = await client.fetch(
+      `*[_type == $type && ${flagPath} == true && defined(slug.current)]{"slug": slug.current}`,
+      { type },
+    );
+    for (const doc of docs) {
+      if (!doc?.slug) continue;
+      for (const url of buildUrls(section, doc.slug, settings)) {
+        excludedUrlSet.add(url);
       }
     }
   }
 
-  await walk(folder);
-  return frontmatterMap;
-}
-
-// Determine language by contentDir in the file path
-function getLanguageCode(filePathPosix, languages) {
-  const match = languages.find((lang) =>
-    filePathPosix.includes(`/${lang.contentDir}/`),
-  );
-  return match?.languageCode ?? null;
-}
-
-// Determine "section" (blog, pages, docs...) from src/content/<section>/<lang>/*
-function getTopSection(filePathPosix) {
-  // filePathPosix contains .../src/content/<section>/...
-  const parts = filePathPosix.split("/");
-
-  const idx = parts.lastIndexOf("content");
-  if (idx === -1) return null;
-
-  return parts[idx + 1] ?? null;
-}
-
-// Build slug: <section>/<originalSlug or filename> (handles -index)
-function getSlug(filePathPosix, metadata) {
-  const fileName = path.posix.basename(
-    filePathPosix,
-    path.posix.extname(filePathPosix),
-  );
-  const section = getTopSection(filePathPosix);
-
-  // fallback if structure isn't src/content/<section>/...
-  const base = section ? section : "";
-
-  const rawSlug = metadata?.originalSlug || fileName;
-  if (fileName === "-index") return base || "";
-
-  // join with posix so URLs are correct on Windows too
-  return path.posix.join(base, rawSlug).replace(/\/+/g, "/");
-}
-
-// Generate URL per multilingual settings
-function generateUrl(filePathPosix, metadata, settings) {
-  const langCode = getLanguageCode(filePathPosix, settings.languages);
-  if (!langCode) return null;
-
-  const slug = getSlug(filePathPosix, metadata);
-  const isDefault = langCode === settings.defaultLanguage;
-
-  const urlPath =
-    isDefault && !settings.showDefaultLangInUrl
-      ? `/${slug}`
-      : `/${langCode}/${slug}`;
-
-  return urlPath.replace(/\/+/g, "/");
+  return excludedUrlSet;
 }
 
 async function buildExcludedFolders() {
@@ -205,27 +155,7 @@ async function processSitemaps() {
     const EXCLUDE_FOLDERS = await buildExcludedFolders();
 
     const sitemapFiles = await getSitemapFiles();
-    const contentFrontmatter = await getContentFrontmatter();
-
-    // Precompute excluded/draft URLs from content
-    const excludedUrlSet = new Set();
-
-    for (const [filePath, meta] of Object.entries(contentFrontmatter)) {
-      const filePathPosix = toPosix(filePath);
-      const url = generateUrl(filePathPosix, meta, settings);
-
-      if (!url) continue;
-
-      // Normalize to match sitemap paths
-      let norm = url;
-      if (norm.includes("/pages/")) norm = norm.replace("/pages/", "/");
-      if (norm.includes("/homepage")) norm = norm.replace("/homepage", "/");
-
-      // If draft/excluded, we mark it for removal
-      if (meta?.draft || meta?.excludeFromSitemap) {
-        excludedUrlSet.add(meta.customSlug || norm);
-      }
-    }
+    const excludedUrlSet = await getExcludedUrls(settings);
 
     for (const sitemapFile of sitemapFiles) {
       const sitemapContent = await fs.readFile(sitemapFile, "utf8");
