@@ -5,16 +5,23 @@ import SectionBadge from "../global/SectionBadge.astro";
 import formatRelativeDate from "@/lib/utils/formatRelativeDate";
 import { useTranslations } from "@/lib/utils/i18nUtils.ts";
 import Icons from "@/helpers/Icons.astro";
-import config from ".astro/config.generated.json";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const t = await useTranslations(Astro.currentLocale as string);
-const { pageHeaderDefaultImage } = config.settings;
+const siteGlobals = await getSiteGlobals();
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+const pageHeaderDefaultImage =
+  siteGlobals.seoDefaults?.pageHeaderDefaultImage ||
+  siteGlobals.seoDefaults?.defaultImage;
 
 type Props = {
   content: {
     badge?: string;
     title?: string;
     image?: string;
+    imageAlt?: string;
     imageText?: string;
     postData?: {
       date?: Date;
@@ -29,6 +36,7 @@ const {
   badge,
   title,
   image = pageHeaderDefaultImage,
+  imageAlt,
   imageText,
   postData,
 } = Astro.props.content;
@@ -90,7 +98,7 @@ const isExternalImage =
             {postData.author && (
               <li class="before:bg-dark relative flex items-center gap-2 leading-normal">
                 <Icons icon="User" class="text-primary size-4" />
-                By {markdownify(postData.author)}
+                {t("common.by")} {markdownify(postData.author)}
               </li>
             )}
           </ul>
@@ -103,7 +111,7 @@ const isExternalImage =
           {isExternalImage ? (
             <img
               src={image}
-              alt={title || ""}
+              alt={imageAlt || title || ""}
               width="1320"
               height="550"
               loading="eager"
@@ -114,7 +122,7 @@ const isExternalImage =
           ) : (
             <OptimizedImage
               src={image}
-              alt={title}
+              alt={imageAlt || title}
               width={1320}
               height={550}
               widths={[480, 640, 768, 1024, 1320]}

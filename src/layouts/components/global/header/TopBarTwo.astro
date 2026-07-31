@@ -1,17 +1,19 @@
 ---
 import config from ".astro/config.generated.json";
-import { useTranslations } from "@/lib/utils/i18nUtils.ts";
 import { markdownify } from "@/lib/utils/textConverter";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import LanguageSwitcher from "./LanguageSwitcher.astro";
+import type { GlobalContact, SiteGlobals } from "@/lib/sanity/siteGlobals";
 
-const t = await useTranslations(Astro.currentLocale as string);
-
-const { announcement } = Astro.props;
-
-const {
-  settings: { contactInfo },
-} = config;
+type HeaderTopBar = SiteGlobals["header"]["topBar"];
+const { announcement, topBar, contact } = Astro.props as {
+  announcement?: string | null;
+  topBar?: HeaderTopBar;
+  contact: GlobalContact;
+};
+const phoneMarkdown = contact.phoneHref
+  ? `[${contact.phoneLabel}](${contact.phoneHref})`
+  : contact.phoneLabel;
 ---
 
 <div class="topbar bg-dark">
@@ -29,9 +31,9 @@ const {
           class="fill-accent size-4"
         />
         <span class="font-medium text-text-light/90">
-          {t("common.hotLine")}:
+          {topBar?.hotLineLabel}:
         </span>
-        <p class="text-text-light" set:html={markdownify(contactInfo.phone)} />
+        <p class="text-text-light" set:html={markdownify(phoneMarkdown)} />
       </div>
       {
         announcement && (

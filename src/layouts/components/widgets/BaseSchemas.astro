@@ -2,22 +2,29 @@
 import { Schema } from "astro-seo-schema";
 import type { WebSite, Organization, BreadcrumbList } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import config from ".astro/config.generated.json";
-import social from "@/config/social.json";
+import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
-const { title = "", canonical = "" } = Astro.props;
+const { title = "", canonical = "", siteGlobals } = Astro.props as {
+  title?: string;
+  canonical?: string;
+  siteGlobals?: SiteGlobals;
+};
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
+const seoDefaults = siteGlobals?.seoDefaults;
+const orgData = siteGlobals?.organization || {};
+const uiCopy = siteGlobals?.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
+const homeLabel = uiCopy?.common?.home;
+if (!homeLabel) {
+  throw new Error('Missing required Sanity uiCopy.common.home value.');
+}
 
 const siteTitle =
-  config.site.title +
-  (config.site.tagline &&
-    (config.site.taglineSeparator || " - ") + config.site.tagline);
-
-const orgData = config.seo.organization || {};
+  (siteGlobals?.brand?.title || seoDefaults?.title || "") +
+  (seoDefaults?.tagline &&
+    (seoDefaults.taglineSeparator || " - ") + seoDefaults.tagline);
 
 // Resolve canonical to absolute for @id references
 let absoluteCanonical = canonical;
@@ -35,7 +42,7 @@ const websiteSchema: WebSite = {
   "@type": "WebSite",
   "@id": `${baseUrlClean}/#website`,
   name: siteTitle,
-  description: config.site.description,
+  description: seoDefaults?.description,
   url: baseUrl,
 };
 
@@ -43,14 +50,14 @@ const websiteSchema: WebSite = {
 const organizationSchema: Organization = {
   "@type": "Organization",
   "@id": `${baseUrlClean}/#organization`,
-  name: config.seo.author,
+  name: orgData.name || siteGlobals?.brand?.title || seoDefaults?.author,
   url: baseUrl,
-  sameAs: social.main
+  sameAs: (siteGlobals?.socialLinks || [])
     .filter((item: any) => item.enable)
     .map((item: any) => item.url),
   logo: {
     "@type": "ImageObject",
-    url: absoluteUrl(config.site.logo, Astro),
+    url: absoluteUrl(orgData.logo || siteGlobals?.brand?.logoPath || "", Astro),
   },
   ...((orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) && {
     address: {
@@ -62,8 +69,12 @@ const organizationSchema: Organization = {
       ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
     },
   }),
-  ...(orgData.email && { email: orgData.email }),
-  ...(orgData.telephone && { telephone: orgData.telephone }),
+  ...(siteGlobals?.contact?.emailLabel
+    ? { email: siteGlobals.contact.emailLabel }
+    : orgData.email && { email: orgData.email }),
+  ...(siteGlobals?.contact?.phoneLabel
+    ? { telephone: siteGlobals.contact.phoneLabel }
+    : orgData.telephone && { telephone: orgData.telephone }),
 };
 
 // 3. BreadcrumbList schema
@@ -82,7 +93,7 @@ const items = [
   {
     "@type": "ListItem" as const,
     position: 1,
-    name: "Home",
+    name: homeLabel,
     item: baseUrl,
   },
   ...segments.map((seg, i) => ({

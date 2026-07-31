@@ -1,7 +1,7 @@
 ---
-import config from ".astro/config.generated.json";
 import type { z } from "astro/zod";
 import type { commentFormSchema } from "@/sections.schema";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 import Button from "@/components/Button.astro";
 
@@ -9,9 +9,13 @@ interface Props {
   form: z.infer<typeof commentFormSchema>;
 }
 
-const {
-  settings: { contactFormAction, contactFormProvider },
-} = config;
+const siteGlobals = await getSiteGlobals();
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+
+const contactFormAction = siteGlobals.forms?.contactFormAction;
+const contactFormProvider = siteGlobals.forms?.contactFormProvider;
 
 const { form } = Astro.props;
 ---

@@ -46,6 +46,7 @@ let {
 if (!src) {
   throw new Error("No image source provided.");
 }
+const isExternalImage = src.startsWith("http://") || src.startsWith("https://");
 const normalizedSrc = src.startsWith("/src/assets") ? src : `/src/assets${src}`;
 
 const images = import.meta.glob(
@@ -56,7 +57,7 @@ const rawSvgs = import.meta.glob("/src/assets/images/**/*.svg", {
   import: "default",
 });
 
-const isValidPath = !!images[normalizedSrc];
+const isValidPath = isExternalImage || !!images[normalizedSrc];
 
 if (!isValidPath) {
   console.error(
@@ -65,7 +66,7 @@ if (!isValidPath) {
 }
 
 let SVG;
-if (inlineSvg && normalizedSrc.includes(".svg")) {
+if (!isExternalImage && inlineSvg && normalizedSrc.includes(".svg")) {
   try {
     SVG = (await rawSvgs[normalizedSrc]()) as string;
     SVG = SVG.split("<svg");
@@ -105,7 +106,19 @@ if (inlineSvg && normalizedSrc.includes(".svg")) {
 
 {
   isValidPath &&
-    (inlineSvg && SVG && normalizedSrc.includes(".svg") ? (
+    (isExternalImage ? (
+      <img
+        src={src}
+        alt={alt || ""}
+        width={width}
+        height={height}
+        loading={loading}
+        decoding={decoding}
+        style={style}
+        {...{ class: Astro.props.class }}
+        {...rest}
+      />
+    ) : inlineSvg && SVG && normalizedSrc.includes(".svg") ? (
       <Fragment set:html={SVG} />
     ) : (
       // @ts-expect-error

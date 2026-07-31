@@ -3,14 +3,27 @@ import { markdownify, toSentenceCase } from "@/lib/utils/textConverter";
 import { getEntrySlugCTM, useTranslations } from "@/lib/utils/i18nUtils.ts";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import Button from "@/components/Button.astro";
-import type { CollectionEntry } from "astro:content";
 import Icons from "@/helpers/Icons.astro";
 
 type Props = {
   index?: number;
   class?: string;
-  content: CollectionEntry<"case-studies">;
-  options: CollectionEntry<"case-studies">["data"]["options"];
+  content: {
+    id?: string;
+    collection?: string;
+    data: {
+      title: string;
+      categories?: string[];
+      image?: string;
+      description?: string;
+      information?: Array<{ label: string; value: string }>;
+    };
+  };
+  options?: {
+    layout?: "card" | "grid" | "slider";
+    appearance?: "dark" | "light";
+    limit?: number | false;
+  };
   [key: string]: any;
 };
 
@@ -30,7 +43,7 @@ let {
 const t = await useTranslations(Astro.currentLocale as string);
 let slug =
   content.id && collection
-    ? getEntrySlugCTM(content, Astro.currentLocale)
+    ? getEntrySlugCTM(content as any, Astro.currentLocale)
     : "#";
 ---
 

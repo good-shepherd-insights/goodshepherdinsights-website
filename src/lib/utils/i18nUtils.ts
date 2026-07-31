@@ -3,6 +3,7 @@ import type { CollectionEntry, CollectionKey } from "astro:content";
 import trailingSlashChecker from "./trailingSlashChecker";
 import config from "../../../.astro/config.generated.json";
 import languagesJSON from "../../config/language.json";
+import { getSiteGlobals } from "../sanity/siteGlobals";
 
 // Load configuration from TOML file
 let {
@@ -59,20 +60,22 @@ export const useTranslations = async (lang: string): Promise<Function> => {
   }
 
   const contentDir = language.contentDir;
-  let menu, dictionary;
+  const siteGlobals = await getSiteGlobals();
+  const copyJson = siteGlobals?.uiCopy?.copy;
 
+  if (!copyJson) {
+    throw new Error('Missing required Sanity siteGlobals.uiCopy.copy JSON');
+  }
+
+  let dictionary: Record<string, unknown>;
   try {
-    menu = await import(`../../../src/config/menu.${lang}.json`);
-    dictionary = await import(`../../../src/i18n/${lang}.json`);
-  } catch (error) {
-    // Fallback to default language if the requested language files fail to load
-    menu = await import(`../../../src/config/menu.${defaultLanguage}.json`);
-    dictionary = await import(`../../../src/i18n/${defaultLanguage}.json`);
+    dictionary = JSON.parse(copyJson);
+  } catch {
+    throw new Error('Invalid JSON in Sanity siteGlobals.uiCopy.copy');
   }
 
   // Combine translations
   const translations = {
-    ...menu,
     ...dictionary,
     contentDir,
   };

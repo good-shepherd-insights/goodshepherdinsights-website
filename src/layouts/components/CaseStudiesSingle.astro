@@ -7,6 +7,7 @@ import { useTranslations } from "@/lib/utils/i18nUtils";
 import OptimizedImage from "./utilities/OptimizedImage.astro";
 import LegacyPaginationForSingle from "./widgets/LegacyPaginationForSingle.astro";
 import { render } from "astro:content";
+import SanityMarkdownContent from "./widgets/SanityMarkdownContent.astro";
 
 let {
   collection,
@@ -25,7 +26,11 @@ let {
 
 const t = await useTranslations(Astro.currentLocale as string);
 const tocHeadings = Astro.props.content.rendered?.metadata.headings;
-const { Content } = await render(Astro.props.content);
+const hasSanityMarkdown = typeof Astro.props.content.data?.bodyMarkdown === "string";
+let Content: any;
+if (!hasSanityMarkdown) {
+  ({ Content } = await render(Astro.props.content));
+}
 
 const tocEnabled = !!(
   config.settings.markup.tableOfContents?.enable && tocHeadings?.length
@@ -135,24 +140,29 @@ if (Array.isArray(information)) {
               <TOC toc={tocHeadings} marker={false} />
             )
           }
-          {
+          {hasSanityMarkdown ? (
+            <SanityMarkdownContent value={Astro.props.content.data.bodyMarkdown} class="[&_.image-list-component]:xl:-ms-31.5 [&_.image-list-component]:xl:w-6xl" />
+          ) : (
             Content && (
               <div class="prose-styles has-video-modal [&_.image-list-component]:xl:-ms-31.5 [&_.image-list-component]:xl:w-6xl">
                 <Content />
               </div>
             )
-          }
+          )}
         </div>
       </div>
-      <div
-        class="border-border-dark/20 mt-10 flex justify-between border-y py-6">
-        <LegacyPaginationForSingle
-          prevBtnText={t("common.paginationCaseStudiesPrev")}
-          nextBtnText={t("common.paginationCaseStudiesNext")}
-          currentPage={Astro.props.content}
-          collection={collection}
-        />
-      </div>
+      {
+        !hasSanityMarkdown && (
+          <div class="border-border-dark/20 mt-10 flex justify-between border-y py-6">
+            <LegacyPaginationForSingle
+              prevBtnText={t("common.paginationCaseStudiesPrev")}
+              nextBtnText={t("common.paginationCaseStudiesNext")}
+              currentPage={Astro.props.content}
+              collection={collection}
+            />
+          </div>
+        )
+      }
     </div>
   </div>
 

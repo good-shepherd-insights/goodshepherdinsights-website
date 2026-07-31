@@ -1,6 +1,5 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import handleDraftPage from "@/lib/utils/handleDraftPage";
 import PageHeader from "@/components/widgets/PageHeader.astro";
 import FaqSection from "@/components/sections/FaqSection.astro";
@@ -12,22 +11,24 @@ import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
 import type { FAQPage } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import { getSanityFaqPage } from "@/lib/sanity/pages";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
-const entry = await getEntryCTM("faq", "-index", Astro.currentLocale);
+const entry = await getSanityFaqPage();
+if (!entry) return Astro.redirect("/404");
 
 // Remove drafts pages in production
-const response = handleDraftPage(entry?.data);
+const response = handleDraftPage(entry);
 if (response) return response;
 
 // Resolve canonical for this FAQ page
 const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
 
 // Build FAQPage schema from faqSection data
-const faqList = entry?.data?.faqSection?.list
+const faqList = (entry as any)?.faqSection?.list
   ?.filter((item: any) => item.enable !== false)
   ?.map((item: any) => ({
     "@type": "Question",
@@ -38,13 +39,10 @@ const faqList = entry?.data?.faqSection?.list
     },
   })) || [];
 
-// Fallback: try FaqSectionTwo data if faqSection has no items
+// Fallback: use the Sanity secondary FAQ section if the primary page section has no items.
 let faqItems = faqList;
 if (faqItems.length === 0) {
-  const faqSectionTwoData = (
-    await getEntryCTM("sections", "faq-section-two", Astro.currentLocale)
-  )?.data;
-  faqItems = faqSectionTwoData?.list
+  faqItems = (entry as any)?.faqSectionTwo?.list
     ?.filter((item: any) => item.enable !== false)
     ?.map((item: any) => ({
       "@type": "Question",
@@ -66,12 +64,12 @@ if (faqItems.length > 0) {
 }
 ---
 
-<Base {...entry?.data}>
-  <PageHeader content={entry?.data} />
-  <FaqSection content={entry?.data?.faqSection} mode="light" />
-  <StatsMarqueeSection hasLightBackground={true} />
-  <FaqSectionTwo mode="shadow" />
-  <CTAGallerySection />
+<Base {...entry}>
+  <PageHeader content={entry} />
+  <FaqSection content={(entry as any)?.faqSection} mode="light" />
+  <StatsMarqueeSection content={(entry as any)?.statsMarqueeSection} hasLightBackground={true} />
+  <FaqSectionTwo content={(entry as any)?.faqSectionTwo} mode="shadow" />
+  <CTAGallerySection content={(entry as any)?.ctaGallerySection} />
   <CTASection />
 
   <!-- Page-specific structured data -->

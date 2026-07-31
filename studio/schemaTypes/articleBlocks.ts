@@ -11,7 +11,7 @@ const inlineText = () =>
         {title: 'Emphasis', value: 'em'},
       ],
       annotations: [
-        defineType({
+        defineArrayMember({
           name: 'link',
           title: 'Link',
           type: 'object',
@@ -63,7 +63,7 @@ const constrainedText = () =>
         {title: 'Emphasis', value: 'em'},
       ],
       annotations: [
-        defineType({
+        defineArrayMember({
           name: 'link',
           title: 'Link',
           type: 'object',
@@ -118,7 +118,11 @@ export const articleSection = defineType({
       },
       initialValue: 'h2',
       hidden: ({parent}) => !parent?.header,
-      validation: (Rule) => Rule.custom((value, context) => (!context.parent?.header || value ? true : 'Required when header is set')),
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {header?: string} | undefined
+          return !parent?.header || value ? true : 'Required when header is set'
+        }),
     }),
     defineField({
       name: 'paragraphs',
@@ -167,7 +171,11 @@ export const articleList = defineType({
       },
       initialValue: 'h2',
       hidden: ({parent}) => !parent?.header,
-      validation: (Rule) => Rule.custom((value, context) => (!context.parent?.header || value ? true : 'Required when header is set')),
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {header?: string} | undefined
+          return !parent?.header || value ? true : 'Required when header is set'
+        }),
     }),
     defineField({
       name: 'style',
@@ -190,6 +198,8 @@ export const articleList = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'articleListItem',
+          title: 'List item',
           type: 'object',
           fields: [
             defineField({
@@ -245,6 +255,8 @@ export const insightList = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'insightItem',
+          title: 'Insight item',
           type: 'object',
           fields: [
             defineField({
@@ -295,6 +307,8 @@ export const takeaways = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'takeawayItem',
+          title: 'Takeaway item',
           type: 'object',
           fields: [
             defineField({
@@ -329,6 +343,8 @@ export const faq = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'source',
+          title: 'Source',
           type: 'object',
           fields: [
             defineField({
@@ -394,6 +410,8 @@ export const sources = defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'source',
+          title: 'Source',
           type: 'object',
           fields: [
             defineField({

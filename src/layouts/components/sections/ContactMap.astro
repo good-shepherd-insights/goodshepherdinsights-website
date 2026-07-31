@@ -1,15 +1,22 @@
 ---
-import config from ".astro/config.generated.json";
 import { useTranslations } from "@/lib/utils/i18nUtils";
 import Icons from "@/helpers/Icons.astro";
+import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const t = await useTranslations(Astro.currentLocale as string);
+const siteGlobals = await getSiteGlobals();
 
-const {
-  settings: {
-    contactInfo: { mapLink, address },
-  },
-} = config;
+if (!siteGlobals) {
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
+}
+
+const { contact } = siteGlobals;
+
+if (!contact.mapEmbedUrl) {
+  throw new Error("Missing required Sanity siteGlobals contact.mapEmbedUrl");
+}
 ---
 
 <section class:list={["bg-light overflow-hidden"]}>
@@ -37,10 +44,10 @@ const {
 
     {/* Map Iframe */}
     <iframe
-      data-map-src={mapLink}
+      data-map-src={contact.mapEmbedUrl}
       class="lazy-map h-full w-full border-0 opacity-0 grayscale transition-opacity duration-1000"
       loading="lazy"
-      title={address}>
+      title={contact.addressText}>
     </iframe>
   </div>
 </section>

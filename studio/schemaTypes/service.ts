@@ -62,7 +62,7 @@ export const service = defineType({
       type: 'string',
       group: 'content',
       initialValue: 'Consulting Service',
-      validation: (Rule) => Rule.max(120),
+      validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
       name: 'heroImage',

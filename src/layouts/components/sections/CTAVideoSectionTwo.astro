@@ -17,9 +17,15 @@ const t = await useTranslations(Astro.currentLocale as string);
 type SectionType = Section & NonNullable<z.infer<typeof ctaVideoSectionSchema>>;
 type Props = { content?: SectionType; hasLightBackground?: boolean };
 
-let defaultContent = (
-  await getEntryCTM("sections", "cta-video-section-two", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : ((
+      await getEntryCTM(
+        "sections",
+        "cta-video-section-two",
+        Astro.currentLocale,
+      )
+    )?.data as SectionType);
 
 let actualContent = overrideObjects(
   { ...defaultContent },

@@ -6,14 +6,16 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import {
-  sanityBlogIndexContent,
-  sanityBlogPlaceholder,
-} from "@/lib/sanity/blog";
+import { sanityBlogPlaceholder } from "@/lib/sanity/blog";
+import { getSanityBlogIndexPage } from "@/lib/sanity/pages";
 import { generatePaths } from "@/lib/utils/i18nUtils";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 const posts = await getSanityBlogPosts();
+const blogIndex = await getSanityBlogIndexPage();
+if (!blogIndex) {
+  throw new Error('Missing Sanity blogIndexPage document with id "blog-index-page".');
+}
 export function getStaticPaths() {
   return generatePaths();
 }
@@ -21,7 +23,7 @@ const {
   badge: blogBadge,
   title: blogTitle,
   metaDescription: blogDescription,
-} = sanityBlogIndexContent;
+} = blogIndex;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const collectionPageSchema = {
   "@context": "https://schema.org",
@@ -51,7 +53,7 @@ const collectionPageSchema = {
     }}
     contentList={{
       options: { layout: "grid", columns: 2, search: true },
-      searchSection: sanityBlogIndexContent.searchSection,
+      searchSection: blogIndex.searchSection,
       pagination: { enable: true, currentPage: 1 },
     }}
     content={{

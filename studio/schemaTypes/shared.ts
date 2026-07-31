@@ -1,6 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
-const linkAnnotation = defineType({
+const linkAnnotation = defineArrayMember({
   name: 'link',
   title: 'Link',
   type: 'object',
@@ -142,6 +142,28 @@ export const seoFields = defineType({
       initialValue: false,
     }),
   ],
+})
+
+export const schemaThing = defineType({
+  name: 'schemaThing',
+  title: 'Thing',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'name',
+      title: 'name',
+      type: 'string',
+      validation: (Rule) => Rule.required().max(120),
+    }),
+    defineField({
+      name: 'url',
+      title: 'url',
+      type: 'url',
+    }),
+  ],
+  preview: {
+    select: {title: 'name', subtitle: 'url'},
+  },
 })
 
 export function previewPortableText(value?: Array<{children?: Array<{text?: string}>}>) {

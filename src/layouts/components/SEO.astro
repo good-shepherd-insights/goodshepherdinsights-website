@@ -1,5 +1,4 @@
 ---
-import { Seo } from "astro-seo-meta";
 import { getLocaleUrlCTM, supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import {
   plainify,
@@ -7,6 +6,7 @@ import {
   resolveTaglineSeparator,
 } from "@/lib/utils/textConverter";
 import config from ".astro/config.generated.json";
+import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
 export interface SEOProps {
   title?: string;
@@ -17,41 +17,52 @@ export interface SEOProps {
   canonical?: string;
   keywords?: string[];
   robots?: string;
-  author?: string;
   disableTagline?: boolean;
   ogType?: string;
   twitter?: string;
   twitterCard?: string;
   ogLocale?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  imageAlt?: string;
+  siteGlobals?: SiteGlobals;
 }
 
+const siteGlobals = (Astro.props as SEOProps).siteGlobals;
+const seoDefaults = siteGlobals?.seoDefaults;
 const {
   title,
   metaTitle,
   description,
   metaDescription,
-  image = config.opengraph.image,
+  image = seoDefaults?.defaultImage || siteGlobals?.brand?.logoPath,
   canonical,
-  keywords = config.seo.keywords,
-  robots = config.seo.robots,
-  author = config.seo.author,
+  keywords = seoDefaults?.keywords || [],
+  robots = seoDefaults?.robots || "index, follow",
   disableTagline,
-  ogType = config.opengraph.ogType,
-  twitter = config.opengraph.twitter,
-  twitterCard = config.opengraph.twitterCard,
-  ogLocale = config.opengraph.ogLocale,
+  ogType = seoDefaults?.ogType || "website",
+  twitter = seoDefaults?.twitter,
+  twitterCard = seoDefaults?.twitterCard || "summary_large_image",
+  ogLocale = seoDefaults?.ogLocale || "en_US",
+  ogTitle,
+  ogDescription,
+  twitterTitle,
+  twitterDescription,
+  imageAlt,
 } = Astro.props as SEOProps;
 
 // Normalize title and description
-let resolvedTitle = plainify(metaTitle ?? title ?? config.site.title);
+let resolvedTitle = plainify(metaTitle ?? title ?? seoDefaults?.title ?? siteGlobals?.brand?.title ?? "");
 let resolvedDescription = plainify(
-  metaDescription ?? description ?? config.site.description,
+  metaDescription ?? description ?? seoDefaults?.description ?? "",
 );
 
 // Add tagline if not disabled
-if (!disableTagline && config.site.tagline) {
-  const separator = resolveTaglineSeparator(config.site.taglineSeparator);
-  resolvedTitle += separator + config.site.tagline;
+if (!disableTagline && seoDefaults?.tagline) {
+  const separator = resolveTaglineSeparator(seoDefaults.taglineSeparator);
+  resolvedTitle += separator + seoDefaults.tagline;
 }
 
 resolvedTitle = removeWhitespace(resolvedTitle);
@@ -66,9 +77,20 @@ const resolvedCanonical = canonical
     );
 
 // OG image — make absolute
-const ogImage = image.startsWith("http")
+const ogImage = image?.startsWith("http")
   ? image
-  : `${config.site.baseUrl}${image}`;
+  : `${seoDefaults?.baseUrl || Astro.url.origin}${image}`;
+const resolvedOgTitle = removeWhitespace(plainify(ogTitle || resolvedTitle));
+const resolvedOgDescription = removeWhitespace(
+  plainify(ogDescription || resolvedDescription),
+);
+const resolvedTwitterTitle = removeWhitespace(
+  plainify(twitterTitle || resolvedOgTitle),
+);
+const resolvedTwitterDescription = removeWhitespace(
+  plainify(twitterDescription || resolvedOgDescription),
+);
+const resolvedImageAlt = imageAlt ? removeWhitespace(plainify(imageAlt)) : undefined;
 
 // Alternate language links (i18n routing, not SEO meta)
 const alternateTags: Array<{ hreflang: string; href: string }> = [];
@@ -87,23 +109,24 @@ if (
 }
 ---
 
-<Seo
-  title={resolvedTitle}
-  description={resolvedDescription}
-  keywords={keywords}
-  robots={robots}
-  icon={config.site.favicon?.image}
-  facebook={{
-    image: ogImage,
-    type: ogType || "website",
-    url: resolvedCanonical,
-  }}
-  twitter={{
-    image: ogImage,
-    card: twitterCard || "summary_large_image",
-    site: twitter || undefined,
-  }}
-/>
+<title>{resolvedTitle}</title>
+<meta name="description" content={resolvedDescription} />
+{keywords?.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
+<meta name="robots" content={robots} />
+{/* favicon <link> tags are emitted by Favicons.astro, which reads seoDefaults.faviconSet */}
+<meta property="og:title" content={resolvedOgTitle} />
+<meta property="og:description" content={resolvedOgDescription} />
+<meta property="og:type" content={ogType || "website"} />
+<meta property="og:url" content={resolvedCanonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+{resolvedImageAlt && <meta property="og:image:alt" content={resolvedImageAlt} />}
+<meta property="og:locale" content={ogLocale || "en_US"} />
+<meta name="twitter:card" content={twitterCard || "summary_large_image"} />
+{twitter && <meta name="twitter:site" content={twitter} />}
+<meta name="twitter:title" content={resolvedTwitterTitle} />
+<meta name="twitter:description" content={resolvedTwitterDescription} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+{resolvedImageAlt && <meta name="twitter:image:alt" content={resolvedImageAlt} />}
 {resolvedCanonical && (
   <link rel="canonical" href={resolvedCanonical} itemprop="url" />
 )}

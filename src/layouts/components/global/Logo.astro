@@ -2,34 +2,27 @@
 import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils.ts";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import { markdownify, toSentenceCase } from "@/lib/utils/textConverter";
-
-import config from ".astro/config.generated.json";
+import type { GlobalBrand } from "@/lib/sanity/siteGlobals";
 
 type Props = {
   src?: string;
+  brand?: GlobalBrand;
   class?: string;
   width?: string;
   height?: string;
   [key: string]: any;
 };
 
-let { src, class: className } = Astro.props;
+let { src, brand, class: className } = Astro.props as Props;
 
 let {
-  logo,
+  logoPath,
   logoWidth = "320px",
   logoHeight = "80px",
   logoText,
-  logoAlternate,
+  logoAlternatePath,
   title,
-}: {
-  logo: string;
-  logoAlternate: string;
-  logoWidth: string;
-  logoHeight: string;
-  logoText: string;
-  title: string;
-} = config.site;
+} = brand || {};
 
 if (Astro.props.width) {
   logoWidth = Astro.props.width;
@@ -38,32 +31,35 @@ if (Astro.props.height) {
   logoHeight = Astro.props.height;
 }
 
-const mainLogo = src ? src : logo;
+const mainLogo = src ? src : logoPath;
+const label = title || "Home";
 ---
 
 <a
   href={getLocaleUrlCTM("/", Astro.currentLocale)}
-  aria-label={title}
+  aria-label={label}
   class:list={["logo-wrapper py-4 lg:py-7", className]}>
   {
-    src || logoAlternate || logo ? (
+    mainLogo || logoAlternatePath ? (
       <>
-        <OptimizedImage
-          src={mainLogo}
-          inlineSvg={mainLogo?.endsWith(".svg")}
-          class="logo max-sm:h-12! max-sm:w-52!"
-          alt={toSentenceCase("Brand logo of " + title)}
-          style={{
-            height: logoHeight,
-            width: logoWidth,
-          }}
-        />
-        {logoAlternate && (
+        {mainLogo && (
           <OptimizedImage
-            src={logoAlternate}
-            inlineSvg={logoAlternate.endsWith(".svg")}
+            src={mainLogo}
+            inlineSvg={mainLogo?.endsWith(".svg")}
+            class="logo max-sm:h-12! max-sm:w-52!"
+            alt={toSentenceCase("Brand logo of " + label)}
+            style={{
+              height: logoHeight,
+              width: logoWidth,
+            }}
+          />
+        )}
+        {logoAlternatePath && (
+          <OptimizedImage
+            src={logoAlternatePath}
+            inlineSvg={logoAlternatePath.endsWith(".svg")}
             class="logo-alternate"
-            alt={toSentenceCase("Brand logo of " + title)}
+            alt={toSentenceCase("Brand logo of " + label)}
             style={{
               height: logoHeight,
               width: logoWidth,
@@ -78,7 +74,7 @@ const mainLogo = src ? src : logo;
     ) : logoText ? (
       logoText
     ) : (
-      title
+      label
     )
   }
 </a>

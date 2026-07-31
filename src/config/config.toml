@@ -1,12 +1,12 @@
 # Site Configuration
 [site]
-  title            = "Good Shepherd Insights" # Shared title for SEO and OpenGraph
-  description      = "Professional Fractional CTO services for mid-sized East Coast churches. We provide strategic technology leadership to align your tools with your mission." # Shared description for SEO and OpenGraph
-  tagline          = "Fractional CTO leadership for mid-sized churches"
+  title            = "" # CMS-owned in Sanity siteGlobals.seoDefaults
+  description      = "" # CMS-owned in Sanity siteGlobals.seoDefaults
+  tagline          = "" # CMS-owned in Sanity siteGlobals.seoDefaults
   taglineSeparator = "" # default is " - " 
-  baseUrl          = "https://goodshepherdinsights.com" # Base URL for the site and used in OpenGraph meta tags.
-  logo             = "/images/good-shepherd-insights.svg" # Path to the site's logo
-  logoAlternate    = "/images/good-shepherd-insights.svg" # Path to the site's logo
+  baseUrl          = "" # CMS-owned in Sanity siteGlobals.seoDefaults
+  logo             = "" # CMS-owned in Sanity siteGlobals.brand
+  logoAlternate    = "" # CMS-owned in Sanity siteGlobals.brand
   logoText         = "" # Text displayed next to the logo
   logoWidth        = "320px" # Width of the logo
   logoHeight       = "75px" # Height of the logo
@@ -15,28 +15,19 @@
   # Note: Manually restart your server when you change this value
   trailingSlash = true
 
-  # Add your site logo in image path below and open your terminal and run "npm run generate-favicons" to generate favicons for different devices and platform (https://realfavicongenerator.net/checker)
+  # Add your site logo in image path below and generate favicons for different devices and platforms (https://realfavicongenerator.net/checker)
   [site.favicon]
     path  = "/images/favicons" # favicon images path (No need to change it)
-    image = "/images/favicon.png" # Add your site logo path here and follow upper instruction
+    image = "" # CMS-owned in Sanity siteGlobals.seoDefaults
 
 
 # SEO Metadata
 # Specific SEO configurations that complement the general site settings.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
-  author = "Good Shepherd Insights"
-  keywords = [
-    "fractional cto for churches",
-    "church technology strategy",
-    "mid-sized church tech solutions",
-    "church software optimization",
-    "technology audit for churches",
-    "church digital transformation",
-    "east coast church technology",
-    "church vendor management",
-  ]
-  robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
+  author = "" # CMS-owned in Sanity siteGlobals.seoDefaults
+  keywords = []
+  robots = "" # CMS-owned in Sanity siteGlobals.seoDefaults
 
   [seo.robotsTxt]
     enable   = true # Enables or disables robots.txt file generation on site build
@@ -48,11 +39,11 @@
 
   [seo.organization]
     streetAddress = ""
-    addressLocality = "East Coast"
-    addressRegion = "USA"
-    email = "contact@goodshepherdinsights.com"
+    addressLocality = ""
+    addressRegion = ""
+    email = ""
     telephone = ""
-    logo = "/images/good-shepherd-insights.svg"
+    logo = ""
 
 
 # Different theme settings
@@ -70,35 +61,31 @@
 
   pagination             = 6 # Number of posts displayed on each page blog list page
   stickyHeader           = true # Enables scroll-aware sticky behavior (e.g., hide on scroll down), not applicable to fixed headers
-  pageHeaderDefaultImage = "/images/page-header/default.png" # if you don't pass image in frontmatter of a page then this image will be used as header image
+  pageHeaderDefaultImage = "" # CMS-owned in Sanity siteGlobals.seoDefaults
 
-  # docs - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
-  # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "https://formsubmit.co/contact@goodshepherdinsights.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
-  # formspree | formsubmit.co | netlify (default is formsubmit.co)
-  contactFormProvider = "formsubmit.co"
+  # CMS-owned in Sanity siteGlobals.forms.
+  contactFormAction = ""
+  contactFormProvider = ""
 
-  footerDescription = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the footer description in different languages or directly add value here if you are not using internationalization feature
+  footerDescription = ""
 
-  # For changing footer description and footer copyright in different languages see src/i18n/en.json and src/i18n/fr.json
-  # We kindly appreciate it if you retain the theme copyright. Thank you for supporting Taxo!
   [settings.copyright]
     enable = true
-    text   = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the copyright text in different languages or directly add value here if you are not using internationalization feature
+    text   = ""
 
   # Mailchimp Subscription Form located in footer
   [settings.subscription]
     enable            = true # Enables or disable the subscription form
-    title             = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the title in different languages or directly add value here if you are not using internationalization feature
-    note              = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the note in different languages or directly add value here if you are not using internationalization feature
-    formAction        = "https://gmail.us11.list-manage.com/subscribe/post?u=d870b06d86c16269e4b1f9b39&amp;id=12cf0c6ac2&amp;f_id=007e61e1f0"
+    title             = ""
+    note              = ""
+    formAction        = ""
     mailchimpTagValue = ""
 
   # Multilingual settings (check src/config/language.json for changing the languages)
   # NOTE: Manually restart your server when you change the following multilingual table values
   [settings.multilingual]
     # Set `enable` to `true` for enabling the multilingual feature or `false` for disabling it.
-    # Run `npm run remove-multilingual` for removing multilingual content files after disabling the feature.
+    # Remove multilingual content files after disabling the feature.
     enable               = true
     defaultLanguage      = "en"
     disableLanguages     = ["fr"] # List of languages to disable (eg: ["fr", "es"])
@@ -106,34 +93,33 @@
 
   # Global Contact Information
   [settings.contactInfo]
-    address = "East Coast, USA"
-    email   = "contact@goodshepherdinsights.com"
-    phone   = "[(240) 441-5259](tel:+12404415259)"
-    mapLink = "https://www.google.com/maps?q=East+Coast,USA&output=embed"
+    address = ""
+    email   = ""
+    phone   = ""
+    mapLink = ""
 
   # Header Offcanvas Configuration
-  # Update social links in `src/config/social.json`
   [settings.headerOffcanvas]
     enable      = true
-    logo        = "/images/good-shepherd-insights.svg"
-    description = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the description in different languages or directly add value here if you are not using internationalization feature. This is also used in footer of personal-case studies homepage
+    logo        = ""
+    description = ""
 
     # Call To Action Button
     [settings.headerOffcanvas.button]
       enable = true
-      label  = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the button label in different languages or directly add value here if you are not using internationalization feature
+      label  = ""
       url    = "/contact/"
 
 # Navigation Button In Header
 [settings.navigationButton]
   enable = true
-  label  = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the navigation button label in different languages or directly add value here if you are not using internationalization feature
+  label  = ""
   url    = "/contact/"
 
 # Announcement bar in HeaderTwo topbar
 [settings.announcementBar]
   enable = true
-  label  = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the announcement label in different languages or directly add value here if you are not using internationalization feature
+  label  = ""
 
 [settings.markup.tableOfContents]
   enable     = false
@@ -147,11 +133,11 @@
 # Specific OpenGraph settings, using values from the [site] section where possible.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [opengraph]
-  image       = "/images/og-image.jpg" # Image used in OpenGraph previews
-  ogLocale    = "en_US" # Locale setting for OpenGraph
-  ogType      = "website" # Type of content for OpenGraph protocol
-  twitter     = "@GSInsights" # Twitter handle for Twitter Card meta tags
-  twitterCard = "summary_large_image" # Type of Twitter Card to use in social sharing
+  image       = "" # CMS-owned in Sanity siteGlobals.seoDefaults
+  ogLocale    = ""
+  ogType      = ""
+  twitter     = ""
+  twitterCard = ""
 
 # [head] (Add custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page)
 # -----------------------------------------------------------------------------------------------------------------------------------

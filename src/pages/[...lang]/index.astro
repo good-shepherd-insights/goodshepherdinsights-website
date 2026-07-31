@@ -1,74 +1,84 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import { generatePaths } from "@/lib/utils/i18nUtils.ts";
-import FaqSection from "@/components/sections/FaqSection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import HeroSection from "@/components/sections/HeroSection.astro";
-import FeaturesGrid from "@/components/sections/FeaturesGrid.astro";
-import StatsSection from "@/components/sections/StatsSection.astro";
 import AboutSection from "@/components/sections/AboutSection.astro";
 import ServicesSection from "@/components/sections/ServicesSection.astro";
-import CTAVideoSection from "@/components/sections/CTAVideoSection.astro";
-// Removed from homepage layout — available for future use:
-import TestimonialSection from "@/components/sections/TestimonialSection.astro";
-import CaseStudiesSection from "@/components/sections/CaseStudiesSection.astro";
-import TeamSection from "@/components/sections/TeamSection.astro";
 import BlogSection from "@/components/sections/BlogSection.astro";
+import { getSanityHomePage } from "@/lib/sanity/homepage";
 import { Schema } from "astro-seo-schema";
 import type { LocalBusiness } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import config from ".astro/config.generated.json";
+import { enabledItems, getSiteGlobals } from "@/lib/sanity/siteGlobals";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
-const page = await getEntryCTM("homepage", "-index", Astro.currentLocale);
+const page = await getSanityHomePage();
+const siteGlobals = await getSiteGlobals();
+
+if (!page) {
+  throw new Error('Missing Sanity homepage document with id "home-page".');
+}
+if (!siteGlobals) {
+  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+}
+
+const pageData = Object.fromEntries(
+  Object.entries(page).map(([key, value]) => [key, value ?? undefined]),
+) as typeof page;
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
-const orgData = config.seo.organization || {};
+const orgData = siteGlobals.organization || {};
 
 // Build LocalBusiness schema inline
 const localBusinessSchema: LocalBusiness = {
   "@type": "LocalBusiness",
   "@id": `${baseUrlClean}/#localbusiness`,
-  name: config.seo.author,
-  description: page?.data?.metaDescription || config.site.description,
+  name: orgData.name || siteGlobals.brand.title,
+  description: page.metaDescription || siteGlobals.seoDefaults?.description,
   url: baseUrl,
-  ...(page?.data?.image && { image: absoluteUrl(page.data.image, Astro) }),
+  ...(page.image && { image: absoluteUrl(page.image, Astro) }),
   ...(orgData.telephone && { telephone: orgData.telephone }),
   ...(orgData.email && { email: orgData.email }),
-  ...((orgData.streetAddress || orgData.addressLocality || orgData.addressRegion) && {
+  ...((orgData.streetAddress ||
+    orgData.addressLocality ||
+    orgData.addressRegion) && {
     address: {
       "@type": "PostalAddress",
       ...(orgData.streetAddress && { streetAddress: orgData.streetAddress }),
-      ...(orgData.addressLocality && { addressLocality: orgData.addressLocality }),
+      ...(orgData.addressLocality && {
+        addressLocality: orgData.addressLocality,
+      }),
       ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
     },
   }),
-  sameAs: config.social?.main
-    ?.filter((item: any) => item.enable)
-    .map((item: any) => item.url) || [],
+  sameAs:
+    enabledItems(siteGlobals.socialLinks)
+      .map((item: any) => item.url) || [],
 };
 ---
 
-<Base {...page?.data} headerLayout="header-1">
-  <HeroSection />
+<Base {...pageData} headerLayout="header-1">
+  <HeroSection content={page.heroSection} />
   {/* SHELVED: FeaturesGrid */}
-  <ServicesSection />
+  <ServicesSection content={page.servicesSection} />
   {/* SHELVED: StatsSection */}
-  <AboutSection />
+  <AboutSection content={page.aboutSection} />
   {/* SHELVED: CTAVideoSection */}
   {/* SHELVED: TestimonialSection */}
   {/* SHELVED: CaseStudiesSection */}
   {/* SHELVED: FaqSection */}
   {/* SHELVED: TeamSection */}
-  <BlogSection />
+  <BlogSection content={page.blogSection} />
   <CTASection />
 
   <!-- Page-specific structured data -->
-  <Schema item={{ "@context": "https://schema.org", ...localBusinessSchema } as any} />
+  <Schema
+    item={{ "@context": "https://schema.org", ...localBusinessSchema } as any}
+  />
 </Base>

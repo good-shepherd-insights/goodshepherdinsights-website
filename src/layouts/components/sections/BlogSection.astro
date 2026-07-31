@@ -17,9 +17,10 @@ type Props = {
 };
 
 // Fetching the default content for the this section
-let defaultContent = (
-  await getEntryCTM("sections", "blog-section", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : (((await getEntryCTM("sections", "blog-section", Astro.currentLocale))
+      ?.data as SectionType) ?? undefined);
 
 // Default content fetch from sections collection
 let actualContent = overrideObjects(

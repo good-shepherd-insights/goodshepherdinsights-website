@@ -4,7 +4,6 @@ import BlogSinglePageLayout from "./BlogSinglePageLayout.astro";
 import SanityBlogSidebar from "./widgets/SanityBlogSidebar.astro";
 import type { SanityBlogPost } from "@/lib/sanity/client";
 import type { SanityBlogOptions } from "@/lib/sanity/blog";
-import { sanityBlogIndexContent } from "@/lib/sanity/blog";
 type Props = {
   pageType?: "single" | "list";
   hasLightBackground?: boolean;
@@ -17,7 +16,11 @@ type Props = {
     filter?: { category?: { name: string }; tag?: { name: string } };
     breadcrumb?: boolean;
     breadcrumbExcludedPaths?: string[];
-    searchSection?: typeof sanityBlogIndexContent.searchSection;
+    searchSection?: {
+      title?: string;
+      searchPlaceholder?: string;
+      noResultsText?: string;
+    };
   };
 };
 const {
@@ -48,10 +51,7 @@ const {
             ]}>
             <ContentList
               {...contentList}
-              searchSection={
-                contentList?.searchSection ||
-                sanityBlogIndexContent.searchSection
-              }
+              searchSection={contentList?.searchSection}
               posts={posts}
             />
           </div>

@@ -11,9 +11,10 @@ import SectionBadge from "../global/SectionBadge.astro";
 type SectionType = Section & NonNullable<z.infer<typeof featuresGridSchema>>;
 type Props = { content?: SectionType; hasLightBackground?: boolean };
 
-let defaultContent = (
-  await getEntryCTM("sections", "features-grid-three", Astro.currentLocale)
-)?.data as SectionType;
+let defaultContent = Astro.props.content
+  ? undefined
+  : ((await getEntryCTM("sections", "features-grid-three", Astro.currentLocale))
+      ?.data as SectionType);
 
 let actualContent = overrideObjects(
   { ...defaultContent },

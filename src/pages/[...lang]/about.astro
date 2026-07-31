@@ -1,6 +1,5 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import { generatePaths } from "@/lib/utils/i18nUtils.ts";
 import AboutHeroSection from "@/components/sections/AboutHeroSection.astro";
 import FeaturesGrid from "@/components/sections/FeaturesGrid.astro";
@@ -17,13 +16,14 @@ import { Schema } from "astro-seo-schema";
 import type { WebPage } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import config from ".astro/config.generated.json";
+import { getSanityAboutPage } from "@/lib/sanity/pages";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
-const page = await getEntryCTM("about-us", "-index", Astro.currentLocale);
+const page = (await getSanityAboutPage()) as any;
+if (!page) return Astro.redirect("/404");
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
@@ -33,24 +33,24 @@ const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const webPageSchema: WebPage = {
   "@type": "WebPage",
   "@id": `${resolvedCanonical}#webpage`,
-  name: page?.data?.title,
-  description: page?.data?.metaDescription || page?.data?.description,
+  name: page?.title,
+  description: page?.metaDescription || page?.description,
   url: resolvedCanonical,
   isPartOf: { "@id": `${baseUrlClean}/#website` },
 };
 ---
 
-<Base {...page?.data} hideOffcanvas={true}>
-  <AboutHeroSection />
-  <FeaturesGrid hasLightBackground={true} />
-  <AboutSectionTwo />
-  <StatsSection hasHalfBackground={true} />
-  <TeamSection badgeVariant="secondary" />
-  <CTAVideoSection />
-  <AboutMetricsSection hasLightBackground={true} />
-  <TestimonialSectionTwo />
-  <CTAGallerySection />
-  <BrandLogos />
+<Base {...page} hideOffcanvas={true}>
+  <AboutHeroSection content={page?.heroSection} />
+  <FeaturesGrid content={(page as any)?.featuresGrid} hasLightBackground={true} />
+  <AboutSectionTwo content={page?.aboutSectionTwo} />
+  <StatsSection content={page?.statsSection} hasHalfBackground={true} />
+  <TeamSection content={page?.teamSection} badgeVariant="secondary" />
+  <CTAVideoSection content={page?.ctaVideoSection} />
+  <AboutMetricsSection content={page?.aboutMetricsSection} hasLightBackground={true} />
+  <TestimonialSectionTwo content={page?.testimonialSectionTwo} />
+  <CTAGallerySection content={page?.ctaGallerySection} />
+  <BrandLogos content={page?.brandLogos} />
   <CTASection />
 
   <!-- Page-specific structured data -->

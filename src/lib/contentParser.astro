@@ -6,6 +6,10 @@ import {
   type CollectionEntry,
   type CollectionKey,
 } from "astro:content";
+import {
+  getReusableSection,
+  isReusableSectionSlug,
+} from "@/lib/sanity/reusableComponents";
 
 export const getCollectionCTM = async <C extends CollectionKey>(
   collectionName: C,
@@ -52,6 +56,23 @@ export const getEntryCTM = async <C extends CollectionKey>(
   subCollectionName: string,
   lang?: string, // Optional, defaults to undefined
 ): Promise<CollectionEntry<C>> => {
+  if (collectionName === "sections") {
+    const section = await getReusableSection(subCollectionName);
+    if (section) {
+      return {
+        id: `${lang || "default"}/${subCollectionName}`,
+        collection: collectionName,
+        data: section,
+      } as CollectionEntry<C>;
+    }
+
+    if (isReusableSectionSlug(subCollectionName)) {
+      throw new Error(`Missing Sanity reusable section: ${subCollectionName}`);
+    }
+
+    return undefined as unknown as CollectionEntry<C>;
+  }
+
   const { defaultLanguage } = config.settings.multilingual;
 
   const selectedLanguageCode = lang || defaultLanguage;

@@ -2,14 +2,11 @@ import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import { slugifyyy } from "@/lib/utils/textConverter";
 import { sanityImageUrl, type SanityBlogPost } from "./client";
 
-export const sanityBlogIndexContent = {
-  badge: "Insights & Updates",
-  title: "Practical guidance on ministry technology",
-  metaDescription: "Strategic technology insights for ministries and churches.",
-  searchSection: {
-    title: "Check our inside News",
-    searchPlaceholder: "Search in blog",
-  },
+export type SanitySeoImage = {
+  asset?: {
+    _ref: string;
+  };
+  alt?: string;
 };
 
 export const sanityBlogPlaceholder: SanityBlogPost = {
@@ -44,8 +41,16 @@ export const blogImageUrl = (
   width = 578,
   height?: number,
 ) => {
-  if (!post.coverImage?.asset) return undefined;
-  const image = sanityImageUrl(post.coverImage.asset)
+  return blogAssetImageUrl(post.coverImage, width, height);
+};
+
+export const blogAssetImageUrl = (
+  source: SanitySeoImage | undefined,
+  width = 578,
+  height?: number,
+) => {
+  if (!source?.asset) return undefined;
+  const image = sanityImageUrl(source.asset)
     .width(width)
     .auto("format");
   return height ? image.height(height).fit("crop").url() : image.url();
