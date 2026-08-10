@@ -5,11 +5,17 @@ export const blogPost = defineType({
   name: 'blogPost',
   title: 'Blog Post',
   type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'settings', title: 'Settings'},
+    {name: 'seo', title: 'SEO'},
+  ],
   fields: [
     defineField({
       name: 'title',
       title: 'Article headline',
       type: 'string',
+      group: 'content',
       description: 'On-page H1 and BlogPosting headline. Max 140 characters.',
       components: {input: characterCount(140)},
       validation: (Rule) => Rule.required().max(140),
@@ -18,6 +24,7 @@ export const blogPost = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      group: 'settings',
       options: {source: 'title', maxLength: 120},
       validation: (Rule) => Rule.required(),
     }),
@@ -25,6 +32,7 @@ export const blogPost = defineType({
       name: 'publishedAt',
       title: 'First published date',
       type: 'datetime',
+      group: 'settings',
       description: 'Required. Emits datePublished and article:published_time.',
       validation: (Rule) => Rule.required(),
     }),
@@ -32,6 +40,7 @@ export const blogPost = defineType({
       name: 'excerpt',
       title: 'Article summary',
       type: 'text',
+      group: 'content',
       description: 'Listing summary and SEO fallback. Max 320 characters.',
       rows: 3,
       components: {input: characterCount(320)},
@@ -41,6 +50,7 @@ export const blogPost = defineType({
       name: 'author',
       title: 'Article author',
       type: 'object',
+      group: 'content',
       description: 'Displayed author and BlogPosting.author.',
       validation: (Rule) => Rule.required(),
       fields: [
@@ -59,7 +69,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'sameAs',
-          title: 'sameAs',
+          title: 'Other profile URLs',
           type: 'array',
           description: 'Author identity URLs for JSON-LD author.sameAs.',
           of: [defineArrayMember({type: 'url'})],
@@ -71,6 +81,7 @@ export const blogPost = defineType({
       name: 'coverImage',
       title: 'Primary article image',
       type: 'image',
+      group: 'content',
       description: 'Default page, social, and JSON-LD image; crops generate 16:9, 4:3, and 1:1.',
       options: {hotspot: true},
       fields: [
@@ -87,6 +98,7 @@ export const blogPost = defineType({
       name: 'seo',
       title: 'SEO',
       type: 'object',
+      group: 'seo',
       description: 'Metadata, Open Graph, and BlogPosting JSON-LD.',
       fieldsets: [
         {name: 'metadata', title: 'Metadata'},
@@ -96,7 +108,7 @@ export const blogPost = defineType({
       fields: [
         defineField({
           name: 'metaTitle',
-          title: 'metaTitle',
+          title: 'SEO title',
           type: 'string',
           fieldset: 'metadata',
           description: 'HTML <title> source. Target 50-60 characters; max 70.',
@@ -105,7 +117,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'metaDescription',
-          title: 'metaDescription',
+          title: 'SEO description',
           type: 'text',
           fieldset: 'metadata',
           description: 'Search/social/schema description. Target 150-160 characters; max 170.',
@@ -147,7 +159,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'keywords',
-          title: 'keywords',
+          title: 'SEO keywords',
           type: 'array',
           fieldset: 'jsonLd',
           description: 'BlogPosting keywords; tags are added.',
@@ -162,7 +174,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'articleSection',
-          title: 'articleSection',
+          title: 'Article section',
           type: 'string',
           fieldset: 'jsonLd',
           description: 'Overrides the primary category in BlogPosting.articleSection.',
@@ -171,7 +183,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'about',
-          title: 'about',
+          title: 'Primary topics',
           type: 'array',
           fieldset: 'jsonLd',
           description: 'Primary topics/entities for BlogPosting.about.',
@@ -179,7 +191,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'mentions',
-          title: 'mentions',
+          title: 'Mentions',
           type: 'array',
           fieldset: 'jsonLd',
           description: 'Entities referenced by the article for BlogPosting.mentions.',
@@ -187,7 +199,7 @@ export const blogPost = defineType({
         }),
         defineField({
           name: 'dateModified',
-          title: 'dateModified',
+          title: 'Date modified',
           type: 'datetime',
           fieldset: 'jsonLd',
           description: 'BlogPosting dateModified and article:modified_time.',
@@ -247,6 +259,7 @@ export const blogPost = defineType({
       name: 'body',
       title: 'Article content',
       type: 'array',
+      group: 'content',
       of: [
         defineArrayMember({type: 'articleSection'}),
         defineArrayMember({type: 'articleList'}),
@@ -302,6 +315,7 @@ export const blogPost = defineType({
       name: 'categories',
       title: 'Categories',
       type: 'array',
+      group: 'content',
       of: [{type: 'string'}],
       options: {layout: 'tags'},
       validation: (Rule) => Rule.unique(),
@@ -310,6 +324,7 @@ export const blogPost = defineType({
       name: 'tags',
       title: 'Tags',
       type: 'array',
+      group: 'content',
       of: [{type: 'string'}],
       options: {layout: 'tags'},
       validation: (Rule) => Rule.unique(),
@@ -318,12 +333,14 @@ export const blogPost = defineType({
       name: 'comments',
       title: 'Comments',
       type: 'number',
+      group: 'settings',
       validation: (Rule) => Rule.integer().min(0),
     }),
     defineField({
       name: 'commentList',
       title: 'Comment list',
       type: 'array',
+      group: 'content',
       of: [
         defineArrayMember({
           type: 'object',
@@ -355,12 +372,14 @@ export const blogPost = defineType({
       name: 'draft',
       title: 'Draft',
       type: 'boolean',
+      group: 'settings',
       initialValue: false,
     }),
     defineField({
       name: 'excludeFromSitemap',
       title: 'Exclude from sitemap',
       type: 'boolean',
+      group: 'settings',
       initialValue: false,
     }),
   ],

@@ -166,13 +166,13 @@ export const schemaThing = defineType({
   fields: [
     defineField({
       name: 'name',
-      title: 'name',
+      title: 'Name',
       type: 'string',
       validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
       name: 'url',
-      title: 'url',
+      title: 'URL',
       type: 'url',
     }),
   ],

@@ -271,8 +271,8 @@ export const serviceIndex = defineType({
   title: 'Services Page',
   type: 'document',
   groups: [
-    {name: 'index', title: 'Services index', default: true},
-    {name: 'detail', title: 'Service detail pages'},
+    {name: 'index', title: 'Services Index', default: true},
+    {name: 'detail', title: 'Service Detail Pages'},
     {name: 'seo', title: 'SEO'},
   ],
   fields: [
