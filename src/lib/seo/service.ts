@@ -3,22 +3,13 @@ import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 import type { SchemaIds } from "./ids";
 import type { SchemaNode } from "./types";
 
-type SchemaAwareService = SanityService & {
-  schema?: {
-    areaServed?: Array<{ name?: string; type?: string }>;
-    audience?: Array<{ name?: string }>;
-    serviceOutput?: string;
-    offers?: Array<{ name?: string; description?: string; url?: string }>;
-  };
-};
-
 export function buildServiceSchema({
   service,
   ids,
   siteGlobals,
   image,
 }: {
-  service: SchemaAwareService;
+  service: SanityService;
   ids: SchemaIds;
   siteGlobals?: SiteGlobals;
   image?: string;

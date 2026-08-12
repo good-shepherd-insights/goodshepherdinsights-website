@@ -13,6 +13,22 @@ export interface SanityServiceTextItem {
   text: SanityInlineText;
 }
 
+export interface SanityServiceSchema {
+  areaServed?: Array<{
+    name?: string;
+    type?: "Place" | "City" | "State" | "Country" | "AdministrativeArea";
+  }>;
+  audience?: Array<{
+    name?: string;
+  }>;
+  serviceOutput?: string;
+  offers?: Array<{
+    name?: string;
+    description?: string;
+    url?: string;
+  }>;
+}
+
 export type SanityServiceBlock =
   | {
       _type: "serviceIntro";
@@ -75,6 +91,7 @@ export interface SanityService {
   order?: number;
   excerpt?: string;
   serviceType: string;
+  schema?: SanityServiceSchema;
   heroImage?: SanityImageWithAlt;
   body?: SanityServiceBlock[];
   seo?: {
@@ -213,6 +230,7 @@ const serviceFields = `
   order,
   excerpt,
   serviceType,
+  schema,
   heroImage,
   body,
   seo

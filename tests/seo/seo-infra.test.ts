@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import ts from "typescript";
 import {
   classifyLivePath,
   type LivePageContract,
@@ -26,6 +27,9 @@ import {
   idReference,
   schemaTypes,
 } from "./lib/schemaGraph";
+import { buildServiceSchema } from "../../src/lib/seo/service";
+import { schemaGraph } from "../../src/lib/seo/types";
+import type { SanityService } from "../../src/lib/sanity/services";
 
 const builtPages = readBuiltPages();
 const sitemapEntries = readSitemapEntries();
@@ -48,8 +52,156 @@ const pagesByCanonical = new Map(
 const canonicalForPathname = (pathname: string) => `${SITE_ORIGIN}${pathname}`;
 
 describe("SEO generated output contract", () => {
+  it("keeps Service JSON-LD enrichment backed by real CMS fields", () => {
+    const schemaFields = nestedSanityFieldNames(
+      "studio/schemaTypes/service.ts",
+      "schema",
+    );
+    const serviceProjection = templateLiteralVariableValue(
+      "src/lib/sanity/services.ts",
+      "serviceFields",
+    );
+
+    expectArrayContains(
+      schemaFields,
+      "areaServed",
+      "service.schema must expose areaServed",
+    );
+    expectArrayContains(
+      schemaFields,
+      "audience",
+      "service.schema must expose audience",
+    );
+    expectArrayContains(
+      schemaFields,
+      "serviceOutput",
+      "service.schema must expose serviceOutput",
+    );
+    expectArrayContains(
+      schemaFields,
+      "offers",
+      "service.schema must expose offers",
+    );
+    expectProjectionField(
+      serviceProjection,
+      "schema",
+      "Sanity service projection must fetch service.schema",
+    );
+  });
+
+  it("emits populated Service JSON-LD enrichment without fabricating empty facts", () => {
+    const completeService: SanityService = {
+      _id: "service.complete",
+      title: "Complete Service",
+      slug: { current: "complete-service" },
+      serviceType: "Consulting Service",
+      excerpt: "Fallback service description",
+      schema: {
+        areaServed: [
+          { name: "Maryland", type: "State" },
+          { name: "Washington, DC", type: "City" },
+        ],
+        audience: [{ name: "Church executive pastors" }],
+        serviceOutput: "A prioritized technology roadmap",
+        offers: [
+          {
+            name: "Discovery sprint",
+            description: "A short assessment of current technology risk.",
+            url: "https://goodshepherdinsights.com/contact/",
+          },
+        ],
+      },
+    };
+    const completeNode = firstGraphNode(
+      schemaGraph([
+        buildServiceSchema({
+          service: completeService,
+          ids: serviceTestIds(),
+          image: "https://goodshepherdinsights.com/images/service.jpg",
+        }),
+      ]),
+    );
+
+    expectSame(
+      completeNode.areaServed?.[0]?.["@type"],
+      "State",
+      "areaServed type must come from CMS",
+    );
+    expectSame(
+      completeNode.areaServed?.[0]?.name,
+      "Maryland",
+      "areaServed name must come from CMS",
+    );
+    expectSame(
+      completeNode.audience?.[0]?.["@type"],
+      "Audience",
+      "audience must emit Audience nodes",
+    );
+    expectSame(
+      completeNode.audience?.[0]?.name,
+      "Church executive pastors",
+      "audience name must come from CMS",
+    );
+    expectSame(
+      completeNode.serviceOutput,
+      "A prioritized technology roadmap",
+      "serviceOutput must come from CMS",
+    );
+    expectSame(
+      completeNode.offers?.[0]?.["@type"],
+      "Offer",
+      "offers must emit Offer nodes",
+    );
+    expectSame(
+      completeNode.offers?.[0]?.url,
+      "https://goodshepherdinsights.com/contact/",
+      "offer URL must come from CMS",
+    );
+
+    const emptyNode = firstGraphNode(
+      schemaGraph([
+        buildServiceSchema({
+          service: {
+            _id: "service.empty",
+            title: "Empty Service",
+            slug: { current: "empty-service" },
+            serviceType: "Consulting Service",
+            excerpt: "Fallback service description",
+            schema: {
+              areaServed: [{ name: "" }],
+              audience: [{ name: "" }],
+              offers: [{ name: "", description: "", url: "" }],
+            },
+          } satisfies SanityService,
+          ids: serviceTestIds(),
+        }),
+      ]),
+    );
+
+    expectSame(
+      emptyNode.areaServed,
+      undefined,
+      "empty areaServed values must be omitted",
+    );
+    expectSame(
+      emptyNode.audience,
+      undefined,
+      "empty audience values must be omitted",
+    );
+    expectSame(
+      emptyNode.serviceOutput,
+      undefined,
+      "empty serviceOutput must be omitted",
+    );
+    expectSame(emptyNode.offers, undefined, "empty offers must be omitted");
+  });
+
   it("reads generated sitemap and robots files", () => {
-    expectGreaterThan(sitemapFilePaths.length, 0, "dist must contain sitemap files");
+    expectGreaterThan(
+      sitemapFilePaths.length,
+      0,
+      "dist must contain sitemap files",
+    );
     expectGreaterThan(sitemapUrls.size, 0, "sitemap must contain URLs");
     expectLength(
       sitemapEntries,
@@ -89,7 +241,9 @@ describe("SEO generated output contract", () => {
   });
 
   it("keeps sitemap entries aligned with generated canonical pages and live route classification", () => {
-    const canonicalUrls = new Set(pageOutputs.flatMap((page) => page.seo.canonicalLinks));
+    const canonicalUrls = new Set(
+      pageOutputs.flatMap((page) => page.seo.canonicalLinks),
+    );
     const staleSitemapUrls = Array.from(sitemapUrls).filter(
       (url) => !canonicalUrls.has(url),
     );
@@ -114,7 +268,9 @@ describe("SEO generated output contract", () => {
 
   it("keeps generated non-live routes explicit instead of silently dropping them", () => {
     const unreviewedGeneratedPages = pageOutputs
-      .filter((page) => !page.contract && !isIgnoredGeneratedPath(page.pathname))
+      .filter(
+        (page) => !page.contract && !isIgnoredGeneratedPath(page.pathname),
+      )
       .map((page) => `${page.pathname} (${page.filePath})`);
 
     expect(unreviewedGeneratedPages).toEqual([]);
@@ -130,7 +286,11 @@ describe("SEO generated output contract", () => {
       expectSame(seo.htmlLang, "en", `${pathname} html lang must be en`);
       expectTruthy(seo.description, `${pathname} is missing meta description`);
       expectTruthy(seo.robots, `${pathname} is missing robots meta`);
-      expectLength(seo.titleTags, 1, `${pathname} must emit exactly one title tag`);
+      expectLength(
+        seo.titleTags,
+        1,
+        `${pathname} must emit exactly one title tag`,
+      );
       expectLength(
         seo.descriptionTags,
         1,
@@ -229,7 +389,11 @@ function expectRouteSpecificMetadata(
 ) {
   if (kind !== "blogPost") return;
 
-  expectSame(seo.openGraph["og:type"], "article", `${pathname} og:type must be article`);
+  expectSame(
+    seo.openGraph["og:type"],
+    "article",
+    `${pathname} og:type must be article`,
+  );
   for (const key of ["article:published_time", "article:modified_time"]) {
     expectTruthy(seo.article[key], `${pathname} is missing ${key}`);
     expectLength(
@@ -237,14 +401,45 @@ function expectRouteSpecificMetadata(
       1,
       `${pathname} must emit exactly one ${key}`,
     );
-    expectValidDate(seo.article[key], `${pathname} ${key} must be a valid date`);
+    expectValidDate(
+      seo.article[key],
+      `${pathname} ${key} must be a valid date`,
+    );
   }
 }
 
-function expectRouteSpecificSchema(pathname: string, kind: string, nodes: any[]) {
+function serviceTestIds() {
+  const canonical = `${SITE_ORIGIN}/services/complete-service/`;
+
+  return {
+    baseUrl: `${SITE_ORIGIN}/`,
+    canonical,
+    website: `${SITE_ORIGIN}/#website`,
+    organization: `${SITE_ORIGIN}/#organization`,
+    webPage: `${SITE_ORIGIN}/services/complete-service/#webpage`,
+    breadcrumb: `${SITE_ORIGIN}/services/complete-service/#breadcrumb`,
+    collectionPage: `${SITE_ORIGIN}/services/complete-service/#collectionpage`,
+    itemList: `${SITE_ORIGIN}/services/complete-service/#itemlist`,
+  };
+}
+
+function firstGraphNode(graph: { "@graph": any[] }) {
+  const node = graph["@graph"][0];
+  expectTruthy(node, "test graph must contain a Service node");
+  return node;
+}
+
+function expectRouteSpecificSchema(
+  pathname: string,
+  kind: string,
+  nodes: any[],
+) {
   if (kind === "home") {
     const localBusiness = findNodeByType(nodes, "LocalBusiness");
-    expectTruthy(localBusiness?.name, `${pathname} LocalBusiness is missing name`);
+    expectTruthy(
+      localBusiness?.name,
+      `${pathname} LocalBusiness is missing name`,
+    );
     expectTruthy(
       localBusiness?.description,
       `${pathname} LocalBusiness is missing description`,
@@ -254,7 +449,11 @@ function expectRouteSpecificSchema(pathname: string, kind: string, nodes: any[])
       `${SITE_ORIGIN}/`,
       `${pathname} LocalBusiness.url must be site root`,
     );
-    expectOptionalAbsoluteUrls(pathname, localBusiness?.sameAs, "LocalBusiness.sameAs");
+    expectOptionalAbsoluteUrls(
+      pathname,
+      localBusiness?.sameAs,
+      "LocalBusiness.sameAs",
+    );
     if (localBusiness?.image) {
       expectAbsoluteUrl(pathname, localBusiness.image, "LocalBusiness.image");
     }
@@ -269,8 +468,14 @@ function expectRouteSpecificSchema(pathname: string, kind: string, nodes: any[])
 
   if (kind === "blogPost") {
     const blogPost = findNodeByType(nodes, "BlogPosting");
-    expectTruthy(blogPost?.headline, `${pathname} BlogPosting is missing headline`);
-    expectTruthy(blogPost?.description, `${pathname} BlogPosting is missing description`);
+    expectTruthy(
+      blogPost?.headline,
+      `${pathname} BlogPosting is missing headline`,
+    );
+    expectTruthy(
+      blogPost?.description,
+      `${pathname} BlogPosting is missing description`,
+    );
     expectValidDate(
       blogPost?.datePublished,
       `${pathname} BlogPosting.datePublished must be a valid date`,
@@ -285,8 +490,14 @@ function expectRouteSpecificSchema(pathname: string, kind: string, nodes: any[])
   if (kind === "serviceDetail") {
     const service = findNodeByType(nodes, "Service");
     expectTruthy(service?.name, `${pathname} Service is missing name`);
-    expectTruthy(service?.description, `${pathname} Service is missing description`);
-    expectTruthy(service?.serviceType, `${pathname} Service is missing serviceType`);
+    expectTruthy(
+      service?.description,
+      `${pathname} Service is missing description`,
+    );
+    expectTruthy(
+      service?.serviceType,
+      `${pathname} Service is missing serviceType`,
+    );
     expectAbsoluteUrl(pathname, service?.image, "Service.image");
   }
 
@@ -361,6 +572,147 @@ function expectCoreSocialTags(
     );
   }
   expectAbsoluteUrl(pathname, seo.twitter["twitter:image"], "twitter:image");
+}
+
+function nestedSanityFieldNames(sourcePath: string, parentFieldName: string) {
+  const sourceFile = parseSourceFile(sourcePath);
+  let parentField: ts.ObjectLiteralExpression | undefined;
+
+  visitNodes(sourceFile, (node) => {
+    if (!ts.isCallExpression(node)) return;
+    if (
+      !ts.isIdentifier(node.expression) ||
+      node.expression.text !== "defineField"
+    ) {
+      return;
+    }
+    const [fieldDefinition] = node.arguments;
+    if (!fieldDefinition || !ts.isObjectLiteralExpression(fieldDefinition))
+      return;
+    if (objectStringProperty(fieldDefinition, "name") === parentFieldName) {
+      parentField = fieldDefinition;
+    }
+  });
+
+  expectTruthy(
+    parentField,
+    `${sourcePath} is missing Sanity field ${parentFieldName}`,
+  );
+
+  return arrayProperty(parentField, "fields").flatMap((field) => {
+    if (!ts.isCallExpression(field)) return [];
+    const [fieldDefinition] = field.arguments;
+    if (!fieldDefinition || !ts.isObjectLiteralExpression(fieldDefinition))
+      return [];
+    return objectStringProperty(fieldDefinition, "name") || [];
+  });
+}
+
+function templateLiteralVariableValue(
+  sourcePath: string,
+  variableName: string,
+) {
+  const sourceFile = parseSourceFile(sourcePath);
+  let value = "";
+
+  visitNodes(sourceFile, (node) => {
+    if (!ts.isVariableDeclaration(node)) return;
+    if (!ts.isIdentifier(node.name) || node.name.text !== variableName) return;
+    const initializer = node.initializer;
+    if (!initializer) return;
+    if (ts.isNoSubstitutionTemplateLiteral(initializer)) {
+      value = initializer.text;
+    }
+  });
+
+  expectTruthy(
+    value,
+    `${sourcePath} is missing template variable ${variableName}`,
+  );
+  return value;
+}
+
+function expectProjectionField(
+  projection: string,
+  fieldName: string,
+  message: string,
+) {
+  const fields = projection
+    .split("\n")
+    .map((line) => line.trim().replace(/,$/, ""))
+    .filter(Boolean);
+
+  expectArrayContains(fields, fieldName, message);
+}
+
+function parseSourceFile(sourcePath: string) {
+  return ts.createSourceFile(
+    sourcePath,
+    readFileSync(sourcePath, "utf8"),
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+}
+
+function visitNodes(
+  sourceFile: ts.SourceFile,
+  callback: (node: ts.Node) => void,
+) {
+  const visit = (node: ts.Node) => {
+    callback(node);
+    ts.forEachChild(node, visit);
+  };
+
+  visit(sourceFile);
+}
+
+function objectStringProperty(
+  object: ts.ObjectLiteralExpression,
+  propertyName: string,
+) {
+  const property = object.properties.find(
+    (item): item is ts.PropertyAssignment => {
+      if (!ts.isPropertyAssignment(item)) return false;
+      return propertyNameText(item.name) === propertyName;
+    },
+  );
+  const initializer = property?.initializer;
+
+  return initializer && ts.isStringLiteral(initializer)
+    ? initializer.text
+    : undefined;
+}
+
+function arrayProperty(
+  object: ts.ObjectLiteralExpression | undefined,
+  propertyName: string,
+) {
+  if (!object) return [];
+
+  const property = object.properties.find(
+    (item): item is ts.PropertyAssignment => {
+      if (!ts.isPropertyAssignment(item)) return false;
+      return propertyNameText(item.name) === propertyName;
+    },
+  );
+  const initializer = property?.initializer;
+
+  return initializer && ts.isArrayLiteralExpression(initializer)
+    ? [...initializer.elements]
+    : [];
+}
+
+function propertyNameText(name: ts.PropertyName) {
+  if (
+    ts.isIdentifier(name) ||
+    ts.isStringLiteral(name) ||
+    ts.isNumericLiteral(name)
+  ) {
+    return name.text;
+  }
+
+  return undefined;
 }
 
 function expectSchemaRelationships(pathname: string, nodes: any[]) {
@@ -470,7 +822,11 @@ function expectGlobalSchema(pathname: string, website: any, organization: any) {
     `${SITE_ORIGIN}/#website`,
     `${pathname} WebSite @id must be stable`,
   );
-  expectSame(website?.url, `${SITE_ORIGIN}/`, `${pathname} WebSite.url must be site root`);
+  expectSame(
+    website?.url,
+    `${SITE_ORIGIN}/`,
+    `${pathname} WebSite.url must be site root`,
+  );
   expectTruthy(website?.name, `${pathname} WebSite is missing name`);
 
   expectSame(
@@ -530,7 +886,11 @@ function expectItemList(pathname: string, itemList: any, kind: string) {
 function expectSchemaImages(pathname: string, value: unknown, label: string) {
   const images = Array.isArray(value) ? value : value ? [value] : [];
 
-  expectGreaterThan(images.length, 0, `${pathname} ${label} must contain images`);
+  expectGreaterThan(
+    images.length,
+    0,
+    `${pathname} ${label} must contain images`,
+  );
   images.forEach((image, index) => {
     if (typeof image === "string") {
       expectAbsoluteUrl(pathname, image, `${label} ${index + 1}`);
@@ -559,7 +919,11 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
 
   if (webPage) {
     expectSame(webPage["@id"], ids.webPage, `${pathname} WebPage @id drifted`);
-    expectSame(webPage.url, canonical, `${pathname} WebPage.url must match canonical`);
+    expectSame(
+      webPage.url,
+      canonical,
+      `${pathname} WebPage.url must match canonical`,
+    );
   }
   if (collectionPage) {
     expectSame(
@@ -574,16 +938,26 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
     );
   }
   if (itemList) {
-    expectSame(itemList["@id"], ids.itemList, `${pathname} ItemList @id drifted`);
+    expectSame(
+      itemList["@id"],
+      ids.itemList,
+      `${pathname} ItemList @id drifted`,
+    );
     expectGreaterThan(
-      Array.isArray(itemList.itemListElement) ? itemList.itemListElement.length : 0,
+      Array.isArray(itemList.itemListElement)
+        ? itemList.itemListElement.length
+        : 0,
       0,
       `${pathname} ItemList must contain listed items`,
     );
   }
   if (service) {
     expectSame(service["@id"], ids.service, `${pathname} Service @id drifted`);
-    expectSame(service.url, canonical, `${pathname} Service.url must match canonical`);
+    expectSame(
+      service.url,
+      canonical,
+      `${pathname} Service.url must match canonical`,
+    );
   }
   if (blogPost) {
     expectSame(
@@ -591,7 +965,11 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
       ids.blogPosting,
       `${pathname} BlogPosting @id drifted`,
     );
-    expectSame(blogPost.url, canonical, `${pathname} BlogPosting.url must match canonical`);
+    expectSame(
+      blogPost.url,
+      canonical,
+      `${pathname} BlogPosting.url must match canonical`,
+    );
   }
   if (contactPage) {
     expectSame(
@@ -632,9 +1010,21 @@ function expectBreadcrumb(pathname: string, breadcrumb: any) {
     ? breadcrumb.itemListElement
     : [];
 
-  expectGreaterThan(items.length, 1, `${pathname} BreadcrumbList must contain items`);
-  expectSame(items[0]?.position, 1, `${pathname} breadcrumb must start at position 1`);
-  expectSame(items[0]?.item, `${SITE_ORIGIN}/`, `${pathname} breadcrumb must start at home`);
+  expectGreaterThan(
+    items.length,
+    1,
+    `${pathname} BreadcrumbList must contain items`,
+  );
+  expectSame(
+    items[0]?.position,
+    1,
+    `${pathname} breadcrumb must start at position 1`,
+  );
+  expectSame(
+    items[0]?.item,
+    `${SITE_ORIGIN}/`,
+    `${pathname} breadcrumb must start at home`,
+  );
   expectSame(
     items[items.length - 1]?.item,
     canonicalForPathname(pathname),
@@ -647,7 +1037,10 @@ function expectBreadcrumb(pathname: string, breadcrumb: any) {
       index + 1,
       `${pathname} breadcrumb positions must be sequential`,
     );
-    expectTruthy(item.name, `${pathname} breadcrumb item ${index + 1} is missing name`);
+    expectTruthy(
+      item.name,
+      `${pathname} breadcrumb item ${index + 1} is missing name`,
+    );
     expectAbsoluteUrl(pathname, item.item, `breadcrumb item ${index + 1}`);
   });
 }
@@ -696,7 +1089,11 @@ function expectSingletonSchemaTypes(pathname: string, nodes: any[]) {
     const matches = findNodesByType(nodes, type);
     if (matches.length === 0) continue;
 
-    expectLength(matches, 1, `${pathname} must emit exactly one ${type} schema`);
+    expectLength(
+      matches,
+      1,
+      `${pathname} must emit exactly one ${type} schema`,
+    );
   }
 }
 
@@ -713,8 +1110,16 @@ function expectRobotsDirective(pathname: string, robots: string | undefined) {
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
 
-  expectArrayContains(directives, "index", `${pathname} robots must include index`);
-  expectArrayContains(directives, "follow", `${pathname} robots must include follow`);
+  expectArrayContains(
+    directives,
+    "index",
+    `${pathname} robots must include index`,
+  );
+  expectArrayContains(
+    directives,
+    "follow",
+    `${pathname} robots must include follow`,
+  );
   for (const blocked of ["none", "noindex", "nofollow"]) {
     expectFalse(
       directives.includes(blocked),
@@ -723,7 +1128,11 @@ function expectRobotsDirective(pathname: string, robots: string | undefined) {
   }
 }
 
-function expectAbsoluteUrl(pathname: string, value: string | undefined, label: string) {
+function expectAbsoluteUrl(
+  pathname: string,
+  value: string | undefined,
+  label: string,
+) {
   expectTruthy(value, `${pathname} is missing ${label}`);
   if (!value) return;
 
@@ -759,9 +1168,11 @@ function expectValidDate(value: unknown, message: string) {
 }
 
 function longestMatchingRule(rules: string[], pathname: string) {
-  return rules
-    .filter((rule) => rule && pathname.startsWith(rule))
-    .sort((a, b) => b.length - a.length)[0] || "";
+  return (
+    rules
+      .filter((rule) => rule && pathname.startsWith(rule))
+      .sort((a, b) => b.length - a.length)[0] || ""
+  );
 }
 
 function expectTruthy(value: unknown, message: string) {

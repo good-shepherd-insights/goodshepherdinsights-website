@@ -7,6 +7,9 @@ const preset = createDefaultEsmPreset({
 
 const jestConfig: JestConfigWithTsJest = {
   ...preset,
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
 };
 
 export default jestConfig;
