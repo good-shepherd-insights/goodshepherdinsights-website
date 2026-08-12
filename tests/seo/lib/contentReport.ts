@@ -59,6 +59,33 @@ export type ContentReport = {
   pages: ContentPageReport[];
 };
 
+export const CONTENT_VISIBILITY_FIELDS = [
+  "organization.address.streetAddress",
+  "organization.telephone",
+  "homePage.image.image",
+  "homePage.image.alt",
+  "aboutPage.imageAlt",
+  "blogIndexPage.imageAlt",
+  "contactPage.imageAlt",
+  "faqPage.imageAlt",
+  "genericPage.imageAlt",
+  "blogPost.author.url",
+  "blogPost.author.sameAs[]",
+  "blogPost.seo.about[].name",
+  "blogPost.seo.about[].url",
+  "blogPost.seo.mentions[].name",
+  "blogPost.seo.mentions[].url",
+  "service.schema.areaServed[].name",
+  "service.schema.areaServed[].type",
+  "service.schema.audience[].name",
+  "service.schema.serviceOutput",
+  "service.schema.offers[].name",
+  "service.schema.offers[].description",
+  "service.schema.offers[].url",
+] as const;
+
+export type ContentVisibilityField = (typeof CONTENT_VISIBILITY_FIELDS)[number];
+
 export function buildContentReport(
   builtPages: BuiltPage[],
   generatedAt = new Date().toISOString(),
@@ -147,7 +174,6 @@ function contentGapsForPage(
     gaps.push(
       gap(
         "organization.address.streetAddress",
-        "siteGlobals.organization.address.streetAddress",
         "Postal street address is not visible in Organization JSON-LD.",
       ),
     );
@@ -158,7 +184,6 @@ function contentGapsForPage(
       gaps.push(
         gap(
           "organization.telephone",
-          "siteGlobals.organization.telephone",
           "Telephone is not visible in homepage LocalBusiness JSON-LD.",
         ),
       );
@@ -166,7 +191,6 @@ function contentGapsForPage(
     if (!localBusiness?.image) {
       gaps.push(
         gap(
-          "homePage.image.image",
           "homePage.image.image",
           "Dedicated homepage image is not visible in LocalBusiness JSON-LD.",
         ),
@@ -179,7 +203,6 @@ function contentGapsForPage(
     gaps.push(
       gap(
         imageAltField,
-        imageAltField,
         "Open Graph and Twitter image alt text is not visible.",
       ),
     );
@@ -190,7 +213,6 @@ function contentGapsForPage(
       gaps.push(
         gap(
           "blogPost.author.url",
-          "blogPost.author.url",
           "Author profile URL is not visible in BlogPosting.author.",
         ),
       );
@@ -199,7 +221,6 @@ function contentGapsForPage(
       gaps.push(
         gap(
           "blogPost.author.sameAs[]",
-          "blogPost.author.sameAs[]",
           "Author sameAs URLs are not visible in BlogPosting.author.",
         ),
       );
@@ -207,46 +228,127 @@ function contentGapsForPage(
     if (!hasItems(blogPost.about)) {
       gaps.push(
         gap(
-          "blogPost.seo.about[]",
-          "blogPost.seo.about[]",
-          "Primary article topics are not visible in BlogPosting.about.",
+          "blogPost.seo.about[].name",
+          "Primary article topic names are not visible in BlogPosting.about.",
         ),
       );
+      gaps.push(
+        gap(
+          "blogPost.seo.about[].url",
+          "Primary article topic URLs are not visible in BlogPosting.about.",
+        ),
+      );
+    } else {
+      for (const item of blogPost.about) {
+        if (!item?.name) {
+          gaps.push(
+            gap(
+              "blogPost.seo.about[].name",
+              "A primary article topic is missing a visible name.",
+            ),
+          );
+        }
+        if (!item?.url) {
+          gaps.push(
+            gap(
+              "blogPost.seo.about[].url",
+              "A primary article topic is missing a visible URL.",
+            ),
+          );
+        }
+      }
     }
     if (!hasItems(blogPost.mentions)) {
       gaps.push(
         gap(
-          "blogPost.seo.mentions[]",
-          "blogPost.seo.mentions[]",
-          "Mentioned article entities are not visible in BlogPosting.mentions.",
+          "blogPost.seo.mentions[].name",
+          "Mentioned article entity names are not visible in BlogPosting.mentions.",
         ),
       );
+      gaps.push(
+        gap(
+          "blogPost.seo.mentions[].url",
+          "Mentioned article entity URLs are not visible in BlogPosting.mentions.",
+        ),
+      );
+    } else {
+      for (const item of blogPost.mentions) {
+        if (!item?.name) {
+          gaps.push(
+            gap(
+              "blogPost.seo.mentions[].name",
+              "A mentioned article entity is missing a visible name.",
+            ),
+          );
+        }
+        if (!item?.url) {
+          gaps.push(
+            gap(
+              "blogPost.seo.mentions[].url",
+              "A mentioned article entity is missing a visible URL.",
+            ),
+          );
+        }
+      }
     }
   }
 
   if (kind === "serviceDetail" && service) {
-    if (!Array.isArray(service.areaServed)) {
+    if (!hasItems(service.areaServed)) {
       gaps.push(
         gap(
-          "service.schema.areaServed[]",
-          "service.schema.areaServed[]",
-          "Service-specific areas served are not visible; output currently uses the global fallback.",
+          "service.schema.areaServed[].name",
+          "Service-specific area-served names are not visible; output currently uses the global fallback.",
         ),
       );
+      gaps.push(
+        gap(
+          "service.schema.areaServed[].type",
+          "Service-specific area-served types are not visible; output currently uses the global fallback.",
+        ),
+      );
+    } else {
+      for (const item of service.areaServed) {
+        if (!item?.name) {
+          gaps.push(
+            gap(
+              "service.schema.areaServed[].name",
+              "A service-specific area served is missing a visible name.",
+            ),
+          );
+        }
+        if (!item?.["@type"]) {
+          gaps.push(
+            gap(
+              "service.schema.areaServed[].type",
+              "A service-specific area served is missing a visible schema type.",
+            ),
+          );
+        }
+      }
     }
     if (!hasItems(service.audience)) {
       gaps.push(
         gap(
-          "service.schema.audience[]",
-          "service.schema.audience[]",
-          "Service audience segments are not visible in Service JSON-LD.",
+          "service.schema.audience[].name",
+          "Service audience segment names are not visible in Service JSON-LD.",
         ),
       );
+    } else {
+      for (const item of service.audience) {
+        if (!item?.name) {
+          gaps.push(
+            gap(
+              "service.schema.audience[].name",
+              "A service audience segment is missing a visible name.",
+            ),
+          );
+        }
+      }
     }
     if (!service.serviceOutput) {
       gaps.push(
         gap(
-          "service.schema.serviceOutput",
           "service.schema.serviceOutput",
           "Service output is not visible in Service JSON-LD.",
         ),
@@ -255,11 +357,49 @@ function contentGapsForPage(
     if (!hasItems(service.offers)) {
       gaps.push(
         gap(
-          "service.schema.offers[]",
-          "service.schema.offers[]",
-          "Service offers are not visible in Service JSON-LD.",
+          "service.schema.offers[].name",
+          "Service offer names are not visible in Service JSON-LD.",
         ),
       );
+      gaps.push(
+        gap(
+          "service.schema.offers[].description",
+          "Service offer descriptions are not visible in Service JSON-LD.",
+        ),
+      );
+      gaps.push(
+        gap(
+          "service.schema.offers[].url",
+          "Service offer URLs are not visible in Service JSON-LD.",
+        ),
+      );
+    } else {
+      for (const item of service.offers) {
+        if (!item?.name) {
+          gaps.push(
+            gap(
+              "service.schema.offers[].name",
+              "A service offer is missing a visible name.",
+            ),
+          );
+        }
+        if (!item?.description) {
+          gaps.push(
+            gap(
+              "service.schema.offers[].description",
+              "A service offer is missing a visible description.",
+            ),
+          );
+        }
+        if (!item?.url) {
+          gaps.push(
+            gap(
+              "service.schema.offers[].url",
+              "A service offer is missing a visible URL.",
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -277,8 +417,8 @@ function socialImageAltField(pathname: string, kind: LivePageKind) {
   return undefined;
 }
 
-function gap(field: string, source: string, note: string): ContentGap {
-  return { field, source, owner: "copywriter", note };
+function gap(field: ContentVisibilityField, note: string): ContentGap {
+  return { field, source: field, owner: "copywriter", note };
 }
 
 function hasItems(value: unknown) {
