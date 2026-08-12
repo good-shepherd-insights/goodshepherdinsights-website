@@ -26,6 +26,7 @@ if (response) return response;
 
 // Resolve canonical for this FAQ page
 const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const faqPageId = `${resolvedCanonical}#faqpage`;
 
 // Build FAQPage schema from faqSection data
 const faqList = (entry as any)?.faqSection?.list
@@ -58,13 +59,13 @@ let faqSchema: FAQPage | undefined;
 if (faqItems.length > 0) {
   faqSchema = {
     "@type": "FAQPage",
-    "@id": `${resolvedCanonical}#faqpage`,
+    "@id": faqPageId,
     mainEntity: faqItems,
   };
 }
 ---
 
-<Base {...entry}>
+<Base {...entry} schemaMainEntityId={faqSchema ? faqPageId : undefined}>
   <PageHeader content={entry} />
   <FaqSection content={(entry as any)?.faqSection} mode="light" />
   <StatsMarqueeSection content={(entry as any)?.statsMarqueeSection} hasLightBackground={true} />
