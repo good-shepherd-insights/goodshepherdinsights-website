@@ -12,8 +12,8 @@
     "format": "prettier -w ./src",
     "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch",
     "test:seo": "npm run build && cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo --runInBand",
-    "test:seo:infra": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-infra.test.ts --runInBand",
-    "test:seo:content": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-content-report.test.ts --runInBand"
+    "test:seo:infra": "npm run build && cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-infra.test.ts --runInBand",
+    "test:seo:content": "npm run build && cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-content-report.test.ts --runInBand"
   },
   "engines": {
     "node": "24.18.0"

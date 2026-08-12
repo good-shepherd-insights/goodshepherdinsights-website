@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import ts from "typescript";
+import packageJson from "../../package.json";
 import {
   classifyLivePath,
   type LivePageContract,
@@ -52,6 +53,22 @@ const pagesByCanonical = new Map(
 const canonicalForPathname = (pathname: string) => `${SITE_ORIGIN}${pathname}`;
 
 describe("SEO generated output contract", () => {
+  it("keeps public SEO test commands tied to fresh production output", () => {
+    for (const scriptName of [
+      "test:seo",
+      "test:seo:infra",
+      "test:seo:content",
+    ] as const) {
+      const command = packageJson.scripts[scriptName];
+
+      expectTruthy(command, `package.json is missing ${scriptName}`);
+      expectTrue(
+        command.startsWith("npm run build && "),
+        `${scriptName} must run the production build before reading dist`,
+      );
+    }
+  });
+
   it("keeps Service JSON-LD enrichment backed by real CMS fields", () => {
     const schemaFields = nestedSanityFieldNames(
       "studio/schemaTypes/service.ts",
