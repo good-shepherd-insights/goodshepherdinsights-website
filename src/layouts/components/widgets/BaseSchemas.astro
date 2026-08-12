@@ -5,11 +5,15 @@ import { buildStandardPageGraph } from "@/lib/seo/schemaGraph";
 
 const {
   title = "",
+  description,
+  metaDescription,
   canonical = "",
   schemaMainEntityId,
   siteGlobals,
 } = Astro.props as {
   title?: string;
+  description?: string;
+  metaDescription?: string;
   canonical?: string;
   schemaMainEntityId?: string;
   siteGlobals?: SiteGlobals;
@@ -25,6 +29,7 @@ if (!homeLabel) {
 
 const schema = buildStandardPageGraph({
   title,
+  description: metaDescription || description,
   canonical,
   currentUrl: Astro.url.href,
   siteGlobals,

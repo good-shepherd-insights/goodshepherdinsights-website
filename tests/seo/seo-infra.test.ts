@@ -924,6 +924,10 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
       canonical,
       `${pathname} WebPage.url must match canonical`,
     );
+    expectTruthy(
+      webPage.description,
+      `${pathname} WebPage is missing description`,
+    );
   }
   if (collectionPage) {
     expectSame(
@@ -935,6 +939,10 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
       collectionPage.url,
       canonical,
       `${pathname} CollectionPage.url must match canonical`,
+    );
+    expectTruthy(
+      collectionPage.description,
+      `${pathname} CollectionPage is missing description`,
     );
   }
   if (itemList) {
@@ -982,9 +990,17 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
       canonical,
       `${pathname} ContactPage.url must match canonical`,
     );
+    expectTruthy(
+      contactPage.description,
+      `${pathname} ContactPage is missing description`,
+    );
   }
   if (faqPage) {
     expectSame(faqPage["@id"], ids.faqPage, `${pathname} FAQPage @id drifted`);
+    expectTruthy(
+      faqPage.description,
+      `${pathname} FAQPage is missing description`,
+    );
     expectGreaterThan(
       Array.isArray(faqPage.mainEntity) ? faqPage.mainEntity.length : 0,
       0,
