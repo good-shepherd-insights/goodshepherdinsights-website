@@ -44,19 +44,25 @@ const pageOutputs = builtPages.map((page) => ({
   contract: classifyLivePath(page.pathname),
   seo: extractSeo(page.html, page.pathname),
 }));
+type PageOutput = (typeof pageOutputs)[number];
 const livePageOutputs = pageOutputs.filter((page) => page.contract);
 const canonicalForPathname = (pathname: string) => `${SITE_ORIGIN}${pathname}`;
-const pagesByUrl = new Map(
-  pageOutputs.flatMap((page) => [
-    [canonicalForPathname(page.pathname), page] as const,
-    ...(page.seo.canonicalLinks.length === 1
-      ? ([[page.seo.canonicalLinks[0], page]] as const)
-      : []),
-  ]),
+const pagesByUrl = new Map<string, PageOutput>(
+  pageOutputs.flatMap((page): Array<[string, PageOutput]> => {
+    const entries: Array<[string, PageOutput]> = [
+      [canonicalForPathname(page.pathname), page],
+    ];
+
+    if (page.seo.canonicalLinks.length === 1) {
+      entries.push([page.seo.canonicalLinks[0], page]);
+    }
+
+    return entries;
+  }),
 );
 
 describe("SEO generated output contract", () => {
-  it("keeps public SEO test commands tied to fresh production output", () => {
+  it("keeps public SEO test commands build-backed and rejects unmarked direct runs", () => {
     for (const scriptName of [
       "test:seo",
       "test:seo:infra",
@@ -69,7 +75,17 @@ describe("SEO generated output contract", () => {
         command.startsWith("npm run build && "),
         `${scriptName} must run the production build before reading dist`,
       );
+      expectTrue(
+        command.includes('SEO_DIST_SOURCE="npm-run-build"'),
+        `${scriptName} must mark dist as produced by the npm build script`,
+      );
     }
+
+    expectSame(
+      process.env.SEO_DIST_SOURCE,
+      "npm-run-build",
+      "SEO tests must run through npm scripts so dist is freshly built first",
+    );
   });
 
   it("keeps Service JSON-LD enrichment backed by real CMS fields", () => {
@@ -361,6 +377,7 @@ describe("SEO generated output contract", () => {
       assertJsonLdDocuments(pathname, seo.jsonLd);
       const nodes = flattenSchemaNodes(seo.jsonLd);
       const types = schemaTypes(nodes);
+      const canonical = seo.canonicalLinks[0];
 
       expectGreaterThan(nodes.length, 0, `${pathname} must emit JSON-LD nodes`);
       assertAbsoluteIds(pathname, nodes);

@@ -20,6 +20,7 @@ describe("SEO content visibility report", () => {
     expect(report.summary.totalContentGaps).toBe(
       report.pages.flatMap((page) => page.gaps).length,
     );
+    expect(report.contentGaps.length).toBe(report.summary.totalContentGaps);
     expect(Object.keys(report.summary.gapsByField).sort()).toEqual(
       unique(
         report.pages.flatMap((page) => page.gaps.map((gap) => gap.field)),
@@ -33,11 +34,21 @@ describe("SEO content visibility report", () => {
       expect(page.schemaTypes.length).toBeGreaterThan(0);
       for (const gap of page.gaps) {
         expect(allowedFields.has(gap.field as any)).toBe(true);
-        expect(gap.owner).toBe("copywriter");
+        expect(["business", "copywriter", "engineering"]).toContain(gap.owner);
         expect(gap.field).toBeTruthy();
         expect(gap.source).toBeTruthy();
         expect(gap.note).toBeTruthy();
       }
+    }
+
+    for (const gap of report.contentGaps) {
+      expect(gap.url).toMatch(/^https:\/\/goodshepherdinsights\.com\//);
+      expect(gap.pathname).toMatch(/^\//);
+      expect(gap.kind).toBeTruthy();
+      expect(allowedFields.has(gap.field as any)).toBe(true);
+      expect(["business", "copywriter", "engineering"]).toContain(gap.owner);
+      expect(gap.source).toBe(gap.field);
+      expect(gap.note).toBeTruthy();
     }
   });
 
@@ -59,6 +70,7 @@ describe("SEO content visibility report", () => {
     const report = buildContentReport([completeHomePage()]);
 
     expect(report.activePageCount).toBe(1);
+    expect(report.contentGaps).toEqual([]);
     expect(report.pages[0].gaps).toEqual([]);
   });
 
@@ -102,6 +114,12 @@ describe("SEO content visibility report", () => {
       "blogPost.seo.about[].url",
       "blogPost.seo.mentions[].name",
     ]);
+    expect(gapOwnersByField(report)).toMatchObject({
+      "blogPost.author.sameAs[]": "business",
+      "blogPost.author.url": "business",
+      "blogPost.seo.about[].url": "copywriter",
+      "blogPost.seo.mentions[].name": "copywriter",
+    });
   });
 
   it("reports exact service partial-object gaps without hiding subfields", () => {
@@ -146,6 +164,29 @@ describe("SEO content visibility report", () => {
       "service.schema.offers[].url",
       "service.schema.serviceOutput",
     ]);
+    expect(
+      new Set(
+        report.pages.flatMap((page) => page.gaps.map((gap) => gap.owner)),
+      ),
+    ).toEqual(new Set(["business"]));
+  });
+
+  it("reports missing Twitter image alt text even when Open Graph alt text exists", () => {
+    const report = buildContentReport([
+      builtPage(
+        "/",
+        jsonLdGraph([organization({ streetAddress: "123 Main St" })]),
+        {
+          includeTwitterImageAlt: false,
+        },
+      ),
+    ]);
+
+    expect(gapFields(report)).toContain("homePage.image.alt");
+    expect(
+      report.pages[0].gaps.find((gap) => gap.field === "homePage.image.alt")
+        ?.note,
+    ).toBe("Twitter image alt text is not visible.");
   });
 
   it("reports service area gaps when output contains only the global fallback", () => {
@@ -211,8 +252,17 @@ function completeHomePage() {
   );
 }
 
-function builtPage(pathname: string, jsonLd: string) {
+function builtPage(
+  pathname: string,
+  jsonLd: string,
+  options: {
+    includeOpenGraphImageAlt?: boolean;
+    includeTwitterImageAlt?: boolean;
+  } = {},
+) {
   const canonical = `https://goodshepherdinsights.com${pathname}`;
+  const { includeOpenGraphImageAlt = true, includeTwitterImageAlt = true } =
+    options;
 
   return {
     filePath: `dist${pathname}index.html`,
@@ -229,12 +279,12 @@ function builtPage(pathname: string, jsonLd: string) {
           <meta property="og:type" content="website">
           <meta property="og:url" content="${canonical}">
           <meta property="og:image" content="https://goodshepherdinsights.com/images/social.jpg">
-          <meta property="og:image:alt" content="Social image alt">
+          ${includeOpenGraphImageAlt ? '<meta property="og:image:alt" content="Social image alt">' : ""}
           <meta name="twitter:card" content="summary_large_image">
           <meta name="twitter:title" content="Example">
           <meta name="twitter:description" content="Example description">
           <meta name="twitter:image" content="https://goodshepherdinsights.com/images/social.jpg">
-          <meta name="twitter:image:alt" content="Social image alt">
+          ${includeTwitterImageAlt ? '<meta name="twitter:image:alt" content="Social image alt">' : ""}
           <script type="application/ld+json">${jsonLd}</script>
         </head>
         <body></body>
@@ -270,6 +320,14 @@ function gapFields(report: ReturnType<typeof buildContentReport>) {
   return report.pages
     .flatMap((page) => page.gaps.map((gap) => gap.field))
     .sort();
+}
+
+function gapOwnersByField(report: ReturnType<typeof buildContentReport>) {
+  return Object.fromEntries(
+    report.pages.flatMap((page) =>
+      page.gaps.map((gap) => [gap.field, gap.owner] as const),
+    ),
+  );
 }
 
 function unique(values: string[]) {

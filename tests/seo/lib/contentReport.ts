@@ -18,9 +18,11 @@ import {
 export type ContentGap = {
   field: string;
   source: string;
-  owner: "copywriter";
+  owner: ContentGapOwner;
   note: string;
 };
+
+export type ContentGapOwner = "business" | "copywriter" | "engineering";
 
 export type ContentPageReport = {
   url: string;
@@ -46,6 +48,12 @@ export type ContentPageReport = {
   gaps: ContentGap[];
 };
 
+export type ListedContentGap = ContentGap & {
+  url: string;
+  pathname: string;
+  kind: LivePageKind;
+};
+
 export type ContentReport = {
   generatedAt: string;
   activePageCount: number;
@@ -56,6 +64,7 @@ export type ContentReport = {
     pagesWithContentGaps: number;
     gapsByField: Record<string, number>;
   };
+  contentGaps: ListedContentGap[];
   pages: ContentPageReport[];
 };
 
@@ -85,6 +94,31 @@ export const CONTENT_VISIBILITY_FIELDS = [
 ] as const;
 
 export type ContentVisibilityField = (typeof CONTENT_VISIBILITY_FIELDS)[number];
+
+const CONTENT_FIELD_OWNERS: Record<ContentVisibilityField, ContentGapOwner> = {
+  "organization.address.streetAddress": "business",
+  "organization.telephone": "business",
+  "homePage.image.image": "copywriter",
+  "homePage.image.alt": "copywriter",
+  "aboutPage.imageAlt": "copywriter",
+  "blogIndexPage.imageAlt": "copywriter",
+  "contactPage.imageAlt": "copywriter",
+  "faqPage.imageAlt": "copywriter",
+  "genericPage.imageAlt": "copywriter",
+  "blogPost.author.url": "business",
+  "blogPost.author.sameAs[]": "business",
+  "blogPost.seo.about[].name": "copywriter",
+  "blogPost.seo.about[].url": "copywriter",
+  "blogPost.seo.mentions[].name": "copywriter",
+  "blogPost.seo.mentions[].url": "copywriter",
+  "service.schema.areaServed[].name": "business",
+  "service.schema.areaServed[].type": "business",
+  "service.schema.audience[].name": "business",
+  "service.schema.serviceOutput": "business",
+  "service.schema.offers[].name": "business",
+  "service.schema.offers[].description": "business",
+  "service.schema.offers[].url": "business",
+};
 
 export function buildContentReport(
   builtPages: BuiltPage[],
@@ -134,19 +168,31 @@ export function buildContentReport(
     });
   }
 
-  const gaps = pages.flatMap((page) => page.gaps);
+  const sortedPages = pages.sort((a, b) =>
+    a.pathname.localeCompare(b.pathname),
+  );
+  const contentGaps = sortedPages.flatMap((page) =>
+    page.gaps.map((gap) => ({
+      url: page.url,
+      pathname: page.pathname,
+      kind: page.kind,
+      ...gap,
+    })),
+  );
 
   return {
     generatedAt,
-    activePageCount: pages.length,
+    activePageCount: sortedPages.length,
     ignoredGeneratedPages: ignoredGeneratedPages.sort(),
     unclassifiedGeneratedPages: unclassifiedGeneratedPages.sort(),
     summary: {
-      totalContentGaps: gaps.length,
-      pagesWithContentGaps: pages.filter((page) => page.gaps.length > 0).length,
-      gapsByField: countBy(gaps.map((gap) => gap.field)),
+      totalContentGaps: contentGaps.length,
+      pagesWithContentGaps: sortedPages.filter((page) => page.gaps.length > 0)
+        .length,
+      gapsByField: countBy(contentGaps.map((gap) => gap.field)),
     },
-    pages: pages.sort((a, b) => a.pathname.localeCompare(b.pathname)),
+    contentGaps,
+    pages: sortedPages,
   };
 }
 
@@ -199,11 +245,19 @@ function contentGapsForPage(
   }
 
   const imageAltField = socialImageAltField(pathname, kind);
-  if (imageAltField && !seo.openGraph["og:image:alt"]) {
+  if (
+    imageAltField &&
+    (!seo.openGraph["og:image:alt"] || !seo.twitter["twitter:image:alt"])
+  ) {
+    const missingTargets = [
+      !seo.openGraph["og:image:alt"] ? "Open Graph" : undefined,
+      !seo.twitter["twitter:image:alt"] ? "Twitter" : undefined,
+    ].filter(Boolean);
+
     gaps.push(
       gap(
         imageAltField,
-        "Open Graph and Twitter image alt text is not visible.",
+        `${missingTargets.join(" and ")} image alt text is not visible.`,
       ),
     );
   }
@@ -418,7 +472,7 @@ function socialImageAltField(pathname: string, kind: LivePageKind) {
 }
 
 function gap(field: ContentVisibilityField, note: string): ContentGap {
-  return { field, source: field, owner: "copywriter", note };
+  return { field, source: field, owner: CONTENT_FIELD_OWNERS[field], note };
 }
 
 function hasItems(value: unknown) {
