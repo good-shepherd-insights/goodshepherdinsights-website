@@ -148,6 +148,31 @@ describe("SEO content visibility report", () => {
     ]);
   });
 
+  it("reports service area gaps when output contains only the global fallback", () => {
+    const report = buildContentReport([
+      builtPage(
+        "/services/example/",
+        jsonLdGraph([
+          organization({ streetAddress: "123 Main St" }),
+          {
+            "@type": "Service",
+            areaServed: { "@type": "State", name: "Maryland" },
+          },
+        ]),
+      ),
+    ]);
+
+    expect(gapFields(report)).toEqual([
+      "service.schema.areaServed[].name",
+      "service.schema.areaServed[].type",
+      "service.schema.audience[].name",
+      "service.schema.offers[].description",
+      "service.schema.offers[].name",
+      "service.schema.offers[].url",
+      "service.schema.serviceOutput",
+    ]);
+  });
+
   it("keeps ignored and unclassified generated pages explicit", () => {
     const report = buildContentReport([
       completeHomePage(),

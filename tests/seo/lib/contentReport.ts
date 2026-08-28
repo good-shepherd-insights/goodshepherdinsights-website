@@ -294,7 +294,7 @@ function contentGapsForPage(
   }
 
   if (kind === "serviceDetail" && service) {
-    if (!hasItems(service.areaServed)) {
+    if (!Array.isArray(service.areaServed)) {
       gaps.push(
         gap(
           "service.schema.areaServed[].name",
