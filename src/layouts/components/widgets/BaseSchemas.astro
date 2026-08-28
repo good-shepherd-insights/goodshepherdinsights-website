@@ -1,120 +1,41 @@
 ---
 import { Schema } from "astro-seo-schema";
-import type { WebSite, Organization, BreadcrumbList } from "schema-dts";
-import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
+import { buildStandardPageGraph } from "@/lib/seo/schemaGraph";
 
-const { title = "", canonical = "", siteGlobals } = Astro.props as {
+const {
+  title = "",
+  description,
+  metaDescription,
+  canonical = "",
+  schemaMainEntityId,
+  siteGlobals,
+} = Astro.props as {
   title?: string;
+  description?: string;
+  metaDescription?: string;
   canonical?: string;
+  schemaMainEntityId?: string;
   siteGlobals?: SiteGlobals;
 };
 
-const baseUrl = trailingSlashChecker(Astro.url.origin);
-const baseUrlClean = baseUrl.replace(/\/$/, "");
-const seoDefaults = siteGlobals?.seoDefaults;
-const orgData = siteGlobals?.organization || {};
-const orgAddress = orgData.address || {};
-const uiCopy = siteGlobals?.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
+const uiCopy = siteGlobals?.uiCopy?.copy
+  ? JSON.parse(siteGlobals.uiCopy.copy)
+  : {};
 const homeLabel = uiCopy?.common?.home;
 if (!homeLabel) {
-  throw new Error('Missing required Sanity uiCopy.common.home value.');
+  throw new Error("Missing required Sanity uiCopy.common.home value.");
 }
 
-const siteTitle =
-  (siteGlobals?.brand?.title || seoDefaults?.title || "") +
-  (seoDefaults?.tagline &&
-    (seoDefaults.taglineSeparator || " - ") + seoDefaults.tagline);
-
-// Resolve canonical to absolute for @id references
-let absoluteCanonical = canonical;
-if (canonical && !canonical.startsWith("http")) {
-  absoluteCanonical = absoluteUrl(
-    canonical.startsWith("/") ? canonical : `/${canonical}`,
-    Astro,
-  );
-} else if (!canonical) {
-  absoluteCanonical = absoluteUrl(Astro.url.pathname, Astro);
-}
-
-// 1. WebSite schema
-const websiteSchema: WebSite = {
-  "@type": "WebSite",
-  "@id": `${baseUrlClean}/#website`,
-  name: siteTitle,
-  description: seoDefaults?.description,
-  url: baseUrl,
-};
-
-// 2. Organization schema
-const organizationSchema: Organization = {
-  "@type": "Organization",
-  "@id": `${baseUrlClean}/#organization`,
-  name: orgData.name || siteGlobals?.brand?.title || seoDefaults?.author,
-  url: baseUrl,
-  sameAs: (siteGlobals?.socialLinks || [])
-    .filter((item: any) => item.enable)
-    .map((item: any) => item.url),
-  logo: {
-    "@type": "ImageObject",
-    url: absoluteUrl(orgData.logo || siteGlobals?.brand?.logoPath || "", Astro),
-  },
-  ...((orgAddress.streetAddress || orgAddress.addressLocality || orgAddress.addressRegion) && {
-    address: {
-      "@type": "PostalAddress",
-      ...(orgAddress.streetAddress && { streetAddress: orgAddress.streetAddress }),
-      ...(orgAddress.addressLocality && {
-        addressLocality: orgAddress.addressLocality,
-      }),
-      ...(orgAddress.addressRegion && { addressRegion: orgAddress.addressRegion }),
-    },
-  }),
-  ...(siteGlobals?.contact?.emailLabel
-    ? { email: siteGlobals.contact.emailLabel }
-    : orgData.email && { email: orgData.email }),
-  ...(siteGlobals?.contact?.phoneLabel
-    ? { telephone: siteGlobals.contact.phoneLabel }
-    : orgData.telephone && { telephone: orgData.telephone }),
-};
-
-// 3. BreadcrumbList schema
-let breadcrumbCanonical = absoluteCanonical;
-if (!breadcrumbCanonical.startsWith("http")) {
-  breadcrumbCanonical = absoluteUrl(
-    breadcrumbCanonical.startsWith("/") ? breadcrumbCanonical : `/${breadcrumbCanonical}`,
-    Astro,
-  );
-}
-
-const path = new URL(breadcrumbCanonical).pathname.replace(/\/$/, "");
-const segments = path.split("/").filter(Boolean);
-
-const items = [
-  {
-    "@type": "ListItem" as const,
-    position: 1,
-    name: homeLabel,
-    item: baseUrl,
-  },
-  ...segments.map((seg, i) => ({
-    "@type": "ListItem" as const,
-    position: i + 2,
-    name:
-      i === segments.length - 1
-        ? title
-        : seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, " "),
-    item: `${baseUrl}${segments.slice(0, i + 1).join("/")}`,
-  })),
-];
-
-const breadcrumbSchema: BreadcrumbList = {
-  "@type": "BreadcrumbList",
-  "@id": `${breadcrumbCanonical}#breadcrumb`,
-  itemListElement: items,
-};
+const schema = buildStandardPageGraph({
+  title,
+  description: metaDescription || description,
+  canonical,
+  currentUrl: Astro.url.href,
+  siteGlobals,
+  homeLabel,
+  mainEntityId: schemaMainEntityId,
+});
 ---
 
-<Schema item={{ "@context": "https://schema.org", ...websiteSchema } as any} />
-<Schema item={{ "@context": "https://schema.org", ...organizationSchema } as any} />
-<Schema item={{ "@context": "https://schema.org", ...breadcrumbSchema } as any} />
+<Schema item={schema as any} />

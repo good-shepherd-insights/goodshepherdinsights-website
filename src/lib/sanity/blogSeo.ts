@@ -10,6 +10,7 @@ import config from "../../../.astro/config.generated.json";
 import type { AstroGlobal } from "astro";
 import type { SanityBlogPost } from "./client";
 import { blogAssetImageUrl } from "./blog";
+import { buildSchemaIds } from "@/lib/seo/ids";
 
 type BuildBlogPostSeoOptions = {
   canonical: string;
@@ -70,6 +71,7 @@ export function buildBlogPostSeo(
   const images = buildArticleImages(post, astro);
   const about = buildSchemaThings(post.seo?.about);
   const mentions = buildSchemaThings(post.seo?.mentions);
+  const schemaIds = buildSchemaIds(canonical, astro.url.href);
 
   const author: Person | Organization | undefined = authorName
     ? {
@@ -85,7 +87,7 @@ export function buildBlogPostSeo(
     "@id": `${canonical}#blogposting`,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": canonical,
+      "@id": schemaIds.webPage,
     },
     headline: post.title,
     description,

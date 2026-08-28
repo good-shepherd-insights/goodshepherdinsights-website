@@ -10,7 +10,10 @@
     "preview": "node scripts/toml-watcher.mjs && astro build && node scripts/remove-draft-from-sitemap.mjs && astro preview",
     "astro-check": "node scripts/toml-watcher.mjs && astro check",
     "format": "prettier -w ./src",
-    "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch"
+    "test": "cross-env TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest --watch",
+    "test:seo": "npm run build && cross-env SEO_DIST_SOURCE=\"npm-run-build\" TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo --runInBand",
+    "test:seo:infra": "npm run build && cross-env SEO_DIST_SOURCE=\"npm-run-build\" TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-infra.test.ts --runInBand",
+    "test:seo:content": "npm run build && cross-env SEO_DIST_SOURCE=\"npm-run-build\" TS_NODE_PROJECT=\"./tsconfig.jest.json\" jest tests/seo/seo-content-report.test.ts --runInBand"
   },
   "engines": {
     "node": "24.18.0"
@@ -50,6 +53,7 @@
     "@types/jest": "^30.0.0",
     "astro": "^6.1.8",
     "astro-auto-import": "^0.5.1",
+    "cheerio": "^1.2.0",
     "cross-env": "^10.1.0",
     "gray-matter": "^4.0.3",
     "jest": "^30.3.0",

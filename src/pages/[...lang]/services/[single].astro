@@ -8,9 +8,8 @@ import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
-import type { Service, FAQPage } from "schema-dts";
+import type { FAQPage } from "schema-dts";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
 import {
   getSanityService,
   getSanityServices,
@@ -19,6 +18,8 @@ import {
 } from "@/lib/sanity/services";
 import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
+import { buildSchemaIds } from "@/lib/seo/ids";
+import { buildServiceSchema } from "@/lib/seo/service";
 
 export async function getStaticPaths() {
   const services = await getSanityServices();
@@ -53,12 +54,10 @@ if (!servicesIndex) {
   throw new Error("Missing Sanity serviceIndex document.");
 }
 if (!siteGlobals) {
-  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
 }
-
-const baseUrl = trailingSlashChecker(Astro.url.origin);
-const baseUrlClean = baseUrl.replace(/\/$/, "");
-const orgData = siteGlobals.organization || {};
 
 // Resolve canonical for this service page
 const resolvedCanonical = service.seo?.canonical
@@ -66,21 +65,13 @@ const resolvedCanonical = service.seo?.canonical
   : absoluteUrl(Astro.url.pathname, Astro);
 const imageUrl = serviceImageUrl(service, 1200, 630);
 
-// Build Service schema inline
-const serviceSchema: Service = {
-  "@type": "Service",
-  "@id": `${resolvedCanonical}#service`,
-  name: service.title,
-  description: service.excerpt || service.seo?.metaDescription,
-  url: resolvedCanonical,
-  ...(imageUrl && { image: imageUrl }),
-  provider: { "@id": `${baseUrlClean}/#organization` },
-  serviceType: service.serviceType,
-  areaServed: {
-    "@type": "State",
-    name: orgData.address?.addressRegion,
-  },
-};
+const serviceSchema = buildServiceSchema({
+  service,
+  ids: buildSchemaIds(resolvedCanonical, Astro.url.href),
+  siteGlobals,
+  image: imageUrl,
+});
+const serviceSchemaId = serviceSchema["@id"] as string;
 
 const faqList =
   servicesIndex.faqSection?.enable === true
@@ -113,7 +104,9 @@ if (faqList.length > 0) {
   canonical={service.seo?.canonical || resolvedCanonical}
   robots={service.seo?.robots}
   image={imageUrl}
-  hideOffcanvas={true}>
+  imageAlt={service.heroImage?.alt}
+  hideOffcanvas={true}
+  schemaMainEntityId={serviceSchemaId}>
   <PageHeader
     content={{
       badge: service.title,

@@ -33,13 +33,14 @@ const pageData = Object.fromEntries(
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
+const localBusinessId = `${baseUrlClean}/#localbusiness`;
 const orgData = siteGlobals.organization || {};
 const orgAddress = orgData.address || {};
 
 // Build LocalBusiness schema inline
 const localBusinessSchema: LocalBusiness = {
   "@type": "LocalBusiness",
-  "@id": `${baseUrlClean}/#localbusiness`,
+  "@id": localBusinessId,
   name: orgData.name || siteGlobals.brand.title,
   description: page.metaDescription || siteGlobals.seoDefaults?.description,
   url: baseUrl,
@@ -64,7 +65,7 @@ const localBusinessSchema: LocalBusiness = {
 };
 ---
 
-<Base {...pageData} headerLayout="header-1">
+<Base {...pageData} headerLayout="header-1" schemaMainEntityId={localBusinessId}>
   <HeroSection content={page.heroSection} />
   {/* SHELVED: FeaturesGrid */}
   <ServicesSection content={page.servicesSection} />
