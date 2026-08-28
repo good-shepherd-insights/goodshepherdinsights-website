@@ -75,6 +75,7 @@ const blogPostSchemaId = (seo.schema as any)["@id"] as string;
       postData: {
         date: new Date(post.publishedAt),
         author: seo.authorName,
+        comments: post.comments,
       },
     }}
     contentClass=""

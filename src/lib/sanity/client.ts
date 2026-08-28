@@ -66,6 +66,7 @@ export interface SanityBlogPost {
   body?: SanityBody[];
   categories?: string[];
   tags?: string[];
+  comments?: number;
   draft?: boolean;
   excludeFromSitemap?: boolean;
 }
@@ -194,6 +195,7 @@ export async function getSanityBlogPost(slug: string) {
       body,
       categories,
       tags,
+      comments,
       draft,
       excludeFromSitemap
     }`,
