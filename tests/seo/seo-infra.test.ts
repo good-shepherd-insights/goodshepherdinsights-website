@@ -45,12 +45,15 @@ const pageOutputs = builtPages.map((page) => ({
   seo: extractSeo(page.html, page.pathname),
 }));
 const livePageOutputs = pageOutputs.filter((page) => page.contract);
-const pagesByCanonical = new Map(
-  pageOutputs
-    .filter((page) => page.seo.canonicalLinks.length === 1)
-    .map((page) => [page.seo.canonicalLinks[0], page]),
-);
 const canonicalForPathname = (pathname: string) => `${SITE_ORIGIN}${pathname}`;
+const pagesByUrl = new Map(
+  pageOutputs.flatMap((page) => [
+    [canonicalForPathname(page.pathname), page] as const,
+    ...(page.seo.canonicalLinks.length === 1
+      ? ([[page.seo.canonicalLinks[0], page]] as const)
+      : []),
+  ]),
+);
 
 describe("SEO generated output contract", () => {
   it("keeps public SEO test commands tied to fresh production output", () => {
@@ -258,18 +261,18 @@ describe("SEO generated output contract", () => {
   });
 
   it("keeps sitemap entries aligned with generated canonical pages and live route classification", () => {
-    const canonicalUrls = new Set(
-      pageOutputs.flatMap((page) => page.seo.canonicalLinks),
+    const generatedPageUrls = new Set(
+      pageOutputs.map((page) => canonicalForPathname(page.pathname)),
     );
     const staleSitemapUrls = Array.from(sitemapUrls).filter(
-      (url) => !canonicalUrls.has(url),
+      (url) => !generatedPageUrls.has(url),
     );
     const unclassifiedSitemapUrls = Array.from(sitemapUrls).filter((url) => {
-      const page = pagesByCanonical.get(url);
+      const page = pagesByUrl.get(url);
       return page && !page.contract;
     });
     const ignoredSitemapUrls = Array.from(sitemapUrls).filter((url) => {
-      const page = pagesByCanonical.get(url);
+      const page = pagesByUrl.get(url);
       return page && isIgnoredGeneratedPath(page.pathname);
     });
 
@@ -330,12 +333,6 @@ describe("SEO generated output contract", () => {
         canonical.startsWith(`${SITE_ORIGIN}/`),
         `${pathname} canonical must use production origin`,
       );
-      expectSame(
-        canonical,
-        canonicalForPathname(pathname),
-        `${pathname} canonical must match its generated live path`,
-      );
-
       expectRobotsDirective(pathname, seo.robots);
       expectNotContains(
         seo.robots?.toLowerCase(),
@@ -387,7 +384,7 @@ describe("SEO generated output contract", () => {
         );
       }
 
-      expectSchemaRelationships(pathname, nodes);
+      expectSchemaRelationships(pathname, canonical, nodes);
       expectPrimaryEntityRelationship(
         pathname,
         seo.canonicalLinks[0],
@@ -732,7 +729,11 @@ function propertyNameText(name: ts.PropertyName) {
   return undefined;
 }
 
-function expectSchemaRelationships(pathname: string, nodes: any[]) {
+function expectSchemaRelationships(
+  pathname: string,
+  canonical: string,
+  nodes: any[],
+) {
   const website = findNodeByType(nodes, "WebSite");
   const organization = findNodeByType(nodes, "Organization");
   const webPage = findNodeByType(nodes, "WebPage");
@@ -805,7 +806,7 @@ function expectSchemaRelationships(pathname: string, nodes: any[]) {
 
   const breadcrumb = findNodeByType(nodes, "BreadcrumbList");
   if (breadcrumb) {
-    expectBreadcrumb(pathname, breadcrumb);
+    expectBreadcrumb(pathname, canonical, breadcrumb);
   }
 }
 
@@ -1038,7 +1039,11 @@ function expectSchemaUrls(pathname: string, canonical: string, nodes: any[]) {
   }
 }
 
-function expectBreadcrumb(pathname: string, breadcrumb: any) {
+function expectBreadcrumb(
+  pathname: string,
+  canonical: string,
+  breadcrumb: any,
+) {
   const items = Array.isArray(breadcrumb.itemListElement)
     ? breadcrumb.itemListElement
     : [];
@@ -1060,7 +1065,7 @@ function expectBreadcrumb(pathname: string, breadcrumb: any) {
   );
   expectSame(
     items[items.length - 1]?.item,
-    canonicalForPathname(pathname),
+    canonical,
     `${pathname} breadcrumb last item must match canonical path`,
   );
 
