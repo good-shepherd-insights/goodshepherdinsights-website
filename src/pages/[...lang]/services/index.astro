@@ -33,7 +33,9 @@ if (!servicesIndex) {
   throw new Error("Missing Sanity serviceIndex document.");
 }
 
-const resolvedCanonical = servicesIndex.seo?.canonical || selfCanonical;
+const resolvedCanonical = servicesIndex.seo?.canonical
+  ? absoluteUrl(servicesIndex.seo.canonical, Astro)
+  : selfCanonical;
 const schemaIds = buildSchemaIds(resolvedCanonical, Astro.url.href);
 const collectionPageSchema = schemaGraph([
   buildCollectionPageSchema({
@@ -59,7 +61,7 @@ const collectionPageSchema = schemaGraph([
   title={servicesIndex.title}
   metaTitle={servicesIndex.seo?.metaTitle || servicesIndex.title}
   metaDescription={servicesIndex.seo?.metaDescription || servicesIndex.excerpt}
-  canonical={servicesIndex.seo?.canonical || selfCanonical}
+  canonical={resolvedCanonical}
   robots={servicesIndex.seo?.robots}
   keywords={servicesIndex.seo?.keywords}
   image={servicesIndex.image}
