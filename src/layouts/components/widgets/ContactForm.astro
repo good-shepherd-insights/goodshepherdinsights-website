@@ -15,12 +15,17 @@ interface Props {
 
 const siteGlobals = await getSiteGlobals();
 if (!siteGlobals) {
-  throw new Error('Missing required Sanity siteGlobals document with _id "site-globals"');
+  throw new Error(
+    'Missing required Sanity siteGlobals document with _id "site-globals"',
+  );
 }
 
 const contactFormAction = siteGlobals.forms?.contactFormAction;
 const contactFormProvider = siteGlobals.forms?.contactFormProvider;
-const uiCopy = siteGlobals.uiCopy?.copy ? JSON.parse(siteGlobals.uiCopy.copy) : {};
+const fallbackEmail = siteGlobals.organization?.email;
+const uiCopy = siteGlobals.uiCopy?.copy
+  ? JSON.parse(siteGlobals.uiCopy.copy)
+  : {};
 const formCopy = uiCopy.forms || {};
 const requiredFormCopyKeys = [
   "chooseOption",
@@ -36,6 +41,12 @@ const requiredFormCopyKeys = [
 
 if (!contactFormAction || !contactFormProvider) {
   throw new Error("Missing required Sanity contact form action or provider");
+}
+
+if (!fallbackEmail) {
+  throw new Error(
+    "Missing required Sanity organization.email — contact form needs a fallback support address for failed submissions.",
+  );
 }
 
 for (const key of requiredFormCopyKeys) {
@@ -211,17 +222,21 @@ const noteStyles = {
                     checked: input.checked ? true : undefined,
                   }}
                   type={input.type || "text"}
-                  name={
-                    input.name || input.groupLabel || formCopy.missingName
+                  name={input.name || input.groupLabel || formCopy.missingName}
+                  id={
+                    input.id ||
+                    genIdFromLabel(input.label || formCopy.exampleId)
                   }
-                  id={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
                   class:list={[
                     input.type === "radio" ? "form-radio" : "form-checkbox",
                   ]}
                   {...(input.required && { required: true })}
                 />
                 <label
-                  for={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
+                  for={
+                    input.id ||
+                    genIdFromLabel(input.label || formCopy.exampleId)
+                  }
                   class="form-check-label"
                   set:html={markdownify(input.label) || formCopy.exampleLabel}
                 />
@@ -248,7 +263,9 @@ const noteStyles = {
               {...(input.required && { required: true })}
             />
             <label
-              for={input.id || genIdFromLabel(input.label || formCopy.exampleId)}
+              for={
+                input.id || genIdFromLabel(input.label || formCopy.exampleId)
+              }
               class="form-check-label"
               set:html={
                 (input.label && markdownify(input.label)) ||
@@ -372,7 +389,12 @@ const noteStyles = {
             .join("\n\n"),
         );
 
-        setMessage(form.getAttribute("data-submitting-message") || "", true, true, form);
+        setMessage(
+          form.getAttribute("data-submitting-message") || "",
+          true,
+          true,
+          form,
+        );
 
         try {
           switch (provider) {
@@ -390,6 +412,7 @@ const noteStyles = {
                 Object.fromEntries(new FormData(form).entries()),
                 5000,
                 form,
+                fallbackEmail,
               );
               break;
             default:
@@ -397,8 +420,7 @@ const noteStyles = {
           }
         } catch (error) {
           setMessage(
-            error +
-              "! Please use this mail - [taxo-astro-theme@gmail.com](mailto:taxo-astro-theme@gmail.com) to submit a ticket!",
+            `${error}! Please use this mail - [${fallbackEmail}](mailto:${fallbackEmail}) to submit a ticket!`,
             false,
             false,
             form,

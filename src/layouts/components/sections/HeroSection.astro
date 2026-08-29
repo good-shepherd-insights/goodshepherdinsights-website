@@ -31,8 +31,6 @@ const {
   titleLine1,
   titleLine2,
   description,
-  decorativeImage,
-  decorativeImageAlt,
   arrowDecorationImage,
   arrowDecorationImageAlt,
   shapeImage,
@@ -197,25 +195,6 @@ if (!enable) {
                 </div>
               )}
             </div>
-            {decorativeImage && (
-              <div
-                class="pointer-events-none absolute top-[95%] right-full z-0 size-40 mix-blend-multiply lg:size-75"
-                aria-hidden="true"
-                data-aos="zoom-in-right"
-                data-aos-delay="800"
-                data-aos-duration="600">
-                <OptimizedImage
-                  src={decorativeImage}
-                  width={320}
-                  height={340}
-                  quality={50}
-                  widths={[160, 300, 320]}
-                  sizes="(min-width: 1024px) 300px, 160px"
-                  class="h-full w-full object-cover object-top-right"
-                  alt={decorativeImageAlt}
-                />
-              </div>
-            )}
           </div>
         </div>
         <div class="relative container">

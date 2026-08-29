@@ -13,17 +13,8 @@ const { pathname } = Astro.url;
   class:list={[
     "hs-dropdown nav-dropdown group [--auto-close:inside] [--offset:0px]",
     recursive ? "nav-dropdown-item [--placement:right-start]" : "nav-item",
-    menu.hasMegaMenu && "has-mega-menu",
-    menu.hasMegaMenu
-      ? "max-lg:relative lg:static!"
-      : menu.hasChildren
-        ? "relative"
-        : "",
-    menu.hasMegaMenu
-      ? "lg:[--strategy:static]"
-      : menu.hasChildren
-        ? "lg:[--strategy:absolute]"
-        : "",
+    menu.hasChildren ? "relative" : "",
+    menu.hasChildren ? "lg:[--strategy:absolute]" : "",
   ]}
   role="none">
   <button
@@ -45,7 +36,7 @@ const { pathname } = Astro.url;
     <Icons class="nav-toggle-icon" icon="ChevronDown" />
   </button>
   {
-    !menu.hasMegaMenu && menu.hasChildren && (
+    menu.hasChildren && (
       <ul
         class="nav-dropdown-list hs-dropdown-menu"
         role="menu"
@@ -62,12 +53,9 @@ const { pathname } = Astro.url;
                   Astro.currentLocale,
                 )}
                 {...{
-                  // Set `rel` attribute for external links or use provided value
                   rel: child.url?.startsWith("http")
                     ? child.rel || "noopener noreferrer"
                     : child.rel || undefined,
-
-                  // Set `target` to "_blank" for external links unless otherwise specified
                   target: child.url?.startsWith("http")
                     ? child.target || "_blank"
                     : child.target || undefined,
@@ -79,32 +67,7 @@ const { pathname } = Astro.url;
                       pathname === `${child.url}/` || pathname === child.url,
                   },
                 ]}>
-                {child.badge ? (
-                  child.badge.type === "dot" ? (
-                    <span class="relative inline-block">
-                      {child.name}
-                      <sup
-                        class:list={[
-                          "badge badge-dot",
-                          child.badge.color && `badge-${child.badge.color}`,
-                        ]}
-                      />
-                    </span>
-                  ) : (
-                    <>
-                      {child.name}
-                      <span
-                        class:list={[
-                          "badge",
-                          child?.badge.color && `badge-${child?.badge.color}`,
-                        ]}>
-                        {child?.badge.label}
-                      </span>
-                    </>
-                  )
-                ) : (
-                  child.name
-                )}
+                {child.name}
               </a>
             </li>
           ),
@@ -113,7 +76,7 @@ const { pathname } = Astro.url;
     )
   }
   {
-    !menu.hasChildren && menu.hasMegaMenu && (
+    !menu.hasChildren && menu.menus && menu.menus.length > 0 && (
       <NavMegaMenu isMobile={Astro.props.isMobile} menu={menu} />
     )
   }

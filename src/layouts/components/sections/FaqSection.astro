@@ -32,7 +32,6 @@ let actualContent = overrideObjects(
 ) as SectionType;
 
 // Extract the faqSection search header data passed from the page
-const faqSection = Astro.props.content;
 let {
   enable = true,
   badge,
@@ -40,6 +39,8 @@ let {
   imageList = [],
   decorativeShapes = [],
   list = [],
+  searchPlaceholder,
+  button,
 } = actualContent;
 
 if (!enable) {
@@ -57,21 +58,21 @@ const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
     hasSectionSpacingBottom && "section-spacing-bottom",
   ]}>
   {
-    faqSection && (
+    (badge || title || searchPlaceholder || button) && (
       <div class="container mb-16 md:mb-20">
         <div class="mx-auto text-center">
-          {faqSection.badge && (
+          {badge && (
             <SectionBadge
-              title={faqSection.badge}
+              title={badge}
               dataAos="reveal-anim-top"
               mode={mode}
               variant={badgeVariant}
               className="justify-center"
             />
           )}
-          {faqSection.title && (
+          {title && (
             <SectionTitle
-              title={faqSection.title}
+              title={title}
               dataAos="reveal-anim-top"
               variant={mode === "dark" ? "dark" : "light"}
               className="text-center"
@@ -79,36 +80,42 @@ const hasSectionSpacingBottom = Astro.props.hasSectionSpacingBottom ?? false;
           )}
         </div>
 
-        <div
-          class="mt-8 w-full"
-          data-aos="reveal-anim-top"
-          data-aos-duration="600">
-          <form
-            id="faq-search-form"
-            class="faq-search-bar bg-body flex items-stretch overflow-hidden">
-            <input
-              id="faq-search-input"
-              name="faq-search"
-              type="text"
-              placeholder={faqSection.searchPlaceholder}
-            class="text-text-dark/85 h-full w-full border-none bg-transparent px-6 py-4 outline-0 placeholder:opacity-60 focus:shadow-none focus:ring-0 md:py-6"
-            />
-            <Button
-              buttonType="submit"
-              variant="fill"
-              hoverEffect="creative-fill"
-              label=""
-              {...faqSection.button}
-              icon={{
-                enable: true,
-                name: "Search",
-                position: "right",
-                size: "sm",
-              }}
-              class="btn-accent effect-color-dark text-text-dark! mt-2 mr-2 h-10 w-10 items-center justify-center p-0 leading-normal md:h-14 md:w-14"
-            />
-          </form>
-        </div>
+        {(searchPlaceholder || button) && (
+          <div
+            class="mt-8 w-full"
+            data-aos="reveal-anim-top"
+            data-aos-duration="600">
+            <form
+              id="faq-search-form"
+              class="faq-search-bar bg-body flex items-stretch overflow-hidden">
+              {searchPlaceholder && (
+                <input
+                  id="faq-search-input"
+                  name="faq-search"
+                  type="text"
+                  placeholder={searchPlaceholder}
+                  class="text-text-dark/85 h-full w-full border-none bg-transparent px-6 py-4 outline-0 placeholder:opacity-60 focus:shadow-none focus:ring-0 md:py-6"
+                />
+              )}
+              {button && (
+                <Button
+                  buttonType="submit"
+                  variant="fill"
+                  hoverEffect="creative-fill"
+                  label=""
+                  {...button}
+                  icon={{
+                    enable: true,
+                    name: "Search",
+                    position: "right",
+                    size: "sm",
+                  }}
+                  class="btn-accent effect-color-dark text-text-dark! mt-2 mr-2 h-10 w-10 items-center justify-center p-0 leading-normal md:h-14 md:w-14"
+                />
+              )}
+            </form>
+          </div>
+        )}
 
         <div
           id="faq-no-results"

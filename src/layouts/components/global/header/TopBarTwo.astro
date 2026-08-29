@@ -30,7 +30,7 @@ const phoneMarkdown = contact.phoneHref
           inlineSvg={true}
           class="fill-accent size-4"
         />
-        <span class="font-medium text-text-light/90">
+        <span class="text-text-light/90 font-medium">
           {topBar?.hotLineLabel}:
         </span>
         <p class="text-text-light" set:html={markdownify(phoneMarkdown)} />
@@ -40,7 +40,7 @@ const phoneMarkdown = contact.phoneHref
           <div class="text-text-light/85 [&_a]:border-text-light flex flex-nowrap items-center justify-center gap-1 max-sm:items-start max-sm:text-center lg:justify-start xl:col-span-2 [&_a]:border-b [&_a]:font-medium">
             <OptimizedImage
               src={"/images/decorative/scribble/scribble-1.svg"}
-              alt="Phone"
+              alt=""
               width={24}
               height={24}
               inlineSvg={true}
