@@ -27,15 +27,17 @@ const rating = customer?.rating ?? 0;
       data-aos="fade-up"
       data-aos-delay={index * 120}
       data-aos-duration="600">
-      <div class="flex items-center gap-4">
-        <OptimizedImage
-          src={customer?.avatar ?? "/images/customers/avatar/placeholder.png"}
-          alt={customer?.name ?? "Customer avatar"}
-          width={190}
-          height={236}
-          class="h-59 min-w-48! rounded-lg object-cover"
-        />
-      </div>
+      {customer?.avatar && (
+        <div class="flex items-center gap-4">
+          <OptimizedImage
+            src={customer.avatar}
+            alt={customer?.name ?? ""}
+            width={190}
+            height={236}
+            class="h-59 min-w-48! rounded-lg object-cover"
+          />
+        </div>
+      )}
       <div class="flex flex-col gap-4 sm:gap-6">
         <div class="flex flex-col gap-1.5">
           {customer?.name && (
@@ -62,15 +64,17 @@ const rating = customer?.rating ?? 0;
     </div>
   ) : layout === "cardWithSign" ? (
     <div class="bg-light flex h-full flex-col items-center justify-between gap-4 p-6 md:flex-row lg:gap-6 xl:p-9">
-      <div class="flex items-center gap-4">
-        <OptimizedImage
-          src={customer?.avatar ?? "/images/customers/avatar/placeholder.png"}
-          alt={customer?.name ?? "Customer avatar"}
-          width={122}
-          height={224}
-          class="h-56 min-w-30.5! object-cover"
-        />
-      </div>
+      {customer?.avatar && (
+        <div class="flex items-center gap-4">
+          <OptimizedImage
+            src={customer.avatar}
+            alt={customer?.name ?? ""}
+            width={122}
+            height={224}
+            class="h-56 min-w-30.5! object-cover"
+          />
+        </div>
+      )}
       <div>
         <div class="flex justify-center md:justify-start">
           <OptimizedImage
