@@ -6,15 +6,25 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import CTAGallerySection from "@/components/sections/CTAGallerySection.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { getSanityBlogPosts } from "@/lib/sanity/client";
-import { sanityBlogPlaceholder } from "@/lib/sanity/blog";
+import {
+  blogImageUrl,
+  blogPostUrl,
+  sanityBlogPlaceholder,
+} from "@/lib/sanity/blog";
 import { getSanityBlogIndexPage } from "@/lib/sanity/pages";
 import { generatePaths } from "@/lib/utils/i18nUtils";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
+import { buildSchemaIds } from "@/lib/seo/ids";
+import { buildItemListSchema } from "@/lib/seo/itemList";
+import { schemaGraph } from "@/lib/seo/types";
+import { buildCollectionPageSchema } from "@/lib/seo/webpage";
 const posts = await getSanityBlogPosts();
 const blogIndex = await getSanityBlogIndexPage();
 if (!blogIndex) {
-  throw new Error('Missing Sanity blogIndexPage document with id "blog-index-page".');
+  throw new Error(
+    'Missing Sanity blogIndexPage document with id "blog-index-page".',
+  );
 }
 export function getStaticPaths() {
   return generatePaths();
@@ -25,21 +35,35 @@ const {
   metaDescription: blogDescription,
 } = blogIndex;
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
-const collectionPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "@id": `${selfCanonical}#collectionpage`,
-  name: blogTitle,
-  description: blogDescription,
-  url: selfCanonical,
-};
+const schemaIds = buildSchemaIds(selfCanonical, Astro.url.href);
+const collectionPageSchema = schemaGraph([
+  buildCollectionPageSchema({
+    ids: schemaIds,
+    name: blogTitle,
+    description: blogDescription,
+  }),
+  buildItemListSchema({
+    id: schemaIds.itemList,
+    itemType: "BlogPosting",
+    baseUrl: schemaIds.baseUrl,
+    items: posts.map((post) => ({
+      name: post.seo?.metaTitle || post.title,
+      url: blogPostUrl(post, Astro.currentLocale),
+      description: post.seo?.metaDescription || post.excerpt,
+      image: blogImageUrl(post, 1200, 630),
+    })),
+  }),
+]);
 ---
 
 <Base
   title={blogTitle}
   metaTitle={blogTitle}
   description={blogDescription}
-  canonical={selfCanonical}>
+  image={blogIndex.image}
+  imageAlt={blogIndex.imageAlt}
+  canonical={selfCanonical}
+  schemaMainEntityId={schemaIds.itemList}>
   <PageHeader
     content={{ badge: blogBadge, title: blogTitle }}
     contentClass="max-w-3xl! xl:px-6"

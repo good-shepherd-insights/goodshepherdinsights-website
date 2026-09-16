@@ -26,23 +26,11 @@ if (response) return response;
 
 // Resolve canonical for this FAQ page
 const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const faqPageId = `${resolvedCanonical}#faqpage`;
 
 // Build FAQPage schema from faqSection data
-const faqList = (entry as any)?.faqSection?.list
-  ?.filter((item: any) => item.enable !== false)
-  ?.map((item: any) => ({
-    "@type": "Question",
-    name: item.title,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.content,
-    },
-  })) || [];
-
-// Fallback: use the Sanity secondary FAQ section if the primary page section has no items.
-let faqItems = faqList;
-if (faqItems.length === 0) {
-  faqItems = (entry as any)?.faqSectionTwo?.list
+const faqList =
+  (entry as any)?.faqSection?.list
     ?.filter((item: any) => item.enable !== false)
     ?.map((item: any) => ({
       "@type": "Question",
@@ -52,26 +40,53 @@ if (faqItems.length === 0) {
         text: item.content,
       },
     })) || [];
+
+// Fallback: use the Sanity secondary FAQ section if the primary page section has no items.
+let faqItems = faqList;
+if (faqItems.length === 0) {
+  faqItems =
+    (entry as any)?.faqSectionTwo?.list
+      ?.filter((item: any) => item.enable !== false)
+      ?.map((item: any) => ({
+        "@type": "Question",
+        name: item.title,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.content,
+        },
+      })) || [];
 }
 
 let faqSchema: FAQPage | undefined;
 if (faqItems.length > 0) {
   faqSchema = {
     "@type": "FAQPage",
-    "@id": `${resolvedCanonical}#faqpage`,
+    "@id": faqPageId,
+    name: entry.title,
+    description: entry.metaDescription || entry.description,
+    url: resolvedCanonical,
     mainEntity: faqItems,
   };
 }
 ---
 
-<Base {...entry}>
+<Base {...entry} schemaMainEntityId={faqSchema ? faqPageId : undefined}>
   <PageHeader content={entry} />
   <FaqSection content={(entry as any)?.faqSection} mode="light" />
-  <StatsMarqueeSection content={(entry as any)?.statsMarqueeSection} hasLightBackground={true} />
+  <StatsMarqueeSection
+    content={(entry as any)?.statsMarqueeSection}
+    hasLightBackground={true}
+  />
   <FaqSectionTwo content={(entry as any)?.faqSectionTwo} mode="shadow" />
   <CTAGallerySection content={(entry as any)?.ctaGallerySection} />
   <CTASection />
 
   <!-- Page-specific structured data -->
-  {faqSchema && <Schema item={{ "@context": "https://schema.org", ...faqSchema } as any} />}
+  {
+    faqSchema && (
+      <Schema
+        item={{ "@context": "https://schema.org", ...faqSchema } as any}
+      />
+    )
+  }
 </Base>

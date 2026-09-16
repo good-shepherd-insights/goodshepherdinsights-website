@@ -65,6 +65,106 @@ export const service = defineType({
       validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
+      name: 'schema',
+      title: 'Service JSON-LD',
+      type: 'object',
+      group: 'seo',
+      description: 'Optional structured-data facts emitted in Service JSON-LD when populated.',
+      fields: [
+        defineField({
+          name: 'areaServed',
+          title: 'Areas served',
+          type: 'array',
+          description: 'Places, regions, or countries this service is offered to.',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'name',
+                  title: 'Name',
+                  type: 'string',
+                  validation: (Rule) => Rule.required().max(120),
+                }),
+                defineField({
+                  name: 'type',
+                  title: 'Schema type',
+                  type: 'string',
+                  initialValue: 'Place',
+                  options: {
+                    list: [
+                      {title: 'Place', value: 'Place'},
+                      {title: 'City', value: 'City'},
+                      {title: 'State', value: 'State'},
+                      {title: 'Country', value: 'Country'},
+                      {title: 'Administrative Area', value: 'AdministrativeArea'},
+                    ],
+                  },
+                }),
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'audience',
+          title: 'Audience',
+          type: 'array',
+          description: 'Audience segments this service is intended for.',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'name',
+                  title: 'Name',
+                  type: 'string',
+                  validation: (Rule) => Rule.required().max(120),
+                }),
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'serviceOutput',
+          title: 'Service output',
+          type: 'string',
+          description: 'Primary result or deliverable produced by this service.',
+          validation: (Rule) => Rule.max(240),
+        }),
+        defineField({
+          name: 'offers',
+          title: 'Offers',
+          type: 'array',
+          description: 'Named service offers or packages available for this service.',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'name',
+                  title: 'Name',
+                  type: 'string',
+                  validation: (Rule) => Rule.max(120),
+                }),
+                defineField({
+                  name: 'description',
+                  title: 'Description',
+                  type: 'text',
+                  rows: 2,
+                  validation: (Rule) => Rule.max(240),
+                }),
+                defineField({
+                  name: 'url',
+                  title: 'URL',
+                  type: 'url',
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: 'heroImage',
       title: 'Hero image',
       type: 'imageWithAlt',

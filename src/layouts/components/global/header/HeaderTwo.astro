@@ -8,15 +8,19 @@ import Navbar from "./Navbar.astro";
 import TopBarTwo from "./TopBarTwo.astro";
 import Icons from "@/helpers/Icons.astro";
 import { markdownify } from "@/lib/utils/textConverter";
+import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import type { SiteGlobals } from "@/lib/sanity/siteGlobals";
 
 const {
-  settings: {
-    stickyHeader,
-  },
+  settings: { stickyHeader },
 } = config;
 
-const { position, hideOffcanvas, class: ClassName, siteGlobals } = Astro.props as {
+const {
+  position,
+  hideOffcanvas,
+  class: ClassName,
+  siteGlobals,
+} = Astro.props as {
   position?: "fixed" | "static" | "sticky";
   hideOffcanvas?: boolean;
   class?: string;
@@ -63,12 +67,20 @@ const phoneMarkdown = contact.phoneHref
 
       {/* Navigation Actions - Search + CTA Button */}
       {
-        (navigationButton?.enable || config.settings.multilingual.enable) && (
+        navigationButton?.enable && (
           <div class="hidden gap-3.5 justify-self-end max-lg:ms-auto max-lg:me-4 lg:flex lg:items-center">
-            <a href="/contact/" class="flex items-center gap-2">
+            <a
+              href={getLocaleUrlCTM(navigationButton.url, Astro.currentLocale)}
+              class="flex items-center gap-2"
+              {...(navigationButton.rel ? { rel: navigationButton.rel } : {})}
+              {...(navigationButton.target
+                ? { target: navigationButton.target }
+                : {})}>
               <Icons icon="MessagesSquare" class="stroke-accent size-8" />
               <div>
-                <div class="text-sm opacity-80">{header.topBar?.letsChatLabel}</div>
+                <div class="text-sm opacity-80">
+                  {header.topBar?.letsChatLabel}
+                </div>
                 <div
                   class="font-secondary leading-none font-medium"
                   set:html={markdownify(phoneMarkdown)}

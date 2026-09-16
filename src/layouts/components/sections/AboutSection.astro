@@ -48,7 +48,7 @@ if (!enable) return;
           image,
           imageAlt,
           imageVerticalTitle,
-          leftImagePostion,
+          leftImagePosition,
         } = item;
 
         return (
@@ -56,12 +56,12 @@ if (!enable) return;
             class:list={[
               "flex flex-col items-start gap-10 xl:gap-20",
               isEven ? "lg:text-right" : "lg:mt-20",
-              !leftImagePostion && "max-lg:flex-col-reverse",
+              !leftImagePosition && "max-lg:flex-col-reverse",
             ]}
             data-aos={isEven ? "reveal-anim-right" : "reveal-anim-left"}
             data-aos-duration="600">
             {/* Logic for image and content order */}
-            {leftImagePostion ? (
+            {leftImagePosition ? (
               <>
                 {image && (
                   <div class="relative w-full shrink-0 overflow-hidden">

@@ -120,7 +120,7 @@ async function buildExcludedFolders() {
   });
   const fromCms =
     (await client.fetch(
-      '*[_type == "siteGlobals" && _id == "site-globals"][0].indexing.sitemap.exclude',
+      '*[_type == "indexing" && _id == "indexing"][0].sitemap.exclude',
     )) || [];
   return ["widgets", "sections", "author", ...(Array.isArray(fromCms) ? fromCms : [])];
 }

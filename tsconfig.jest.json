@@ -1,8 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "esModuleInterop": true,
     "moduleResolution": "node10",
+    "paths": {
+      "@/components/*": ["./src/layouts/components/*"],
+      "@/shortcodes/*": ["./src/layouts/shortcodes/*"],
+      "@/helpers/*": ["./src/layouts/helpers/*"],
+      "@/*": ["./src/*"]
+    },
     "verbatimModuleSyntax": false,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   }
 }

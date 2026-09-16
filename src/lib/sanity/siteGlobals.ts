@@ -100,9 +100,11 @@ export interface SiteGlobals {
   };
   organization?: {
     name?: string;
-    streetAddress?: string;
-    addressLocality?: string;
-    addressRegion?: string;
+    address?: {
+      streetAddress?: string;
+      addressLocality?: string;
+      addressRegion?: string;
+    };
     email?: string;
     telephone?: string;
     logo?: string;
@@ -209,60 +211,80 @@ const navigationFields = `
 `;
 
 export async function getSiteGlobals() {
-  siteGlobalsPromise ??= sanityClient.fetch<SiteGlobals | null>(
-    `*[_type == "siteGlobals" && _id == "site-globals"][0]{
-      _id,
-      brand,
-      contact,
-      seoDefaults,
-      organization,
-      indexing,
-      forms,
-      uiCopy,
-      appManifest,
-      socialLinks[]{
-        enable,
-        label,
-        url
-      },
-      header{
-        primaryNavigation[] | order(weight asc, name asc){
-          ${navigationFields},
-          "hasChildren": count(children[enable != false]) > 0,
-          children[enable != false] | order(weight asc, name asc){
-            ${navigationFields}
-          }
+  siteGlobalsPromise ??= sanityClient
+    .fetch<(SiteGlobals & { brand?: GlobalBrand }) | null>(
+      `{
+        "_id": "site-globals",
+        "brand": *[_type == "brand" && _id == "brand"][0]{
+          title, logoPath, logoAlternatePath, logoText, logoWidth, logoHeight
         },
-        navigationButton,
-        topBar,
-        announcementBar,
-        offcanvas
-      },
-      footer{
-        primary{
-          description,
-          supportLabel,
-          servicesHeading,
-          contactHeading,
-          workHourLabel,
-          workHourValue,
-          sinceText,
-          navigation[enable != false] | order(weight asc, name asc){
-            ${navigationFields}
-          }
+        "contact": *[_type == "contact" && _id == "contact"][0]{
+          addressText, phoneLabel, phoneHref, emailLabel, emailHref, mapEmbedUrl
         },
-        secondary{
-          description,
-          callUsLabel,
-          subscription,
-          navigation[enable != false] | order(weight asc, name asc){
-            ${navigationFields}
-          }
+        "seoDefaults": *[_type == "seoDefaults" && _id == "seo-defaults"][0]{
+          author, title, description, tagline, taglineSeparator, baseUrl, defaultImage,
+          pageHeaderDefaultImage, faviconSet, keywords, robots, ogLocale, ogType, twitter,
+          twitterCard, themeColorLight, themeColorDark, headContent
         },
-        copyright
-      }
-    }`,
-  );
+        "organization": *[_type == "organization" && _id == "organization"][0]{
+          name, address, email, telephone, logo
+        },
+        "indexing": *[_type == "indexing" && _id == "indexing"][0]{
+          robotsTxt, sitemap
+        },
+        "forms": *[_type == "forms" && _id == "forms"][0]{
+          contactFormProvider, contactFormAction, subscriptionFormAction, mailchimpTagValue, messages
+        },
+        "uiCopy": *[_type == "uiCopy" && _id == "ui-copy"][0]{
+          copy
+        },
+        "appManifest": *[_type == "appManifest" && _id == "app-manifest"][0]{
+          name, shortName, themeColor, backgroundColor, display, icons
+        },
+        "socialLinks": *[_type == "socialLinks" && _id == "social-links"][0].links[]{
+          enable,
+          label,
+          url
+        },
+        "header": *[_type == "header" && _id == "header"][0]{
+          primaryNavigation[] | order(weight asc, name asc){
+            ${navigationFields},
+            "hasChildren": count(children[enable != false]) > 0,
+            children[enable != false] | order(weight asc, name asc){
+              ${navigationFields}
+            }
+          },
+          navigationButton,
+          topBar,
+          announcementBar,
+          offcanvas
+        },
+        "footer": *[_type == "footer" && _id == "footer"][0]{
+          primary{
+            description,
+            supportLabel,
+            servicesHeading,
+            contactHeading,
+            workHourLabel,
+            workHourValue,
+            sinceText,
+            navigation[enable != false] | order(weight asc, name asc){
+              ${navigationFields}
+            }
+          },
+          secondary{
+            description,
+            callUsLabel,
+            subscription,
+            navigation[enable != false] | order(weight asc, name asc){
+              ${navigationFields}
+            }
+          },
+          copyright
+        }
+      }`,
+    )
+    .then((result) => (result?.brand ? (result as SiteGlobals) : null));
 
   return siteGlobalsPromise;
 }

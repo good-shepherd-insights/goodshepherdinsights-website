@@ -54,9 +54,9 @@ async function convertTomlToJson() {
     const content = await fs.readFile(configFilePath, "utf8");
     const parsed = toml.parse(content);
     const siteGlobals = await sanityClient.fetch(
-      `*[_type == "siteGlobals" && _id == "site-globals"][0]{
-        seoDefaults{baseUrl},
-        indexing{
+      `{
+        "seoDefaults": *[_type == "seoDefaults" && _id == "seo-defaults"][0]{baseUrl},
+        "indexing": *[_type == "indexing" && _id == "indexing"][0]{
           robotsTxt{enable, disallow},
           sitemap{enable, exclude}
         }
@@ -64,7 +64,7 @@ async function convertTomlToJson() {
     );
 
     if (!siteGlobals?.seoDefaults?.baseUrl) {
-      throw new Error("Missing required Sanity siteGlobals.seoDefaults.baseUrl");
+      throw new Error("Missing required Sanity seoDefaults.baseUrl");
     }
 
     parsed.site.baseUrl = siteGlobals.seoDefaults.baseUrl;

@@ -27,11 +27,12 @@ if (response) return response;
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
 const resolvedCanonical = absoluteUrl(Astro.url.pathname, Astro);
+const contactPageId = `${resolvedCanonical}#contactpage`;
 
 // Build ContactPage schema inline
 const contactPageSchema: ContactPage = {
   "@type": "ContactPage",
-  "@id": `${resolvedCanonical}#contactpage`,
+  "@id": contactPageId,
   name: contactIndex?.title,
   description: contactIndex?.description,
   url: resolvedCanonical,
@@ -39,7 +40,7 @@ const contactPageSchema: ContactPage = {
 };
 ---
 
-<Base {...contactIndex}>
+<Base {...contactIndex} schemaMainEntityId={contactPageId}>
   <PageHeader content={contactIndex} />
   <ContactSectionTwo content={(contactIndex as any)?.contactSection} />
   <ContactMap />

@@ -266,10 +266,10 @@ export const aboutSectionSchema = z
           imageVerticalTitle: z.string().optional(),
           imageSecondary: z.string().optional(),
           imageSecondaryAlt: z.string().optional(),
-          leftImagePostion: z.boolean().optional(),
+          leftImagePosition: z.boolean().optional(),
           button: sharedButton.optional(),
-          deocrativeScribble: z.string().optional(),
-          deocrativeScribbleAlt: z.string().optional(),
+          decorativeScribble: z.string().optional(),
+          decorativeScribbleAlt: z.string().optional(),
 
           testimonial: z
             .object({

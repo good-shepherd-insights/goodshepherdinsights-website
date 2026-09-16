@@ -33,28 +33,30 @@ const pageData = Object.fromEntries(
 
 const baseUrl = trailingSlashChecker(Astro.url.origin);
 const baseUrlClean = baseUrl.replace(/\/$/, "");
+const localBusinessId = `${baseUrlClean}/#localbusiness`;
 const orgData = siteGlobals.organization || {};
+const orgAddress = orgData.address || {};
 
 // Build LocalBusiness schema inline
 const localBusinessSchema: LocalBusiness = {
   "@type": "LocalBusiness",
-  "@id": `${baseUrlClean}/#localbusiness`,
+  "@id": localBusinessId,
   name: orgData.name || siteGlobals.brand.title,
   description: page.metaDescription || siteGlobals.seoDefaults?.description,
   url: baseUrl,
   ...(page.image && { image: absoluteUrl(page.image, Astro) }),
   ...(orgData.telephone && { telephone: orgData.telephone }),
   ...(orgData.email && { email: orgData.email }),
-  ...((orgData.streetAddress ||
-    orgData.addressLocality ||
-    orgData.addressRegion) && {
+  ...((orgAddress.streetAddress ||
+    orgAddress.addressLocality ||
+    orgAddress.addressRegion) && {
     address: {
       "@type": "PostalAddress",
-      ...(orgData.streetAddress && { streetAddress: orgData.streetAddress }),
-      ...(orgData.addressLocality && {
-        addressLocality: orgData.addressLocality,
+      ...(orgAddress.streetAddress && { streetAddress: orgAddress.streetAddress }),
+      ...(orgAddress.addressLocality && {
+        addressLocality: orgAddress.addressLocality,
       }),
-      ...(orgData.addressRegion && { addressRegion: orgData.addressRegion }),
+      ...(orgAddress.addressRegion && { addressRegion: orgAddress.addressRegion }),
     },
   }),
   sameAs:
@@ -63,7 +65,7 @@ const localBusinessSchema: LocalBusiness = {
 };
 ---
 
-<Base {...pageData} headerLayout="header-1">
+<Base {...pageData} headerLayout="header-1" schemaMainEntityId={localBusinessId}>
   <HeroSection content={page.heroSection} />
   {/* SHELVED: FeaturesGrid */}
   <ServicesSection content={page.servicesSection} />

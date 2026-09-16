@@ -90,10 +90,12 @@ const isExternalImage =
               </li>
             )}
 
-            <li class="before:bg-dark relative flex items-center gap-2 pe-5 leading-normal">
-              <Icons icon="MessagesSquare" class="text-primary size-4" />
-              {postData.comments} {t("common.comments")}
-            </li>
+            {typeof postData.comments === "number" && (
+              <li class="before:bg-dark relative flex items-center gap-2 pe-5 leading-normal">
+                <Icons icon="MessagesSquare" class="text-primary size-4" />
+                {postData.comments} {t("common.comments")}
+              </li>
+            )}
 
             {postData.author && (
               <li class="before:bg-dark relative flex items-center gap-2 leading-normal">

@@ -10,44 +10,64 @@ import CTAVideoSectionTwo from "@/components/sections/CTAVideoSectionTwo.astro";
 import CTASection from "@/components/sections/CTASection.astro";
 import { Schema } from "astro-seo-schema";
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
-import trailingSlashChecker from "@/lib/utils/trailingSlashChecker";
-import { getSanityServicesIndex } from "@/lib/sanity/services";
+import {
+  getSanityServices,
+  getSanityServicesIndex,
+  serviceImageUrl,
+  serviceUrl,
+} from "@/lib/sanity/services";
+import { buildSchemaIds } from "@/lib/seo/ids";
+import { buildItemListSchema } from "@/lib/seo/itemList";
+import { schemaGraph } from "@/lib/seo/types";
+import { buildCollectionPageSchema } from "@/lib/seo/webpage";
 
 export function getStaticPaths() {
   return generatePaths();
 }
 
-// ISSUE 6: CollectionPage schema for services listing
-const baseUrl = trailingSlashChecker(Astro.url.origin);
 const selfCanonical = absoluteUrl(Astro.url.pathname, Astro);
 const servicesIndex = await getSanityServicesIndex();
+const services = await getSanityServices();
 
 if (!servicesIndex) {
   throw new Error("Missing Sanity serviceIndex document.");
 }
 
-const collectionPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "@id": `${selfCanonical}#collectionpage`,
-  name: servicesIndex.seo?.metaTitle || servicesIndex.title,
-  description: servicesIndex.seo?.metaDescription || servicesIndex.excerpt,
-  url: selfCanonical,
-  isPartOf: {
-    "@id": `${baseUrl.replace(/\/$/, "")}/#website`,
-  },
-};
+const resolvedCanonical = servicesIndex.seo?.canonical
+  ? absoluteUrl(servicesIndex.seo.canonical, Astro)
+  : selfCanonical;
+const schemaIds = buildSchemaIds(resolvedCanonical, Astro.url.href);
+const collectionPageSchema = schemaGraph([
+  buildCollectionPageSchema({
+    ids: schemaIds,
+    name: servicesIndex.seo?.metaTitle || servicesIndex.title,
+    description: servicesIndex.seo?.metaDescription || servicesIndex.excerpt,
+  }),
+  buildItemListSchema({
+    id: schemaIds.itemList,
+    itemType: "Service",
+    baseUrl: schemaIds.baseUrl,
+    items: services.map((service) => ({
+      name: service.title,
+      url: serviceUrl(service, Astro.currentLocale),
+      description: service.seo?.metaDescription || service.excerpt,
+      image: serviceImageUrl(service, 1200, 630),
+    })),
+  }),
+]);
 ---
 
 <Base
   title={servicesIndex.title}
   metaTitle={servicesIndex.seo?.metaTitle || servicesIndex.title}
   metaDescription={servicesIndex.seo?.metaDescription || servicesIndex.excerpt}
-  canonical={servicesIndex.seo?.canonical || selfCanonical}
+  canonical={resolvedCanonical}
   robots={servicesIndex.seo?.robots}
   keywords={servicesIndex.seo?.keywords}
   image={servicesIndex.image}
-  hideOffcanvas={true}>
+  imageAlt={servicesIndex.imageAlt}
+  hideOffcanvas={true}
+  schemaMainEntityId={schemaIds.itemList}>
   <PageHeader
     content={{
       badge: servicesIndex.badge,

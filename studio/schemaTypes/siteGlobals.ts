@@ -1,55 +1,52 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-
-const buttonOptions = [
-  {title: 'Fill', value: 'fill'},
-  {title: 'Outline', value: 'outline'},
-  {title: 'Text', value: 'text'},
-  {title: 'Circle', value: 'circle'},
-  {title: 'White', value: 'white'},
-]
-
-const hoverEffectOptions = [
-  {title: 'Text flip', value: 'text-flip'},
-  {title: 'Creative fill', value: 'creative-fill'},
-  {title: 'Magnetic', value: 'magnetic'},
-  {title: 'Magnetic text flip', value: 'magnetic-text-flip'},
-]
+import {buttonHoverEffectOptions, buttonVariantOptions} from './shared'
 
 export const globalButton = defineType({
   name: 'globalButton',
-  title: 'Global button',
+  title: 'Global Button',
   type: 'object',
   fields: [
-    defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+    defineField({
+      name: 'enable',
+      title: 'Enable',
+      type: 'boolean',
+      description: 'Uncheck to hide this button without deleting its content.',
+      initialValue: true,
+    }),
     defineField({
       name: 'label',
       title: 'Label',
       type: 'string',
+      description: 'Button text shown to visitors. Max 100 characters.',
       validation: (Rule) => Rule.required().max(100),
     }),
     defineField({
       name: 'url',
       title: 'URL',
       type: 'string',
+      description: 'Where the button links to. Absolute URL or a site-relative path like /contact.',
       validation: (Rule) => Rule.required().max(2048),
     }),
     defineField({
       name: 'variant',
       title: 'Variant',
       type: 'string',
-      options: {list: buttonOptions},
+      description: 'Visual style of the button.',
+      options: {list: buttonVariantOptions},
     }),
     defineField({
       name: 'hoverEffect',
       title: 'Hover effect',
       type: 'string',
-      options: {list: hoverEffectOptions},
+      description: 'Animation applied when a visitor hovers the button.',
+      options: {list: buttonHoverEffectOptions},
     }),
-    defineField({name: 'rel', title: 'Rel', type: 'string'}),
+    defineField({name: 'rel', title: 'Rel', type: 'string', description: 'HTML rel attribute, e.g. "noopener" or "nofollow".'}),
     defineField({
       name: 'target',
       title: 'Target',
       type: 'string',
+      description: 'Whether the link opens in the same tab or a new one.',
       options: {
         list: [
           {title: 'Same tab', value: '_self'},
@@ -60,212 +57,285 @@ export const globalButton = defineType({
   ],
 })
 
-export const globalBrand = defineType({
-  name: 'globalBrand',
+export const brand = defineType({
+  name: 'brand',
   title: 'Brand',
-  type: 'object',
+  type: 'document',
   fields: [
     defineField({
       name: 'title',
       title: 'Site title',
       type: 'string',
+      description: 'Site name shown in the header logo area and used as the default page-title suffix.',
       validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
       name: 'logoPath',
       title: 'Logo path',
       type: 'string',
+      description: 'Path to the primary logo file, e.g. /images/logo.svg.',
       validation: (Rule) => Rule.required().max(2048),
     }),
     defineField({
       name: 'logoAlternatePath',
       title: 'Alternate logo path',
       type: 'string',
+      description: 'Optional alternate logo (e.g. for a dark header or footer background).',
       validation: (Rule) => Rule.max(2048),
     }),
-    defineField({name: 'logoText', title: 'Logo text', type: 'string'}),
-    defineField({name: 'logoWidth', title: 'Logo width', type: 'string'}),
-    defineField({name: 'logoHeight', title: 'Logo height', type: 'string'}),
+    defineField({name: 'logoText', title: 'Logo text', type: 'string', description: 'Text shown next to or instead of the logo image, if the theme supports it.'}),
+    defineField({name: 'logoWidth', title: 'Logo width', type: 'string', description: 'Rendered logo width, e.g. "160" or "160px".'}),
+    defineField({name: 'logoHeight', title: 'Logo height', type: 'string', description: 'Rendered logo height, e.g. "40" or "40px".'}),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Brand'}
+    },
+  },
 })
 
-export const globalContact = defineType({
-  name: 'globalContact',
-  title: 'Global contact',
-  type: 'object',
+export const contact = defineType({
+  name: 'contact',
+  title: 'Contact',
+  type: 'document',
   fields: [
     defineField({
       name: 'addressText',
       title: 'Address',
       type: 'string',
+      description: 'Postal address as displayed to visitors (footer, contact page).',
       validation: (Rule) => Rule.required().max(240),
     }),
     defineField({
       name: 'phoneLabel',
       title: 'Phone label',
       type: 'string',
+      description: 'Phone number as displayed to visitors, e.g. "+1 (555) 123-4567".',
       validation: (Rule) => Rule.required().max(80),
     }),
     defineField({
       name: 'phoneHref',
       title: 'Phone link',
       type: 'string',
+      description: 'tel: link target for the phone number, e.g. "tel:+15551234567".',
       validation: (Rule) => Rule.required().max(120),
     }),
     defineField({
       name: 'emailLabel',
       title: 'Email label',
       type: 'string',
+      description: 'Email address as displayed to visitors.',
       validation: (Rule) => Rule.required().max(160),
     }),
     defineField({
       name: 'emailHref',
       title: 'Email link',
       type: 'string',
+      description: 'mailto: link target for the email address, e.g. "mailto:hello@example.com".',
       validation: (Rule) => Rule.required().max(200),
     }),
-    defineField({name: 'mapEmbedUrl', title: 'Map embed URL', type: 'url'}),
+    defineField({name: 'mapEmbedUrl', title: 'Map embed URL', type: 'url', description: 'Embeddable map URL (e.g. Google Maps embed link) shown on the contact page.'}),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Contact'}
+    },
+  },
 })
 
 export const socialLink = defineType({
   name: 'socialLink',
-  title: 'Social link',
+  title: 'Social Link',
   type: 'object',
   fields: [
-    defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+    defineField({
+      name: 'enable',
+      title: 'Enable',
+      type: 'boolean',
+      description: 'Uncheck to hide this social link without deleting it.',
+      initialValue: true,
+    }),
     defineField({
       name: 'label',
       title: 'Label',
       type: 'string',
+      description: 'Platform name shown as the link\'s accessible label, e.g. "Instagram".',
       validation: (Rule) => Rule.required().max(60),
     }),
     defineField({
       name: 'url',
       title: 'URL',
       type: 'url',
+      description: 'Full profile URL for this platform.',
       validation: (Rule) => Rule.required(),
     }),
   ],
 })
 
+export const socialLinks = defineType({
+  name: 'socialLinks',
+  title: 'Social Links',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'links',
+      title: 'Links',
+      type: 'array',
+      description: 'Social profile links shown in the header and/or footer.',
+      of: [defineArrayMember({type: 'socialLink'})],
+    }),
+  ],
+  preview: {
+    prepare() {
+      return {title: 'Social Links'}
+    },
+  },
+})
+
 export const navigationChildItem = defineType({
   name: 'navigationChildItem',
-  title: 'Navigation child item',
+  title: 'Navigation Child Item',
   type: 'object',
   fields: [
-    defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+    defineField({
+      name: 'enable',
+      title: 'Enable',
+      type: 'boolean',
+      description: 'Uncheck to hide this link without deleting it.',
+      initialValue: true,
+    }),
     defineField({
       name: 'name',
       title: 'Label',
       type: 'string',
+      description: 'Link text shown to visitors.',
       validation: (Rule) => Rule.required().max(80),
     }),
     defineField({
       name: 'url',
       title: 'URL',
       type: 'string',
+      description: 'Where this link points to. Absolute URL or a site-relative path.',
       validation: (Rule) => Rule.required().max(2048),
     }),
-    defineField({name: 'weight', title: 'Weight', type: 'number'}),
-    defineField({name: 'rel', title: 'Rel', type: 'string'}),
-    defineField({name: 'target', title: 'Target', type: 'string'}),
+    defineField({name: 'weight', title: 'Weight', type: 'number', description: 'Sort order among sibling links; lower numbers appear first.'}),
+    defineField({name: 'rel', title: 'Rel', type: 'string', description: 'HTML rel attribute, e.g. "noopener" or "nofollow".'}),
+    defineField({name: 'target', title: 'Target', type: 'string', description: 'HTML target attribute, e.g. "_blank" to open in a new tab.'}),
   ],
 })
 
 export const navigationItem = defineType({
   name: 'navigationItem',
-  title: 'Navigation item',
+  title: 'Navigation Item',
   type: 'object',
   fields: [
-    defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
+    defineField({
+      name: 'enable',
+      title: 'Enable',
+      type: 'boolean',
+      description: 'Uncheck to hide this link (and its children) without deleting it.',
+      initialValue: true,
+    }),
     defineField({
       name: 'name',
       title: 'Label',
       type: 'string',
+      description: 'Link text shown to visitors.',
       validation: (Rule) => Rule.required().max(80),
     }),
-    defineField({name: 'url', title: 'URL', type: 'string', validation: (Rule) => Rule.max(2048)}),
-    defineField({name: 'weight', title: 'Weight', type: 'number'}),
-    defineField({name: 'rel', title: 'Rel', type: 'string'}),
-    defineField({name: 'target', title: 'Target', type: 'string'}),
+    defineField({name: 'url', title: 'URL', type: 'string', description: 'Where this link points to. Leave blank if this item only opens a dropdown of children.', validation: (Rule) => Rule.max(2048)}),
+    defineField({name: 'weight', title: 'Weight', type: 'number', description: 'Sort order among sibling top-level links; lower numbers appear first.'}),
+    defineField({name: 'rel', title: 'Rel', type: 'string', description: 'HTML rel attribute, e.g. "noopener" or "nofollow".'}),
+    defineField({name: 'target', title: 'Target', type: 'string', description: 'HTML target attribute, e.g. "_blank" to open in a new tab.'}),
     defineField({
       name: 'children',
       title: 'Children',
       type: 'array',
+      description: 'Dropdown links shown under this item in the primary navigation.',
       of: [defineArrayMember({type: 'navigationChildItem'})],
     }),
   ],
 })
 
-export const globalHeader = defineType({
-  name: 'globalHeader',
-  title: 'Global header',
-  type: 'object',
+export const header = defineType({
+  name: 'header',
+  title: 'Header',
+  type: 'document',
   fields: [
     defineField({
       name: 'primaryNavigation',
       title: 'Primary navigation',
       type: 'array',
+      description: 'Main site navigation menu, ordered by each item\'s Weight.',
       of: [defineArrayMember({type: 'navigationItem'})],
       validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({name: 'navigationButton', title: 'Navigation button', type: 'globalButton'}),
+    defineField({name: 'navigationButton', title: 'Navigation button', type: 'globalButton', description: 'Call-to-action button shown at the end of the header navigation.'}),
     defineField({
       name: 'topBar',
       title: 'Top bar',
       type: 'object',
+      description: 'Thin bar above the main header showing working hours and quick contact links.',
       fields: [
-        defineField({name: 'workingHoursLabel', title: 'Working hours label', type: 'string'}),
-        defineField({name: 'workingHoursValue', title: 'Working hours value', type: 'string'}),
-        defineField({name: 'callLabel', title: 'Call label', type: 'string'}),
-        defineField({name: 'hotLineLabel', title: 'Hotline label', type: 'string'}),
-        defineField({name: 'letsChatLabel', title: 'Lets chat label', type: 'string'}),
+        defineField({name: 'workingHoursLabel', title: 'Working hours label', type: 'string', description: 'e.g. "Mon - Fri:".'}),
+        defineField({name: 'workingHoursValue', title: 'Working hours value', type: 'string', description: 'e.g. "9:00 - 18:00".'}),
+        defineField({name: 'callLabel', title: 'Call label', type: 'string', description: 'Label shown before the phone number, e.g. "Call us".'}),
+        defineField({name: 'hotLineLabel', title: 'Hotline label', type: 'string', description: 'Label for a secondary/emergency contact number.'}),
+        defineField({name: 'letsChatLabel', title: 'Lets chat label', type: 'string', description: 'Label for a chat/contact CTA in the top bar.'}),
       ],
     }),
     defineField({
       name: 'announcementBar',
       title: 'Announcement bar',
       type: 'object',
+      description: 'Optional dismissible banner shown above the header.',
       fields: [
-        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-        defineField({name: 'label', title: 'Label', type: 'text', rows: 2}),
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Show the announcement bar site-wide.', initialValue: true}),
+        defineField({name: 'label', title: 'Label', type: 'text', rows: 2, description: 'Announcement text.'}),
       ],
     }),
     defineField({
       name: 'offcanvas',
       title: 'Offcanvas',
       type: 'object',
+      description: 'Content shown in the slide-out mobile navigation panel.',
       fields: [
-        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-        defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
-        defineField({name: 'button', title: 'Button', type: 'globalButton'}),
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Include this content in the offcanvas panel.', initialValue: true}),
+        defineField({name: 'description', title: 'Description', type: 'text', rows: 3, description: 'Short blurb shown in the offcanvas panel.'}),
+        defineField({name: 'button', title: 'Button', type: 'globalButton', description: 'Call-to-action button shown in the offcanvas panel.'}),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Header'}
+    },
+  },
 })
 
-export const globalFooter = defineType({
-  name: 'globalFooter',
-  title: 'Global footer',
-  type: 'object',
+export const footer = defineType({
+  name: 'footer',
+  title: 'Footer',
+  type: 'document',
   fields: [
     defineField({
       name: 'primary',
       title: 'Primary footer',
       type: 'object',
+      description: 'Main footer row: company blurb, headings, and navigation columns.',
       fields: [
-        defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
-        defineField({name: 'supportLabel', title: 'Support label', type: 'string'}),
-        defineField({name: 'servicesHeading', title: 'Services heading', type: 'string'}),
-        defineField({name: 'contactHeading', title: 'Contact heading', type: 'string'}),
-        defineField({name: 'workHourLabel', title: 'Work hour label', type: 'string'}),
-        defineField({name: 'workHourValue', title: 'Work hour value', type: 'string'}),
-        defineField({name: 'sinceText', title: 'Since text', type: 'string'}),
+        defineField({name: 'description', title: 'Description', type: 'text', rows: 3, description: 'Short company blurb shown in the footer.'}),
+        defineField({name: 'supportLabel', title: 'Support label', type: 'string', description: 'Heading above support/contact details in the footer.'}),
+        defineField({name: 'servicesHeading', title: 'Services heading', type: 'string', description: 'Heading above the services link list in the footer.'}),
+        defineField({name: 'contactHeading', title: 'Contact heading', type: 'string', description: 'Heading above the contact details in the footer.'}),
+        defineField({name: 'workHourLabel', title: 'Work hour label', type: 'string', description: 'Label shown before working hours, e.g. "Working hours".'}),
+        defineField({name: 'workHourValue', title: 'Work hour value', type: 'string', description: 'e.g. "Mon - Fri, 9:00 - 18:00".'}),
+        defineField({name: 'sinceText', title: 'Since text', type: 'string', description: 'e.g. "Since 2015" shown in the footer.'}),
         defineField({
           name: 'navigation',
           title: 'Navigation',
           type: 'array',
+          description: 'Footer link column, ordered by each item\'s Weight.',
           of: [defineArrayMember({type: 'navigationChildItem'})],
         }),
       ],
@@ -274,27 +344,30 @@ export const globalFooter = defineType({
       name: 'secondary',
       title: 'Secondary footer',
       type: 'object',
+      description: 'Second footer row: newsletter signup and an additional navigation column.',
       fields: [
-        defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
-        defineField({name: 'callUsLabel', title: 'Call us label', type: 'string'}),
+        defineField({name: 'description', title: 'Description', type: 'text', rows: 3, description: 'Short blurb shown above the secondary footer navigation.'}),
+        defineField({name: 'callUsLabel', title: 'Call us label', type: 'string', description: 'Label shown before the phone number in the secondary footer.'}),
         defineField({
           name: 'subscription',
           title: 'Subscription',
           type: 'object',
+          description: 'Newsletter signup form shown in the secondary footer.',
           fields: [
-            defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-            defineField({name: 'title', title: 'Title', type: 'string'}),
-            defineField({name: 'note', title: 'Note', type: 'text', rows: 2}),
-            defineField({name: 'formAction', title: 'Form action', type: 'string'}),
-            defineField({name: 'mailchimpTagValue', title: 'Mailchimp tag value', type: 'string'}),
-            defineField({name: 'emailPlaceholder', title: 'Email placeholder', type: 'string'}),
-            defineField({name: 'submitLabel', title: 'Submit label', type: 'string'}),
+            defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Show the newsletter signup form.', initialValue: true}),
+            defineField({name: 'title', title: 'Title', type: 'string', description: 'Heading above the signup form.'}),
+            defineField({name: 'note', title: 'Note', type: 'text', rows: 2, description: 'Small print shown under the signup form.'}),
+            defineField({name: 'formAction', title: 'Form action', type: 'string', description: 'URL the signup form submits to.'}),
+            defineField({name: 'mailchimpTagValue', title: 'Mailchimp tag value', type: 'string', description: 'Mailchimp tag applied to subscribers who sign up here.'}),
+            defineField({name: 'emailPlaceholder', title: 'Email placeholder', type: 'string', description: 'Placeholder text shown in the empty email field.'}),
+            defineField({name: 'submitLabel', title: 'Submit label', type: 'string', description: 'Text shown on the submit button.'}),
           ],
         }),
         defineField({
           name: 'navigation',
           title: 'Navigation',
           type: 'array',
+          description: 'Second footer link column, ordered by each item\'s Weight.',
           of: [defineArrayMember({type: 'navigationChildItem'})],
         }),
       ],
@@ -303,25 +376,31 @@ export const globalFooter = defineType({
       name: 'copyright',
       title: 'Copyright',
       type: 'object',
+      description: 'Copyright line shown at the very bottom of the footer.',
       fields: [
-        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-        defineField({name: 'text', title: 'Text', type: 'text', rows: 2}),
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Show the copyright line.', initialValue: true}),
+        defineField({name: 'text', title: 'Text', type: 'text', rows: 2, description: 'Copyright text, e.g. "© 2026 Good Shepherd Insights. All rights reserved."'}),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Footer'}
+    },
+  },
 })
 
 export const globalFaviconItem = defineType({
   name: 'globalFaviconItem',
-  title: 'Favicon entry',
+  title: 'Favicon Entry',
   type: 'object',
   fields: [
-    defineField({name: 'rel', title: 'Rel', type: 'string', validation: (Rule) => Rule.required()}),
-    defineField({name: 'type', title: 'MIME type', type: 'string'}),
-    defineField({name: 'sizes', title: 'Sizes', type: 'string'}),
-    defineField({name: 'purpose', title: 'Purpose', type: 'string'}),
-    defineField({name: 'color', title: 'Color (Safari pinned)', type: 'string'}),
-    defineField({name: 'image', title: 'Image', type: 'imageWithAlt', validation: (Rule) => Rule.required()}),
+    defineField({name: 'rel', title: 'Rel', type: 'string', description: 'Value of the <link rel="..."> attribute, e.g. "icon" or "apple-touch-icon".', validation: (Rule) => Rule.required()}),
+    defineField({name: 'type', title: 'MIME type', type: 'string', description: 'e.g. "image/png" or "image/svg+xml".'}),
+    defineField({name: 'sizes', title: 'Sizes', type: 'string', description: 'e.g. "32x32" or "180x180".'}),
+    defineField({name: 'purpose', title: 'Purpose', type: 'string', description: 'e.g. "maskable" for adaptive app icons.'}),
+    defineField({name: 'color', title: 'Color (Safari pinned)', type: 'string', description: 'Mask icon color for Safari pinned tabs, e.g. "#0f172a". Only used when rel is "mask-icon".'}),
+    defineField({name: 'image', title: 'Image', type: 'imageWithAlt', description: 'The favicon/icon image file for this entry.', validation: (Rule) => Rule.required()}),
   ],
   preview: {
     select: {
@@ -340,19 +419,19 @@ export const globalFaviconItem = defineType({
   },
 })
 
-export const globalSeoDefaults = defineType({
-  name: 'globalSeoDefaults',
-  title: 'SEO defaults',
-  type: 'object',
+export const seoDefaults = defineType({
+  name: 'seoDefaults',
+  title: 'SEO Defaults',
+  type: 'document',
   fields: [
-    defineField({name: 'author', title: 'Author', type: 'string'}),
-    defineField({name: 'title', title: 'Fallback title', type: 'string'}),
-    defineField({name: 'description', title: 'Fallback description', type: 'text', rows: 3}),
-    defineField({name: 'tagline', title: 'Tagline', type: 'string'}),
-    defineField({name: 'taglineSeparator', title: 'Tagline separator', type: 'string'}),
-    defineField({name: 'baseUrl', title: 'Base URL', type: 'url'}),
-    defineField({name: 'defaultImage', title: 'Default social image path', type: 'string'}),
-    defineField({name: 'pageHeaderDefaultImage', title: 'Default page header image path', type: 'string'}),
+    defineField({name: 'author', title: 'Author', type: 'string', description: 'Default content author, used where a page or post does not set its own.'}),
+    defineField({name: 'title', title: 'Fallback title', type: 'string', description: 'Used as the page <title> when a page does not set its own SEO title.'}),
+    defineField({name: 'description', title: 'Fallback description', type: 'text', rows: 3, description: 'Used as the meta description when a page does not set its own.'}),
+    defineField({name: 'tagline', title: 'Tagline', type: 'string', description: 'Site tagline appended to page titles, e.g. "Good Shepherd Insights - Church Consulting".'}),
+    defineField({name: 'taglineSeparator', title: 'Tagline separator', type: 'string', description: 'Characters placed between a page title and the tagline, e.g. " | " or " - ".'}),
+    defineField({name: 'baseUrl', title: 'Base URL', type: 'url', description: 'Canonical site origin used to build absolute URLs, e.g. https://www.example.com.'}),
+    defineField({name: 'defaultImage', title: 'Default social image path', type: 'string', description: 'Fallback Open Graph/Twitter image when a page does not set its own.'}),
+    defineField({name: 'pageHeaderDefaultImage', title: 'Default page header image path', type: 'string', description: 'Fallback header/banner image for pages that do not set their own.'}),
     defineField({
       name: 'faviconSet',
       title: 'Favicon set',
@@ -360,145 +439,158 @@ export const globalSeoDefaults = defineType({
       of: [defineArrayMember({type: 'globalFaviconItem'})],
       description: 'Browser/app favicons. Each entry renders a <link rel="..."> tag.',
     }),
-    defineField({name: 'keywords', title: 'Default keywords', type: 'array', of: [defineArrayMember({type: 'string'})]}),
-    defineField({name: 'robots', title: 'Default robots directive', type: 'string'}),
-    defineField({name: 'ogLocale', title: 'Open Graph locale', type: 'string'}),
-    defineField({name: 'ogType', title: 'Open Graph type', type: 'string'}),
-    defineField({name: 'twitter', title: 'Twitter handle', type: 'string'}),
-    defineField({name: 'twitterCard', title: 'Twitter card', type: 'string'}),
-    defineField({name: 'themeColorLight', title: 'Theme color light', type: 'string'}),
-    defineField({name: 'themeColorDark', title: 'Theme color dark', type: 'string'}),
-    defineField({name: 'headContent', title: 'Custom head content', type: 'text', rows: 6}),
+    defineField({name: 'keywords', title: 'Default keywords', type: 'array', of: [defineArrayMember({type: 'string'})], description: 'Fallback meta keywords when a page does not set its own.'}),
+    defineField({name: 'robots', title: 'Default robots directive', type: 'string', description: 'Fallback robots meta value, e.g. "index, follow", when a page does not set its own.'}),
+    defineField({name: 'ogLocale', title: 'Open Graph locale', type: 'string', description: 'og:locale value, e.g. "en_US".'}),
+    defineField({name: 'ogType', title: 'Open Graph type', type: 'string', description: 'og:type value, e.g. "website".'}),
+    defineField({name: 'twitter', title: 'Twitter handle', type: 'string', description: 'Site\'s Twitter/X handle, used for twitter:site, e.g. "@example".'}),
+    defineField({name: 'twitterCard', title: 'Twitter card', type: 'string', description: 'twitter:card value, e.g. "summary_large_image".'}),
+    defineField({name: 'themeColorLight', title: 'Theme color light', type: 'string', description: 'theme-color meta value used in light mode, e.g. "#ffffff".'}),
+    defineField({name: 'themeColorDark', title: 'Theme color dark', type: 'string', description: 'theme-color meta value used in dark mode, e.g. "#0f172a".'}),
+    defineField({name: 'headContent', title: 'Custom head content', type: 'text', rows: 6, description: 'Raw HTML injected into <head> on every page. Use with care - not sanitized.'}),
   ],
+  preview: {
+    prepare() {
+      return {title: 'SEO Defaults'}
+    },
+  },
 })
 
-export const globalOrganization = defineType({
-  name: 'globalOrganization',
+export const organization = defineType({
+  name: 'organization',
   title: 'Organization',
-  type: 'object',
+  type: 'document',
   fields: [
-    defineField({name: 'name', title: 'Name', type: 'string'}),
-    defineField({name: 'streetAddress', title: 'Street address', type: 'string'}),
-    defineField({name: 'addressLocality', title: 'Address locality', type: 'string'}),
-    defineField({name: 'addressRegion', title: 'Address region', type: 'string'}),
-    defineField({name: 'email', title: 'Email', type: 'string'}),
-    defineField({name: 'telephone', title: 'Telephone', type: 'string'}),
-    defineField({name: 'logo', title: 'Logo path', type: 'string'}),
+    defineField({name: 'name', title: 'Name', type: 'string', description: 'Legal/organization name used in Organization JSON-LD structured data.'}),
+    defineField({
+      name: 'address',
+      title: 'Address',
+      type: 'object',
+      description: 'Postal address used in Organization JSON-LD structured data (schema.org PostalAddress).',
+      fields: [
+        defineField({name: 'streetAddress', title: 'Street address', type: 'string', description: 'schema.org PostalAddress.streetAddress.'}),
+        defineField({name: 'addressLocality', title: 'Address locality', type: 'string', description: 'City/locality used in Organization JSON-LD structured data.'}),
+        defineField({name: 'addressRegion', title: 'Address region', type: 'string', description: 'State/region used in Organization JSON-LD structured data.'}),
+      ],
+    }),
+    defineField({name: 'email', title: 'Email', type: 'string', description: 'Organization contact email used in JSON-LD structured data.'}),
+    defineField({name: 'telephone', title: 'Telephone', type: 'string', description: 'Organization phone number used in JSON-LD structured data.'}),
+    defineField({name: 'logo', title: 'Logo path', type: 'string', description: 'Logo image path used in Organization JSON-LD structured data.'}),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Organization'}
+    },
+  },
 })
 
-export const globalIndexing = defineType({
-  name: 'globalIndexing',
+export const indexing = defineType({
+  name: 'indexing',
   title: 'Indexing',
-  type: 'object',
+  type: 'document',
   fields: [
     defineField({
       name: 'robotsTxt',
       title: 'Robots.txt',
       type: 'object',
+      description: 'Controls the generated /robots.txt file.',
       fields: [
-        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-        defineField({name: 'disallow', title: 'Disallow paths', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Generate a robots.txt file for this site.', initialValue: true}),
+        defineField({name: 'disallow', title: 'Disallow paths', type: 'array', of: [defineArrayMember({type: 'string'})], description: 'Path prefixes to disallow, e.g. "/admin/".'}),
       ],
     }),
     defineField({
       name: 'sitemap',
       title: 'Sitemap',
       type: 'object',
+      description: 'Controls the generated XML sitemap.',
       fields: [
-        defineField({name: 'enable', title: 'Enable', type: 'boolean', initialValue: true}),
-        defineField({name: 'exclude', title: 'Excluded path fragments', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+        defineField({name: 'enable', title: 'Enable', type: 'boolean', description: 'Generate an XML sitemap for this site.', initialValue: true}),
+        defineField({name: 'exclude', title: 'Excluded path fragments', type: 'array', of: [defineArrayMember({type: 'string'})], description: 'URLs containing any of these fragments are left out of the sitemap.'}),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Indexing'}
+    },
+  },
 })
 
-export const globalForms = defineType({
-  name: 'globalForms',
+export const forms = defineType({
+  name: 'forms',
   title: 'Forms',
-  type: 'object',
+  type: 'document',
   fields: [
-    defineField({name: 'contactFormProvider', title: 'Contact form provider', type: 'string'}),
-    defineField({name: 'contactFormAction', title: 'Contact form action', type: 'string'}),
-    defineField({name: 'subscriptionFormAction', title: 'Subscription form action', type: 'string'}),
-    defineField({name: 'mailchimpTagValue', title: 'Mailchimp tag value', type: 'string'}),
+    defineField({name: 'contactFormProvider', title: 'Contact form provider', type: 'string', description: 'Which backend handles contact form submissions, e.g. "formspree" or "mailchimp".'}),
+    defineField({name: 'contactFormAction', title: 'Contact form action', type: 'string', description: 'URL the contact form submits to.'}),
+    defineField({name: 'subscriptionFormAction', title: 'Subscription form action', type: 'string', description: 'URL the newsletter subscription form submits to.'}),
+    defineField({name: 'mailchimpTagValue', title: 'Mailchimp tag value', type: 'string', description: 'Default Mailchimp tag applied to subscribers site-wide.'}),
     defineField({
       name: 'messages',
       title: 'Form messages',
       type: 'object',
+      description: 'Fallback status messages shown by forms across the site.',
       fields: [
-        defineField({name: 'missingAction', title: 'Missing action message', type: 'string'}),
-        defineField({name: 'subscribeSuccess', title: 'Subscribe success fallback', type: 'string'}),
-        defineField({name: 'subscribeError', title: 'Subscribe error fallback', type: 'string'}),
-        defineField({name: 'subscribeNetworkError', title: 'Subscribe network error fallback', type: 'string'}),
+        defineField({name: 'missingAction', title: 'Missing action message', type: 'string', description: 'Shown when a form has no submission URL configured.'}),
+        defineField({name: 'subscribeSuccess', title: 'Subscribe success fallback', type: 'string', description: 'Shown after a successful newsletter signup.'}),
+        defineField({name: 'subscribeError', title: 'Subscribe error fallback', type: 'string', description: 'Shown when the newsletter provider rejects a signup.'}),
+        defineField({name: 'subscribeNetworkError', title: 'Subscribe network error fallback', type: 'string', description: 'Shown when the newsletter signup request fails to reach the server.'}),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'Forms'}
+    },
+  },
 })
 
-export const globalAppManifest = defineType({
-  name: 'globalAppManifest',
-  title: 'App manifest',
-  type: 'object',
+export const appManifest = defineType({
+  name: 'appManifest',
+  title: 'App Manifest',
+  type: 'document',
   fields: [
-    defineField({name: 'name', title: 'Name', type: 'string'}),
-    defineField({name: 'shortName', title: 'Short name', type: 'string'}),
-    defineField({name: 'themeColor', title: 'Theme color', type: 'string'}),
-    defineField({name: 'backgroundColor', title: 'Background color', type: 'string'}),
-    defineField({name: 'display', title: 'Display', type: 'string'}),
+    defineField({name: 'name', title: 'Name', type: 'string', description: 'Full app name used in the web app manifest.'}),
+    defineField({name: 'shortName', title: 'Short name', type: 'string', description: 'Short name shown under the home-screen icon when the site is installed as a PWA.'}),
+    defineField({name: 'themeColor', title: 'Theme color', type: 'string', description: 'Manifest theme_color value, e.g. "#0f172a".'}),
+    defineField({name: 'backgroundColor', title: 'Background color', type: 'string', description: 'Manifest background_color value shown on the splash screen.'}),
+    defineField({name: 'display', title: 'Display', type: 'string', description: 'Manifest display mode, e.g. "standalone" or "browser".'}),
     defineField({
       name: 'icons',
       title: 'Icons',
       type: 'array',
+      description: 'App icons listed in the web app manifest, at various sizes.',
       of: [
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'sizes', title: 'Sizes', type: 'string'}),
-            defineField({name: 'type', title: 'Type', type: 'string'}),
-            defineField({name: 'purpose', title: 'Purpose', type: 'string'}),
-            defineField({name: 'image', title: 'Image', type: 'imageWithAlt', validation: (Rule) => Rule.required()}),
+            defineField({name: 'sizes', title: 'Sizes', type: 'string', description: 'e.g. "192x192" or "512x512".'}),
+            defineField({name: 'type', title: 'Type', type: 'string', description: 'e.g. "image/png".'}),
+            defineField({name: 'purpose', title: 'Purpose', type: 'string', description: 'e.g. "any" or "maskable".'}),
+            defineField({name: 'image', title: 'Image', type: 'imageWithAlt', description: 'The icon image file.', validation: (Rule) => Rule.required()}),
           ],
         }),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return {title: 'App Manifest'}
+    },
+  },
 })
 
-export const globalUiCopy = defineType({
-  name: 'globalUiCopy',
-  title: 'UI copy',
-  type: 'object',
-  fields: [
-    defineField({name: 'copy', title: 'Copy JSON', type: 'text', rows: 30}),
-  ],
-})
-
-export const siteGlobals = defineType({
-  name: 'siteGlobals',
-  title: 'Site globals',
+export const uiCopy = defineType({
+  name: 'uiCopy',
+  title: 'UI Copy',
   type: 'document',
   fields: [
-    defineField({name: 'brand', title: 'Brand', type: 'globalBrand'}),
-    defineField({name: 'contact', title: 'Contact', type: 'globalContact'}),
-    defineField({name: 'header', title: 'Header', type: 'globalHeader'}),
-    defineField({name: 'footer', title: 'Footer', type: 'globalFooter'}),
-    defineField({name: 'seoDefaults', title: 'SEO defaults', type: 'globalSeoDefaults'}),
-    defineField({name: 'organization', title: 'Organization', type: 'globalOrganization'}),
-    defineField({name: 'indexing', title: 'Indexing', type: 'globalIndexing'}),
-    defineField({name: 'forms', title: 'Forms', type: 'globalForms'}),
-    defineField({name: 'uiCopy', title: 'UI copy', type: 'globalUiCopy'}),
-    defineField({name: 'appManifest', title: 'App manifest', type: 'globalAppManifest'}),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social links',
-      type: 'array',
-      of: [defineArrayMember({type: 'socialLink'})],
-    }),
+    defineField({name: 'copy', title: 'Copy JSON', type: 'text', rows: 30, description: 'Raw JSON blob of miscellaneous UI strings consumed by the frontend. Must be valid JSON.'}),
   ],
   preview: {
     prepare() {
-      return {title: 'Site globals'}
+      return {title: 'UI Copy'}
     },
   },
 })
