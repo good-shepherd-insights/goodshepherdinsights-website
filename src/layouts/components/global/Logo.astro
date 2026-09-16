@@ -32,12 +32,12 @@ if (Astro.props.height) {
 }
 
 const mainLogo = src ? src : logoPath;
-const label = title || "Home";
+const label = title;
 ---
 
 <a
   href={getLocaleUrlCTM("/", Astro.currentLocale)}
-  aria-label={label}
+  aria-label={label ?? ""}
   class:list={["logo-wrapper py-4 lg:py-7", className]}>
   {
     mainLogo || logoAlternatePath ? (
@@ -47,7 +47,7 @@ const label = title || "Home";
             src={mainLogo}
             inlineSvg={mainLogo?.endsWith(".svg")}
             class="logo max-sm:h-12! max-sm:w-52!"
-            alt={toSentenceCase("Brand logo of " + label)}
+            alt={label ? toSentenceCase("Brand logo of " + label) : ""}
             style={{
               height: logoHeight,
               width: logoWidth,
@@ -59,7 +59,7 @@ const label = title || "Home";
             src={logoAlternatePath}
             inlineSvg={logoAlternatePath.endsWith(".svg")}
             class="logo-alternate"
-            alt={toSentenceCase("Brand logo of " + label)}
+            alt={label ? toSentenceCase("Brand logo of " + label) : ""}
             style={{
               height: logoHeight,
               width: logoWidth,

@@ -232,20 +232,20 @@ export const formspreeSubmit = async (
   data: Record<string, FormDataEntryValue>,
   timeout: number,
   form: HTMLFormElement,
+  fallbackEmail: string,
 ) => {
   try {
-    await fetchWithTimeout(
-      "https://formspree.io/f/xwpkvjaa",
-      data,
-      new AbortController(),
-      timeout,
-    );
+    const action =
+      form.getAttribute("data-action") || form.getAttribute("action") || "";
+    if (!action) {
+      throw new Error("Missing Formspree endpoint (data-action).");
+    }
+    await fetchWithTimeout(action, data, new AbortController(), timeout);
     setMessage("default", true, false, form);
     formReset(form);
   } catch (error) {
     setMessage(
-      error +
-        "! Please use this mail - [taxo-astro-theme@gmail.com](mailto:taxo-astro-theme@gmail.com) to submit a ticket!",
+      `${error}! Please use this mail - [${fallbackEmail}](mailto:${fallbackEmail}) to submit a ticket!`,
       true,
       false,
       form,
