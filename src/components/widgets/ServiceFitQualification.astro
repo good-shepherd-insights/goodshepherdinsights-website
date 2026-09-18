@@ -1,0 +1,271 @@
+---
+import Icons from "@/layouts/helpers/Icons.astro";
+import Button from "@/layouts/components/Button.astro";
+
+/**
+ * Service page — Audience and Fit Qualification (KEY_SERVICE_PAGE_COMPONENTS §2).
+ * Generic and scalable: all content arrives via props from the service's
+ * verified source of truth. Nothing service-specific is hardcoded.
+ *
+ * Five required content elements:
+ *  - intro:    one-sentence honesty preamble (why this section exists)
+ *  - fit:      situations that indicate a good fit (styled check list)
+ *  - roles:    buyer roles involved in the decision, each with the role's
+ *              ownership in the decision (label + description pair)
+ *  - context:  relevant organizational / operational / technical context
+ *  - nonFit:   explicit non-fit conditions
+ *
+ * Three structurally distinct variations, all light-surface (the band hero
+ * above ends dark; the service body below is bg-light):
+ *  "columns" — bordered fit card left; roles (divided list) and non-fit
+ *              (bg-secondary/30 panel, SanityServiceContent:149 pattern) right
+ *  "ledger"  — numbered 01/–03/ rows in the divided border-y list
+ *              (ProcessSection:97 mechanic); roles as audience pills
+ *              (SanityServiceContent:120 chip pattern); non-fit as a plain
+ *              divided list with minus markers
+ *  "styled"  — the CMS-native has-list-check treatment (components.css:548,
+ *              as rendered inside SanityServiceContent:149): fit criteria as
+ *              bold-label check items, roles as pills, non-fit as a
+ *              secondary-tinted styled list
+ */
+export type ServiceFitRole = {
+  label: string;
+  owns: string;
+};
+export type ServiceFitContent = {
+  intro?: string;
+  fitTitle: string;
+  fit: string[];
+  roles: ServiceFitRole[];
+  context?: string;
+  nonFit?: string[];
+  cta?: { label: string; href: string };
+};
+interface Props {
+  id: string;
+  content: ServiceFitContent;
+  variant: "columns" | "ledger" | "styled";
+  headingLevel?: "h2" | "h3";
+}
+const { id, content: c, variant, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+const colHead = "font-secondary text-primary text-h6-sm mb-5 font-bold tracking-wider uppercase";
+---
+
+<section id={id} aria-labelledby={`${id}-title`} class="pt-0!">
+  {
+    variant === "columns" ? (
+      <div class="bg-body">
+        <div class="container">
+          <Heading
+            id={`${id}-title`}
+            class="text-h3-sm md:text-h3 text-dark max-w-3xl"
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.fitTitle}
+          </Heading>
+          {c.intro && (
+            <p class="text-text-dark/85 mt-4 max-w-3xl text-base leading-relaxed lg:text-lg">{c.intro}</p>
+          )}
+          <div class="border-border-dark/20 mt-8 grid grid-cols-1 gap-10 border-t pt-10 lg:grid-cols-2 lg:gap-14">
+            <div class="border-border-dark/20 border p-6 md:p-8">
+              <h3 class={colHead}>Good fit</h3>
+              <ul class="space-y-4">
+                {c.fit.map((item) => (
+                  <li class="flex items-start gap-3">
+                    <Icons icon="CircleCheckBig" class="text-primary mt-1 size-5 shrink-0" />
+                    <p class="text-text-dark/85 text-base leading-relaxed">{item}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="flex flex-col gap-8">
+              {c.roles.length > 0 && (
+                <div>
+                  <h3 class={colHead}>Decisions involve</h3>
+                  <ul class="divide-border-dark border-border-dark divide-y border-y">
+                    {c.roles.map((role) => (
+                      <li class="py-3">
+                        <p class="text-dark text-base font-bold">{role.label}</p>
+                        <p class="text-text-dark/85 mt-1 text-base leading-relaxed">{role.owns}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {c.nonFit && c.nonFit.length > 0 && (
+                <div class="bg-secondary/30 rounded-lg p-6">
+                  <h3 class="font-secondary text-dark mb-4 text-h6-sm font-bold tracking-wider uppercase">This is not for</h3>
+                  <ul class="space-y-3">
+                    {c.nonFit.map((item) => (
+                      <li class="flex items-start gap-3">
+                        <Icons icon="CircleMinus" class="text-dark/70 mt-1 size-5 shrink-0" />
+                        <p class="text-text-dark/85 text-base leading-relaxed">{item}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+          {c.context && (
+            <p class="text-text-dark/85 mt-8 max-w-3xl text-base leading-relaxed lg:text-lg">{c.context}</p>
+          )}
+        </div>
+      </div>
+    ) : variant === "ledger" ? (
+      <div class="bg-body">
+        <div class="container">
+          <Heading
+            id={`${id}-title`}
+            class="text-h3-sm md:text-h3 text-dark max-w-3xl"
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.fitTitle}
+          </Heading>
+          {c.intro && (
+            <p class="text-text-dark/85 mt-4 max-w-3xl text-base leading-relaxed lg:text-lg">{c.intro}</p>
+          )}
+          <div class="border-border-dark divide-border-dark mt-8 grid w-full grid-cols-1 divide-y border-y">
+            <div class="grid grid-cols-1 gap-3 py-6 lg:grid-cols-12 lg:gap-10 lg:py-8">
+              <div class="lg:col-span-3">
+                <h3 class="text-h6-sm xl:text-h5-sm flex items-center gap-4">
+                  <span class="text-primary font-secondary font-bold">01/</span>
+                  <span>Good fit</span>
+                </h3>
+              </div>
+              <div class="has-list has-list-check styled-list lg:col-span-9">
+                <ul>
+                  {c.fit.map((item) => (
+                    <li class="text-text-dark/85 text-base leading-relaxed">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            {c.roles.length > 0 && (
+              <div class="grid grid-cols-1 gap-3 py-6 lg:grid-cols-12 lg:gap-10 lg:py-8">
+                <div class="lg:col-span-3">
+                  <h3 class="text-h6-sm xl:text-h5-sm flex items-center gap-4">
+                    <span class="text-primary font-secondary font-bold">02/</span>
+                    <span>Decisions involve</span>
+                  </h3>
+                </div>
+                <div class="lg:col-span-9">
+                  <div class="flex flex-wrap gap-3">
+                    {c.roles.map((role) => (
+                      <span
+                        class="border-primary/20 bg-primary/10 text-dark inline-block rounded-full border px-4 py-2 text-sm font-medium"
+                        title={role.owns}>
+                        {role.label}
+                      </span>
+                    ))}
+                  </div>
+                  <ul class="mt-6 space-y-3">
+                    {c.roles.map((role) => (
+                      <li class="text-text-dark/85 text-base leading-relaxed">
+                        <strong>{role.label}</strong> — {role.owns}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+            {c.nonFit && c.nonFit.length > 0 && (
+              <div class="grid grid-cols-1 gap-3 py-6 lg:grid-cols-12 lg:gap-10 lg:py-8">
+                <div class="lg:col-span-3">
+                  <h3 class="text-h6-sm xl:text-h5-sm flex items-center gap-4">
+                    <span class="text-primary font-secondary font-bold">03/</span>
+                    <span>This is not for</span>
+                  </h3>
+                </div>
+                <ul class="divide-border-dark border-border-dark divide-y border-y lg:col-span-9">
+                  {c.nonFit.map((item) => (
+                    <li class="flex items-start gap-3 py-3">
+                      <Icons icon="CircleMinus" class="text-dark/70 mt-1 size-5 shrink-0" />
+                      <span class="text-text-dark/85 text-base leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          {c.context && (
+            <p class="text-text-dark/85 mt-8 max-w-3xl text-base leading-relaxed lg:text-lg">{c.context}</p>
+          )}
+        </div>
+      </div>
+    ) : (
+      <div class="bg-secondary/30">
+        <div class="container pt-10 lg:pt-14 pb-10 lg:pb-12">
+          <Heading
+            id={`${id}-title`}
+            class="text-h3-sm md:text-h3 text-dark max-w-3xl"
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.fitTitle}
+          </Heading>
+          {c.intro && (
+            <p class="text-text-dark/85 mt-4 max-w-3xl text-base leading-relaxed lg:text-lg">{c.intro}</p>
+          )}
+          <div class="border-border-dark/20 mt-8 grid grid-cols-1 gap-10 border-t pt-10 lg:grid-cols-12 lg:gap-14">
+            <div class="lg:col-span-7">
+              <h3 class={colHead}>Good fit</h3>
+              <div class="has-list has-list-check styled-list bg-light rounded-lg p-6">
+                <div class="prose-styles prose-p:first:mt-0 prose-p:last:mb-0">
+                  <ul>
+                    {c.fit.map((item) => (
+                      <li class="text-text-dark/85 text-base leading-relaxed">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {c.context && (
+                <p class="text-text-dark/85 mt-6 text-base leading-relaxed lg:text-lg">{c.context}</p>
+              )}
+              {c.context && c.cta && (
+                <div class="mt-6">
+                  <Button
+                    label={c.cta.label}
+                    url={c.cta.href}
+                    variant="fill"
+                    class="whitespace-normal min-w-0" />
+                </div>
+              )}
+            </div>
+            <div class="lg:col-span-5">
+              {c.roles.length > 0 && (
+                <div>
+                  <h3 class={colHead}>Decisions involve</h3>
+                  <ul class="space-y-4">
+                    {c.roles.map((role) => (
+                      <li>
+                        <p class="text-dark text-base font-bold">{role.label}</p>
+                        <p class="text-text-dark/85 mt-1 text-base leading-relaxed">{role.owns}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {c.nonFit && c.nonFit.length > 0 && (
+                <div class="border-border-dark mt-8 border-t pt-6">
+                  <h3 class="font-secondary text-dark text-h6-sm mb-4 font-bold tracking-wider uppercase">This is not for</h3>
+                  <ul class="divide-border-dark divide-y">
+                    {c.nonFit.map((item) => (
+                      <li class="flex items-start gap-3 py-3">
+                        <Icons icon="CircleMinus" class="text-dark/70 mt-1 size-5 shrink-0" />
+                        <span class="text-text-dark/85 text-base leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</section>

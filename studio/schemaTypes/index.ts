@@ -106,10 +106,12 @@ import {
 } from './siteGlobals'
 import {
   serviceCta,
+  serviceFit,
   serviceImage,
   serviceIntro,
   serviceNarrative,
   serviceOffering,
+  serviceProcess,
   statCallout,
 } from './serviceBlocks'
 import {
@@ -191,6 +193,8 @@ export const schemaTypes = [
   statCallout,
   serviceOffering,
   serviceCta,
+  serviceFit,
+  serviceProcess,
   serviceImage,
   serviceIndex,
   serviceFeatureGridSection,

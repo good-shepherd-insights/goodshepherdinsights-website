@@ -1,0 +1,205 @@
+---
+import Button from "@/layouts/components/Button.astro";
+import SectionBadge from "@/layouts/components/global/SectionBadge.astro";
+
+/**
+ * Service page hero. One content architecture — service badge, display headline,
+ * buyer statement, problem and promise columns, outcome + CTA block — in three
+ * visual variations built from committed section mechanics:
+ *  "columns" — light treatment: badge + display headline, problem/promise columns,
+ *              bg-primary outcome panel with CTA; bg-light base band ties it into
+ *              the page (PageHeader / AboutHeroSection grounding)
+ *  "inset"   — the same flow inside an inset dark rounded panel
+ *              (StatsSection / SocialBarSection card mechanic)
+ *  "band"    — full-bleed bg-primary band with optional 10%-opacity image backdrop
+ *              (FeaturesGridCard backdrop mechanic) and divided columns
+ *              (SocialBarSection dividers)
+ * Each variant presents the same five elements: buyer, problem, promise,
+ * outcome (+label), primary service CTA. All copy arrives via props.
+ */
+export type ServiceHeroContent = {
+  service: string;
+  headline: string;
+  buyer?: string;
+  problem?: string;
+  promise?: string;
+  outcomeLabel: string;
+  outcome: string;
+  cta: { label: string; href: string };
+  image?: { src: string; alt: string };
+};
+interface Props {
+  id: string;
+  content: ServiceHeroContent;
+  variant: "columns" | "inset" | "band";
+  headingLevel?: "h1" | "h2";
+}
+const { id, content: c, variant, headingLevel = "h1" } = Astro.props;
+const Heading = headingLevel;
+const paras = (text?: string) => (text || "").split("\n\n").filter(Boolean);
+const labels = {
+  buyer: "Who this is for",
+  problem: "The problem",
+  promise: "Our promise",
+  outcome: "The outcome",
+};
+const colHead = (color: string) =>
+  `font-secondary text-h6-sm mb-4 font-bold tracking-wider uppercase ${color}`;
+const colBody = "space-y-4 text-base leading-relaxed lg:text-lg";
+const ctaWrap = "whitespace-normal min-w-0";
+---
+
+<section id={id} aria-labelledby={`${id}-title`} class="pt-0!">
+  {
+    variant === "columns" ? (
+      <div class="relative">
+        <div class="bg-light absolute bottom-0 left-0 z-[-1] h-18 w-full sm:h-30 md:h-40 lg:h-52 xl:h-68" aria-hidden="true" />
+        <div class="container">
+          <SectionBadge title={c.service} dataAos="reveal-anim-left" />
+          <Heading
+            id={`${id}-title`}
+            class="text-h1-sm sm:text-h2 md:text-h1 lg:text-display-4 mt-2 max-w-5xl leading-[1.1]"
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.headline}
+          </Heading>
+          {c.buyer && (
+            <div class="mt-8 max-w-2xl">
+              <h3 class={`${colHead("text-primary")}`}>{labels.buyer}</h3>
+              <div class="space-y-4 text-lg leading-relaxed">{paras(c.buyer).map((p) => <p>{p}</p>)}</div>
+            </div>
+          )}
+          {(c.problem || c.promise) && (
+            <div class="border-border-dark/20 mt-12 grid grid-cols-1 gap-10 border-t pt-10 md:mt-14 lg:gap-14 xl:gap-20 md:grid-cols-2">
+              {c.problem && (
+                <div>
+                  <h3 class={`${colHead("text-primary")}`}>{labels.problem}</h3>
+                  <div class={colBody}>{paras(c.problem).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+              {c.promise && (
+                <div>
+                  <h3 class={`${colHead("text-primary")}`}>{labels.promise}</h3>
+                  <div class={colBody}>{paras(c.promise).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+            </div>
+          )}
+          <div class="bg-primary text-text-light mt-12 flex flex-col gap-6 rounded-lg p-6 md:mt-14 md:flex-row md:items-center md:justify-between md:gap-10 md:p-8 lg:p-10">
+            <div class="max-w-3xl">
+              <h3 class="text-accent font-secondary mb-2 font-bold">{labels.outcome}</h3>
+              <div class="space-y-3 text-base leading-relaxed text-white/80">{paras(c.outcome).map((p) => <p>{p}</p>)}</div>
+            </div>
+            <div class="shrink-0">
+              <Button label={c.cta.label} url={c.cta.href} variant="fill" class={`btn-accent effect-color-dark ${ctaWrap}`} />
+            </div>
+            <div class="bg-accent absolute right-4 bottom-4 flex size-2 lg:size-3" aria-hidden="true" />
+          </div>
+        </div>
+      </div>
+    ) : variant === "inset" ? (
+      <div class="bg-body">
+        <div class="bg-body-dark relative container overflow-hidden! rounded-md px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
+          <p class="text-accent font-secondary mb-6 text-h6-sm font-bold tracking-wider uppercase">{c.service}</p>
+          <Heading
+            id={`${id}-title`}
+            class="text-h3-sm sm:text-h2 md:text-h1 lg:text-display-4 text-text-light max-w-5xl leading-[1.1]"
+            data-aos="reveal-anim-top"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.headline}
+          </Heading>
+          {c.buyer && (
+            <div class="mt-8 max-w-2xl">
+              <h3 class="text-accent font-secondary text-h6-sm mb-3 font-bold tracking-wider uppercase">{labels.buyer}</h3>
+              <div class="text-white/85 space-y-4 text-lg leading-relaxed">{paras(c.buyer).map((p) => <p>{p}</p>)}</div>
+            </div>
+          )}
+          {(c.problem || c.promise) && (
+            <div class="border-white/10 mt-12 grid grid-cols-1 gap-10 border-t pt-10 lg:gap-14 xl:gap-20 md:grid-cols-2">
+              {c.problem && (
+                <div>
+                  <h3 class="text-accent font-secondary text-h6-sm mb-4 font-bold tracking-wider uppercase">{labels.problem}</h3>
+                  <div class="text-white/80 space-y-4 text-base leading-relaxed lg:text-lg">{paras(c.problem).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+              {c.promise && (
+                <div>
+                  <h3 class="text-accent font-secondary text-h6-sm mb-4 font-bold tracking-wider uppercase">{labels.promise}</h3>
+                  <div class="text-white/80 space-y-4 text-base leading-relaxed lg:text-lg">{paras(c.promise).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+            </div>
+          )}
+          <div class="border-white/10 mt-12 flex flex-col gap-6 border-t pt-8 md:flex-row md:items-center md:justify-between md:gap-10">
+            <div class="max-w-3xl">
+              <h3 class="text-accent font-secondary mb-2 font-bold">{labels.outcome}</h3>
+              <div class="text-white/80 space-y-3 text-base leading-relaxed">{paras(c.outcome).map((p) => <p>{p}</p>)}</div>
+            </div>
+            <div class="shrink-0">
+              <Button label={c.cta.label} url={c.cta.href} variant="fill" class={`btn-accent effect-color-dark ${ctaWrap}`} />
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div class="bg-primary relative overflow-hidden">
+        {c.image && (
+          <img
+            src={c.image.src}
+            alt=""
+            aria-hidden="true"
+            width="1024"
+            height="1024"
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-10"
+          />
+        )}
+        <div class="relative z-10 container py-10 lg:py-14">
+          <Heading
+            id={`${id}-title`}
+            class="text-text-light text-h1-sm sm:text-h2 md:text-h1 lg:text-display-4 max-w-5xl leading-[1.1]"
+            data-aos="reveal-anim-left"
+            data-aos-offset="0"
+            data-aos-duration="600">
+            {c.headline}
+          </Heading>
+          {c.buyer && (
+            <div class="mt-8 max-w-2xl">
+              <h3 class="text-accent font-secondary text-h6-sm mb-3 font-bold tracking-wider uppercase">{labels.buyer}</h3>
+              <div class="text-white/85 space-y-4 text-lg leading-relaxed">{paras(c.buyer).map((p) => <p>{p}</p>)}</div>
+            </div>
+          )}
+          {(c.problem || c.promise) && (
+            <div class="border-white/10 mt-12 grid grid-cols-1 gap-10 border-t pt-10 lg:gap-14 xl:gap-20 md:grid-cols-2">
+              {c.problem && (
+                <div>
+                  <h3 class="text-accent font-secondary text-h6-sm mb-4 font-bold tracking-wider uppercase">{labels.problem}</h3>
+                  <div class="text-white/80 space-y-4 text-base leading-relaxed lg:text-lg">{paras(c.problem).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+              {c.promise && (
+                <div>
+                  <h3 class="text-accent font-secondary text-h6-sm mb-4 font-bold tracking-wider uppercase">{labels.promise}</h3>
+                  <div class="text-white/80 space-y-4 text-base leading-relaxed lg:text-lg">{paras(c.promise).map((p) => <p>{p}</p>)}</div>
+                </div>
+              )}
+            </div>
+          )}
+          <div class="border-white/10 mt-12 flex flex-col gap-6 border-t pt-8 md:flex-row md:items-center md:justify-between md:gap-10">
+            <div class="max-w-3xl">
+              <h3 class="text-accent font-secondary mb-2 font-bold">{labels.outcome}</h3>
+              <div class="text-white/80 space-y-3 text-base leading-relaxed">{paras(c.outcome).map((p) => <p>{p}</p>)}</div>
+            </div>
+            <div class="shrink-0">
+              <Button label={c.cta.label} url={c.cta.href} variant="fill" class={`btn-accent effect-color-dark ${ctaWrap}`} />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</section>

@@ -171,12 +171,78 @@ export const service = defineType({
       group: 'content',
     }),
     defineField({
+      name: 'hero',
+      title: 'Service hero',
+      description:
+        'Five hero elements rendered by the ServiceHero component (shown under the page title). Buyer, problem and promise have no fallbacks — leave a field empty and that block is skipped.',
+      type: 'object',
+      group: 'content',
+      fields: [
+        defineField({
+          name: 'headline',
+          title: 'Headline',
+          description:
+            'Overrides the excerpt in the hero. Keep it under 60 characters so it stays on two lines at display size.',
+          type: 'string',
+          validation: (Rule) => Rule.max(90),
+        }),
+        defineField({
+          name: 'buyer',
+          title: 'Target buyer',
+          description:
+            'Who this service is for. Separate paragraphs with a blank line.',
+          type: 'text',
+          rows: 4,
+        }),
+        defineField({
+          name: 'problem',
+          title: 'Triggering problem',
+          description:
+            'The specific problem that makes someone look for this service. Separate paragraphs with a blank line.',
+          type: 'text',
+          rows: 6,
+        }),
+        defineField({
+          name: 'promise',
+          title: 'Service promise',
+          description:
+            'What Good Shepherd Insights commits to do. Separate paragraphs with a blank line.',
+          type: 'text',
+          rows: 6,
+        }),
+        defineField({
+          name: 'outcome',
+          title: 'Concrete outcome',
+          description:
+            'What the buyer walks away with. Falls back to the serviceCta text in the body when empty.',
+          type: 'text',
+          rows: 4,
+        }),
+        defineField({
+          name: 'variant',
+          title: 'Hero variant',
+          type: 'string',
+          options: {
+            list: [
+              {title: 'Columns (light)', value: 'columns'},
+              {title: 'Inset (dark panel)', value: 'inset'},
+              {title: 'Band (full-bleed)', value: 'band'},
+            ],
+            layout: 'radio',
+          },
+          initialValue: 'band',
+        }),
+      ],
+    }),
+    defineField({
       name: 'body',
       title: 'Service content',
       type: 'array',
       group: 'content',
       of: [
         defineArrayMember({type: 'serviceIntro'}),
+        defineArrayMember({type: 'serviceFit'}),
+        defineArrayMember({type: 'serviceProcess'}),
         defineArrayMember({type: 'serviceNarrative'}),
         defineArrayMember({type: 'statCallout'}),
         defineArrayMember({type: 'serviceOffering'}),

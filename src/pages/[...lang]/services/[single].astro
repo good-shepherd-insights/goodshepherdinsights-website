@@ -2,7 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils.ts";
 import config from ".astro/config.generated.json";
-import PageHeader from "@/components/widgets/PageHeader.astro";
+import ServicePageHeader from "../../../components/widgets/ServicePageHeader.astro";
 import FeaturesGridThree from "@/components/sections/FeaturesGridThree.astro";
 import StatsMarqueeSection from "@/components/sections/StatsMarqueeSection.astro";
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo.astro";
@@ -18,6 +18,11 @@ import {
 } from "@/lib/sanity/services";
 import { getSiteGlobals } from "@/lib/sanity/siteGlobals";
 import SanityServiceContent from "@/components/widgets/SanityServiceContent.astro";
+import ServiceHero from "../../../components/widgets/ServiceHero.astro";
+import {
+  getServiceHeroContent,
+  type SanityServiceHeroVariant,
+} from "@/lib/sanity/services";
 import { buildSchemaIds } from "@/lib/seo/ids";
 import { buildServiceSchema } from "@/lib/seo/service";
 
@@ -87,6 +92,8 @@ const faqList =
         })) || []
     : [];
 
+const heroContent = getServiceHeroContent(service);
+
 let faqSchema: FAQPage | undefined;
 if (faqList.length > 0) {
   faqSchema = {
@@ -107,17 +114,18 @@ if (faqList.length > 0) {
   imageAlt={service.heroImage?.alt}
   hideOffcanvas={true}
   schemaMainEntityId={serviceSchemaId}>
-  <PageHeader
-    content={{
-      badge: service.title,
-      title: service.title,
-      image: imageUrl,
-      imageAlt: service.heroImage?.alt,
-      imageText: service.title,
-    }}
-    contentClass="max-w-2xl!"
-  />
-  <SanityServiceContent value={service.body || []} />
+  <ServicePageHeader badge="Services" title={service.title} contentClass="max-w-2xl!" />
+  {
+    heroContent && (
+      <ServiceHero
+        id={`service-hero-${service.slug.current}`}
+        content={heroContent}
+        variant={(service.hero?.variant || "band") as SanityServiceHeroVariant}
+        headingLevel="h2"
+      />
+    )
+  }
+  <SanityServiceContent value={service.body || []} service={service} />
   {
     servicesIndex.featureGrid && (
       <FeaturesGridThree content={servicesIndex.featureGrid} />
