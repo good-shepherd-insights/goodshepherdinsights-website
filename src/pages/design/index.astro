@@ -1,0 +1,114 @@
+---
+import Base from "@/layouts/Base.astro";
+import ServiceEngagementProcess, { type ServiceProcessContent } from "../../components/widgets/ServiceEngagementProcess.astro";
+
+// QA fixture — Component 3 (KEY_SERVICE_PAGE_COMPONENTS §3, Defined Engagement
+// Process). Content below is repurposed from VERIFIED material only — per user
+// instruction to add relevant content, not placeholders. Sources:
+//   phases → the 4 chms serviceOffering blocks (Sanity body): Selection & Evaluation,
+//            Migration, Integration, Optimization — names condensed from titles,
+//            descriptions from their verified descriptions
+//   md:117 (migration phase chain verified verbatim): data mapping, cleansing,
+//            validation, parallel running, staff training, cutover
+//   clientInputs → composed ONLY from md:113 verified phrases (ministry size,
+//            growth trajectory, staff capacity, integration needs, data requirements)
+//            + md:51 (tools/workflows staff actually use)
+//   outputs → condensed from each offering's verified deliverables/outcomes
+//   timing → omitted; no verified timeframe exists for the full engagement
+const content: ServiceProcessContent = {
+  processTitle: "How the Engagement Works",
+  intro: "The requirements come first. Vendors respond to them.",
+  phases: [
+    {
+      name: "Selection & Evaluation",
+      description:
+        "A disciplined, independent evaluation replaces committee chaos with clear, data-driven recommendations — scored against your actual ministry needs, not vendor marketing.",
+    },
+    {
+      name: "Migration",
+      description:
+        "Led end-to-end: your data protected, your vendor managed, your staff trained, your new platform launched clean — a controlled project instead of a crisis.",
+    },
+    {
+      name: "Integration",
+      description:
+        "Your ChMS connected to your giving platform, accounting software, email system, and website — a unified stack that actually works together.",
+    },
+    {
+      name: "Optimization & Training",
+      description:
+        "The gap closed between what you pay for and what you actually use — reliable reporting leadership can act on.",
+    },
+  ],
+  clientInputs: [
+    "Your ministry's size, growth trajectory, and staff capacity",
+    "Your integration needs and data requirements",
+    "An inventory of the tools and workflows your staff actually use",
+    "Access to current systems for audits and training",
+  ],
+  outputs: [
+    {
+      label: "Platform recommendation",
+      description:
+        "A board-ready recommendation with clear rationale, risk assessment, and implementation timeline.",
+    },
+    {
+      label: "Controlled migration",
+      description:
+        "Data mapping, cleansing, validation, parallel running, and a cutover plan — executed, not advised on.",
+    },
+    {
+      label: "Unified integrations",
+      description:
+        "Your ChMS, giving, accounting, email, and website connected with end-to-end data flow testing.",
+    },
+    {
+      label: "Feature utilization gains",
+      description:
+        "Workflows reconfigured to match how your church operates, with leadership dashboards you can act on.",
+    },
+  ],
+};
+
+const variants = [
+  { key: "base", name: "01" },
+  { key: "compactNeeds", name: "02" },
+  { key: "dense", name: "03" },
+] as const;
+---
+<Base title="Defined Engagement Process" robots="noindex, nofollow" hideOffcanvas={true}>
+  <header class="container pt-20 pb-4">
+    <h1 class="text-h3-sm md:text-h3">Defined Engagement Process</h1>
+    <p class="mt-3 max-w-3xl text-base leading-relaxed">
+      Goal: the buyer sees how the engagement works before contacting anyone. The component must present, sourced
+      from the service's verified content:
+    </p>
+    <ul class="mt-4 max-w-3xl space-y-2 text-base leading-relaxed">
+      <li>Ordered phases of the engagement</li>
+      <li>What happens in each phase</li>
+      <li>Inputs required from the client</li>
+      <li>Outputs produced by the service provider</li>
+      <li>Decision points, dependencies, and timing guidance when verified</li>
+    </ul>
+    <p class="mt-4 max-w-3xl text-base leading-relaxed">
+      Requirements: generic and scalable across all services, content from data not code, existing project styling.
+      Content shown is repurposed from verified ChMS Advisory sources (see trace comments in source).
+    </p>
+    <nav aria-label="Process variations" class="mt-5 flex flex-wrap gap-6">
+      {
+        variants.map((v) => (
+          <a class="text-primary underline underline-offset-2" href={`#process-${v.key}`}>
+            {v.name} — {v.key}
+          </a>
+        ))
+      }
+    </nav>
+  </header>
+  {
+    variants.map((v) => (
+      <div id={`wrap-process-${v.key}`} class="mt-10">
+        <ServiceEngagementProcess id={`process-${v.key}`} content={content} variant={v.key} headingLevel="h2" />
+      </div>
+    ))
+  }
+</Base>

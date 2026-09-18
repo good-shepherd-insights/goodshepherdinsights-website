@@ -1,0 +1,42 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+import SectionBadge from "@/layouts/components/global/SectionBadge.astro";
+
+type Props = {
+  badge?: string;
+  title?: string;
+  contentClass?: string;
+};
+
+/**
+ * Service page title header: badge + H1 only. Same committed pattern as
+ * PageHeader (centered max-w-5xl, reveal-anim-top, identical type ladder)
+ * minus the image block, base band, and default-image fallback, so service
+ * pages can pair it with the ServiceHero component without duplicating imagery.
+ * Do not add image handling here — the ServiceHero band owns the image.
+ */
+const { badge, title, contentClass } = Astro.props;
+---
+
+<section class="relative pb-10 md:pb-14">
+  <div class="container">
+    <div class:list={["mx-auto flex max-w-5xl flex-col items-center text-center", contentClass]}>
+      {
+        badge && (
+          <SectionBadge title={badge} variant="secondary" dataAos="reveal-anim-top" />
+        )
+      }
+      {
+        title && (
+          <h1
+            data-aos="reveal-anim-top"
+            data-aos-offset="0"
+            data-aos-duration="400"
+            class:list={["text-h2-sm lg:text-h1-sm leading-tight"]}
+            set:html={markdownify(title)}
+          />
+        )
+      }
+    </div>
+  </div>
+</section>

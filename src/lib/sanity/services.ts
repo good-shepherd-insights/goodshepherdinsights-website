@@ -37,6 +37,28 @@ export type SanityServiceBlock =
       text: SanityInlineText;
     }
   | {
+      _type: "serviceFit";
+      _key: string;
+      fitTitle?: string;
+      intro?: string;
+      fit?: string[];
+      roles?: Array<{ label?: string; owns?: string }>;
+      context?: string;
+      nonFit?: string[];
+      variant?: "columns" | "ledger" | "styled";
+    }
+  | {
+      _type: "serviceProcess";
+      _key: string;
+      processTitle?: string;
+      intro?: string;
+      phases?: Array<{ name?: string; description?: string }>;
+      clientInputs?: string[];
+      outputs?: Array<{ label?: string; description?: string }>;
+      timing?: string;
+      variant?: "base" | "compactNeeds" | "dense";
+    }
+  | {
       _type: "serviceNarrative";
       _key: string;
       heading?: string;
@@ -83,6 +105,17 @@ export type SanityServiceBlock =
       };
     };
 
+export type SanityServiceHeroVariant = "columns" | "inset" | "band";
+
+export interface SanityServiceHero {
+  headline?: string;
+  buyer?: string;
+  problem?: string;
+  promise?: string;
+  outcome?: string;
+  variant?: SanityServiceHeroVariant;
+}
+
 export interface SanityService {
   _id: string;
   title: string;
@@ -93,6 +126,7 @@ export interface SanityService {
   serviceType: string;
   schema?: SanityServiceSchema;
   heroImage?: SanityImageWithAlt;
+  hero?: SanityServiceHero;
   body?: SanityServiceBlock[];
   seo?: {
     metaTitle?: string;
@@ -232,6 +266,7 @@ const serviceFields = `
   serviceType,
   schema,
   heroImage,
+  hero,
   body,
   seo
 `;
@@ -340,4 +375,147 @@ export const serviceImageUrl = (
 
   const builder = sanityImageUrl(asset).width(width).auto("format");
   return height ? builder.height(height).fit("crop").url() : builder.url();
+};
+
+const inlineTextToPlain = (value: SanityInlineText): string =>
+  value
+    .map((block) =>
+      (block.children || [])
+        .map((span) => span.text)
+        .join("")
+        .trim(),
+    )
+    .filter(Boolean)
+    .join("\n\n");
+
+export type ServiceHeroContent = {
+  service: string;
+  headline: string;
+  buyer?: string;
+  problem?: string;
+  promise?: string;
+  outcomeLabel: string;
+  outcome: string;
+  cta: { label: string; href: string };
+  image?: { src: string; alt: string };
+};
+
+/**
+ * Assembles ServiceHero content from a service document.
+ * Hero fields (CMS) win; documented fallbacks keep pages rendering for services
+ * that have not filled the hero object in yet. Throws only when the service
+ * cannot produce the required CTA, outcome label, or title.
+ */
+export const getServiceHeroContent = (
+  service: SanityService,
+): ServiceHeroContent | null => {
+  const ctaBlock = service.body?.find((block) => block._type === "serviceCta");
+  if (!ctaBlock || !ctaBlock.linkText || !ctaBlock.href) return null;
+
+  const image = serviceImageUrl(service, 1024, 1024);
+  const hero = service.hero || {};
+
+  const buyer = hero.buyer?.trim();
+  const problem = hero.problem?.trim();
+  const promise = hero.promise?.trim();
+  const outcome =
+    hero.outcome?.trim() ||
+    (ctaBlock.text ? inlineTextToPlain(ctaBlock.text) : "");
+
+  if (!buyer && !problem && !promise && !outcome) return null;
+
+  return {
+    service: service.title,
+    headline: hero.headline?.trim() || service.excerpt || service.title,
+    buyer,
+    problem,
+    promise,
+    outcomeLabel: ctaBlock.title,
+    outcome,
+    cta: { label: ctaBlock.linkText, href: ctaBlock.href },
+    image: image
+      ? { src: image, alt: service.heroImage?.alt || service.title }
+      : undefined,
+  };
+};
+
+export type ServiceFitRender = {
+  content: import("../../components/widgets/ServiceFitQualification.astro").ServiceFitContent;
+  variant: "columns" | "ledger" | "styled";
+};
+
+/**
+ * Maps a serviceFit body block to ServiceFitQualification props.
+ * The CTA is resolved from the sibling serviceCta block (single source of
+ * truth). Returns null when the block has no meaningful content or the
+ * service has no usable serviceCta — explicit, never silently partial.
+ */
+export const getServiceFitRender = (
+  block: Extract<SanityServiceBlock, { _type: "serviceFit" }>,
+  service: SanityService,
+): ServiceFitRender | null => {
+  const fit = (block.fit || []).map((item) => item?.trim()).filter(Boolean) as string[];
+  const roles = (block.roles || [])
+    .map((role) => ({ label: role.label?.trim() || "", owns: role.owns?.trim() || "" }))
+    .filter((role) => role.label && role.owns);
+  const nonFit = (block.nonFit || []).map((item) => item?.trim()).filter(Boolean) as string[];
+
+  if (fit.length === 0 && roles.length === 0 && nonFit.length === 0) return null;
+
+  const ctaBlock = service.body?.find((b) => b._type === "serviceCta");
+  if (!ctaBlock || !ctaBlock.linkText || !ctaBlock.href) return null;
+
+  return {
+    content: {
+      fitTitle: block.fitTitle?.trim() || "Who This Is For",
+      intro: block.intro?.trim() || undefined,
+      fit,
+      roles,
+      context: block.context?.trim() || undefined,
+      nonFit,
+      cta: { label: ctaBlock.linkText, href: ctaBlock.href },
+    },
+    variant: block.variant || "styled",
+  };
+};
+
+export type ServiceProcessRender = {
+  content: import("../../components/widgets/ServiceEngagementProcess.astro").ServiceProcessContent;
+  variant: "base" | "compactNeeds" | "dense";
+};
+
+/**
+ * Maps a serviceProcess body block to ServiceEngagementProcess props.
+ * Returns null when the block has no meaningful content — explicit, never
+ * silently partial. Row positions are fixed by the component: phases, then
+ * client inputs, then outputs — never rearranged.
+ */
+export const getServiceProcessRender = (
+  block: Extract<SanityServiceBlock, { _type: "serviceProcess" }>,
+  service: SanityService,
+): ServiceProcessRender | null => {
+  const phases = (block.phases || [])
+    .map((phase) => ({ name: phase.name?.trim() || "", description: phase.description?.trim() || "" }))
+    .filter((phase) => phase.name && phase.description);
+  const clientInputs = (block.clientInputs || []).map((item) => item?.trim()).filter(Boolean) as string[];
+  const outputs = (block.outputs || [])
+    .map((output) => ({ label: output.label?.trim() || "", description: output.description?.trim() || "" }))
+    .filter((output) => output.label);
+
+  if (phases.length === 0) return null;
+
+  const ctaBlock = service.body?.find((b) => b._type === "serviceCta");
+
+  return {
+    content: {
+      processTitle: block.processTitle?.trim() || "How the Engagement Works",
+      intro: block.intro?.trim() || undefined,
+      phases,
+      clientInputs: clientInputs.length > 0 ? clientInputs : undefined,
+      outputs: outputs.length > 0 ? outputs : undefined,
+      timing: block.timing?.trim() || undefined,
+      cta: ctaBlock && ctaBlock.linkText && ctaBlock.href ? { label: ctaBlock.linkText, href: ctaBlock.href } : undefined,
+    },
+    variant: block.variant || "base",
+  };
 };
